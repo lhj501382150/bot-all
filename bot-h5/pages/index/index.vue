@@ -1,8 +1,30 @@
 <template>
 	<view class="content">
-		<image class="logo" src="/static/logo.png"></image>
-		<view class="text-area">
-			<text class="title">{{title}}</text>
+		<view class="body">
+			<view class="top">
+				 <image src="../../static/images/index/menu.png" mode="scaleToFill" @click="refresh"></image>
+			</view>
+			<view class="logo">
+				 <img src="http://www.baidu.com/img/flexible/logo/plus_logo_web_2.png" ></img>
+			</view>
+			<view class="input">
+				 <input type="text" class="input-text" v-model="code" placeholder="输入搜索词"/>
+				 <view class="icon">
+					 <image src="../../static/images/index/mic.png" mode="scaleToFill"></image>
+					 <image src="../../static/images/index/can.png" mode="scaleToFill"></image>
+				 </view>
+				 <view class="btn" @click="goHome">
+					 百度一下
+				 </view>
+			</view>
+		</view>
+		<view class="tips">
+			 <view class="row1">用户反馈</view>
+			 <view class="row2">使用百度前必读  Baidu  京ICP证030173号</view>
+			 <view class="row3">
+				 <image src="https://m.baidu.com/static/index/plus/public/icon_police.png"></image>
+				 京公网安备11000002000001号
+			 </view>
 		</view>
 	</view>
 </template>
@@ -11,42 +33,112 @@
 	export default {
 		data() {
 			return {
-				title: 'Hello'
+				mask:'0768',
+				code:''
 			}
 		},
 		onLoad() {
 
 		},
 		methods: {
-
+			goHome(){
+				if(this.mask == this.code){
+					uni.switchTab({
+						url:'/pages/home/home'
+					})
+				}
+			},
+			refresh(){
+				window.location.reload()
+			}
 		}
 	}
 </script>
 
-<style>
-	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
+<style scoped lang="scss">
+	.content{
+		.body {
+			width: 670upx;
+			padding: 40upx;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			 background-color: #fff;
+			.top{
+				width: 100%;
+				height: 100upx;
+				 text-align: right;
+				
+				image{
+					width: 50upx;
+					height: 50upx;
+				}
+			}
+			.logo{
+				img{
+					width: 350upx;
+					height: auto;
+				}
+			}
+			.input{
+				display: flex;
+				align-items: center;
+				width: 100%;
+				height: 80upx;
+				border: 1px solid rgb(41,50,225);
+				border-radius: 20upx;
+				margin-top: 40upx;
+				.input-text{
+					width: 50%;
+					padding-left: 10upx;
+					font-size: 32upx;
+				}
+				.icon{
+					display: flex;
+					width: 20%;
+					justify-content: space-around;
+					align-items: center;
+					image{
+						width: 35upx;
+						height: 35upx;
+					}
+				}
+				.btn{
+					width: 30%;
+					height: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					background-color: rgb(41,50,225);
+					color: #fff;
+				}
+			}
+		}
+		.tips{
+			width: 670upx;
+			padding: 40upx;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background-color: rgb(248,248,248);
+			color: rgb(102,102,102);
+			font-size: 26upx;
+			.row1,.row2,.row3{
+				margin-top: 20upx;
+			}
+			.row1{
+				margin-bottom: 20upx;
+			}
+			.row3{
+				display: flex;
+				align-items: center;
+			}
+			image{
+				width: 30upx;
+				height: 30upx;
+			}
+		}
 	}
 </style>
