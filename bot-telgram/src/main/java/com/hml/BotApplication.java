@@ -1,0 +1,37 @@
+package com.hml;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
+import com.hml.bot.BaseBot;
+import com.hml.thread.GetDataThread;
+
+@SpringBootApplication
+@EnableScheduling
+@EnableAsync
+public class BotApplication {
+
+	public static void main(String[] args) {
+		try {
+			ApplicationContext applicationContext = SpringApplication.run(BotApplication.class, args);
+			
+			BaseBot bot = applicationContext.getBean(BaseBot.class);
+			System.out.println("Token:" + bot.getBotToken());
+			System.out.println("Username:" + bot.getBotUsername());
+			TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+		    botsApi.registerBot(bot);
+		    
+		    new GetDataThread().start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		  
+	}
+
+}
+
