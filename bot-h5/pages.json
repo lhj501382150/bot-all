@@ -11,6 +11,24 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "",
+				"enablePullDownRefresh" : false,
+				"navigationStyle":"custom"
+			}
+		},
+		{
+			"path" : "user/user",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
+				"enablePullDownRefresh" : false,
+				"navigationStyle":"custom"
+			}
+		},
+		{
+			"path" : "record/record",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false
 			}
 		}
