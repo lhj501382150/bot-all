@@ -34,12 +34,21 @@
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
+		},
+		{
+			"path" : "pages/home/qmbd",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
+				"enablePullDownRefresh" : false,
+				"navigationStyle":"custom"
+			}
 		}
 	],
 	"tabBar": {
 		"color": "#757575",
 		"selectedColor": "#FFBC09",
-		"borderStyle": "white",
+		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [
 			{

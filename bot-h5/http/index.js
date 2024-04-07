@@ -3,7 +3,12 @@ import {baseUrl,AUTH_TOKEN} from '../utils/global'
 
 http.setBaseUrl(baseUrl)
 http.beforeRequestFilter = function(res){
-	console.log(res,'Request-------------')
+	http.header[AUTH_TOKEN] = '';
+	if(res.url.indexOf("/login") < 0){
+		if (uni.getStorageSync(AUTH_TOKEN)) {
+		    http.header[AUTH_TOKEN] = uni.getStorageSync(AUTH_TOKEN);
+		}
+	} 
 	return res;
 }
 http.beforeResponseFilter = function (res) {
