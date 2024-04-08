@@ -99,6 +99,9 @@
 			</view>
 			<view class="g-b-7"></view>
 		</view>
+		<view class="form">
+			<uni-forms></uni-forms>
+		</view>
 	</view>
 </template>
 
