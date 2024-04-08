@@ -118,9 +118,20 @@
 			共选择了{{formData.selected.length}}注，共计{{formData.money * formData.selected.length}}元
 			</uni-popup-dialog>
 		</uni-popup>
-		<uni-popup ref="rulePopup" :mask-click="false">
-			<text>Popup</text>
-			<button @click="closeRule">关闭</button>
+		<uni-popup ref="rulePopup" :mask-click="false" background-color="#fff" borderRadius="10upx 10upx 0upx 0upx">
+			<view class="rule-content">
+				<view>宝斗规则</view>
+				<view>玩法：1入、2龙、3出、4虎</view>
+				<view>串、角1:1/筒、粘1:2/股1:3</view>
+				<view>粘角下注要分开（没有明宝）</view>
+				<view>中奖平台抽水4%</view>
+				<view>开奖结果以1-2-3-4的先后排名为准，最靠近第一名的为最终开奖结果。</view>
+				<view>例如：7-6-10-9-8-2-5-4-3-1</view>
+				<view>开奖结果为（2龙）</view>
+				
+				<button @click="closeRule" class="pop-btn">关闭</button>
+			</view>
+			
 		</uni-popup>
 
 	</view>
@@ -246,9 +257,6 @@
 				uni.switchTab({
 					url:'/pages/home/home'
 				})
-			},
-			goRule(){
-				
 			}
 		}
 	}
@@ -607,5 +615,16 @@
 		align-items: center;
 		
 	}
+	.rule-content{
+		width: 600upx;
+		padding: 40upx;
+		.pop-btn{
+			margin-top: 100upx;
+			width: 200upx;
+			background-color: #f35458;
+			color: #fff;
+		}
+	}
+	
 }
 </style>
