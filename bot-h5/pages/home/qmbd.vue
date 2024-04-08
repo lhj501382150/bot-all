@@ -1,6 +1,6 @@
 <template>
 	<view class="qmbd-game">
-		<uni-nav-bar  title="全民宝斗" background-color="rgb(250,81,81)" color="#fff" left-icon="back" :border="false" right-text="规则" @clickLeft="goBack" @clickRight="goRule"></uni-nav-bar>
+		<uni-nav-bar  title="全民宝斗" background-color="rgb(250,81,81)" color="#fff" left-icon="back" :border="false" right-text="规则" @clickLeft="goBack" @clickRight="openRule"></uni-nav-bar>
 		<view class="tab-bar">
 			<view class="tab-item" :class="tabIndex==0 ? 'active':''">宝斗</view>
 			<view class="tab-item" :class="tabIndex==1 ? 'active':''" @click="goRecord">下注记录</view>
@@ -100,15 +100,29 @@
 			<view class="g-b-7"></view>
 		</view>
 		<view class="form">
-			<view class="form">
-				<uni-forms ref="form" :modelValue="formData" :rules="rules" label-position="top">
-					<uni-forms-item label="投注金额" name="money">
-						<uni-easyinput type="number" v-model="formData.money" placeholder="请输入投注金额" />
-					</uni-forms-item>
-				</uni-forms>
-				<button class="btn" @click="submit">{{$t('register.confirm.text')}}</button>
+			<uni-forms ref="form" :modelValue="formData" :rules="rules">
+				<uni-forms-item  name="money">
+					<uni-easyinput type="number" v-model="formData.money" placeholder="请输入投注金额" />
+				</uni-forms-item>
+			</uni-forms>
+			<button :class="isStop?'btn1':'btn'" @click="submit">{{isStop?'封盘中':'确认下注'}}</button>
+		</view>
+		<view class="result">
+			<view class="result-item" v-for="(item,index) in results" :key="index">
+				{{item}}
 			</view>
 		</view>
+		
+		<uni-popup ref="popup" type="dialog">
+			<uni-popup-dialog mode="base" :duration="2000" :before-close="true" @close="close" @confirm="confirm">
+			共选择了{{formData.selected.length}}注，共计{{formData.money * formData.selected.length}}元
+			</uni-popup-dialog>
+		</uni-popup>
+		<uni-popup ref="rulePopup" :mask-click="false">
+			<text>Popup</text>
+			<button @click="closeRule">关闭</button>
+		</uni-popup>
+
 	</view>
 </template>
 
@@ -157,36 +171,62 @@
 				],
 				formData:{
 					money:'',
-					
+					selected:[]
 				},
 				rules: {
 					 money: {
 					 	rules: [
-					 		{required: true,errorMessage: this.$t('ruls.xxx.empty',{name:this.$t('register.code.text')})}
+					 		{required: true,errorMessage: '请输入人下注金额'}
 					 	]
 					 }
 				},
+				results:[],
+				isStop:false
+				
 			}
 		},
 		methods: {
+			openRule(){
+				this.$refs.rulePopup.open()
+			},
+			closeRule(){
+				this.$refs.rulePopup.close()
+			},
+			close(){
+				this.$refs.popup.close()
+			},
+			confirm() {
+				this.close()
+				let para = {
+					
+				}
+				this.$http.post('',para,(res=>{
+					if(res.code ==200){
+						this.formData.money = ''
+						this.formData.selected = []
+						this.items.forEach(item=> item.check=false)
+						uni.showToast({
+							title:'下注成功',
+							icon:'success'
+						})
+					}
+				}))
+				
+			},
 			submit(){
+				if(this.isStop) return;
+				
 				this.$refs.form.validate().then(res=>{
-					const para = Object.assign({},this.formData)
-					this.$http.post('/player/mail/bind',para,(res=>{
-						if(res.code ==200){
-							uni.showToast({
-								title:this.$t('oper.tip.success.text'),
-								icon:'none',
-								success() {
-									uni.switchTab({
-										url:'/pages/user/user'
-									})
-								}
-							})
-						}else{
-							this.isSendCode = false
-						}
-					}))
+					let arr = this.items.filter(item=>item.check==true) || []
+					if(arr.length == 0){
+						uni.showToast({
+							title:'请选择下注类型',
+							icon:'error'
+						})
+						return
+					}
+					this.formData.selected = arr
+					this.$refs.popup.open()
 				}).catch(err =>{
 					console.log( err);
 				})
@@ -505,7 +545,7 @@
 					align-items: center;
 					.text{
 						transform: rotate(135deg);
-						margin: 134upx -260upx 0upx 0upx;
+						margin: 160upx -300upx 0upx 0upx;
 					}
 				}
 				.g-b-6-4{
@@ -532,7 +572,7 @@
 			height: 82upx;
 			background-color: #fff;
 			margin-left: 320upx;
-			margin-top: 330upx;
+			margin-top: 320upx;
 			display: flex;
 			justify-content: space-between;
 			background-size: 100%;
@@ -544,18 +584,28 @@
 	}
 	.form{
 		width: 670upx;
-		::v-deep .uni-forms-item__label{
-			color: #fff;
-		}
+		border-top: 10upx solid #e2e2e2;
+		padding: 40upx;
 		::v-deep .uni-easyinput__content{
-			background-color: rgb(24, 24, 34)!important;
-			border-color: rgb(24, 24, 34)!important;
-			color: rgb(255,255,255)!important;
+			height: 100upx;
+			font-size: 30upx;
+			border: 4upx solid #f35458!important;
 		}
 		.btn{
-			background-color: $fontColor;
+			background-color: #f35458;
 			color: #fff;
 		}
+		.btn1{
+			background-color: #5e6262;
+			color: #fff;
+		}
+	}
+	.result{
+		margin-top: 60upx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		
 	}
 }
 </style>
