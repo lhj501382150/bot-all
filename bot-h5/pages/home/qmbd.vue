@@ -30,49 +30,74 @@
 		</view>
 		<view class="game-box">
 			<view class="g-b-1">
-				<view class="game-box-1" :class="items[0].check ? 'active':''">{{items[0].name}}</view>
-				<view class="game-box-2" :class="items[1].check ? 'active':''">{{items[1].name}}</view>
-				<view class="game-box-2" :class="items[2].check ? 'active':''">{{items[2].name}}</view>
-				<view class="game-box-1" :class="items[3].check ? 'active':''">{{items[3].name}}</view>
+				<view class="game-box-1" :class="items[0].check ? 'active':''" @click="chooseItem(items[0])">{{items[0].name}}</view>
+				<view class="game-box-2" :class="items[1].check ? 'active':''" @click="chooseItem(items[1])">{{items[1].name}}</view>
+				<view class="game-box-2" :class="items[2].check ? 'active':''" @click="chooseItem(items[2])">{{items[2].name}}</view>
+				<view class="game-box-1" :class="items[3].check ? 'active':''" @click="chooseItem(items[3])">{{items[3].name}}</view>
 			</view>
 			<view class="g-b-2">
-				<view class="game-box-3" :class="items[4].check ? 'active':''">{{items[4].name}}</view>
+				<view class="game-box-3" :class="items[4].check ? 'active':''" @click="chooseItem(items[4])">{{items[4].name}}</view>
 				<view class="game-box-4">
-					<view class="game-box-4-1" :class="items[5].check ? 'active':''">{{items[5].name}}</view>
-					<view class="game-box-4-2" :class="items[6].check ? 'active':''">{{items[6].name}}</view>
+					<view class="game-box-4-1" :class="items[5].check ? 'active':''" @click="chooseItem(items[5])">
+						<view class="text">{{items[5].name}}</view>
+					</view>
+					<view class="game-box-4-2" :class="items[6].check ? 'active':''" @click="chooseItem(items[6])">
+						<view class="text">{{items[6].name}}</view>
+					</view>
 				</view>
 				<view class="game-box-5">
-					<view class="game-box-5-1" :class="items[7].check ? 'active':''">{{items[7].name}}</view>
-					<view class="game-box-5-1" :class="items[8].check ? 'active':''">{{items[8].name}}</view>
+					<view class="game-box-5-1" :class="items[7].check ? 'active':''" @click="chooseItem(items[7])">
+						<view class="text">{{items[7].name}}</view>
+					</view>
+					<view class="game-box-5-2" :class="items[8].check ? 'active':''" @click="chooseItem(items[8])">
+						<view class="text">{{items[8].name}}</view>
+					</view>
 				</view>
-				<view class="game-box-3" :class="items[9].check ? 'active':''">{{items[9].name}}</view>
+				<view class="game-box-3" :class="items[9].check ? 'active':''" @click="chooseItem(items[9])">{{items[9].name}}</view>
 			</view>
 			<view class="g-b-2">
-				<view class="game-box-3" :class="items[10].check ? 'active':''">{{items[10].name}}</view>
+				<view class="game-box-3" :class="items[10].check ? 'active':''" @click="chooseItem(items[10])">{{items[10].name}}</view>
 				<view class="game-box-5">
-					<view class="game-box-5-1" :class="items[11].check ? 'active':''">{{items[11].name}}</view>
-					<view class="game-box-5-1" :class="items[12].check ? 'active':''">{{items[12].name}}</view>
+					<view class="game-box-5-1" :class="items[11].check ? 'active':''" @click="chooseItem(items[11])">
+						<view class="text">{{items[11].name}}</view>
+					</view>
+					<view class="game-box-5-2" :class="items[12].check ? 'active':''" @click="chooseItem(items[12])">
+						<view class="text">{{items[12].name}}</view>
+					</view>
 				</view>
 				<view class="game-box-4">
-					<view class="game-box-4-1" :class="items[13].check ? 'active':''">{{items[13].name}}</view>
-					<view class="game-box-4-2" :class="items[14].check ? 'active':''">{{items[14].name}}</view>
+					<view class="game-box-4-1" :class="items[13].check ? 'active':''" @click="chooseItem(items[13])">
+						<view class="text">{{items[13].name}}</view>
+					</view>
+					<view class="game-box-4-2" :class="items[14].check ? 'active':''" @click="chooseItem(items[14])">
+						<view class="text">{{items[14].name}}</view>
+					</view>
 				</view>
-				<view class="game-box-3" :class="items[15].check ? 'active':''">{{items[15].name}}</view>
+				<view class="game-box-3" :class="items[15].check ? 'active':''" @click="chooseItem(items[15])">{{items[15].name}}</view>
 			</view>
 			<view class="g-b-1">
-				<view class="game-box-1" :class="items[16].check ? 'active':''">{{items[16].name}}</view>
-				<view class="game-box-2" :class="items[17].check ? 'active':''">{{items[17].name}}</view>
-				<view class="game-box-2" :class="items[18].check ? 'active':''">{{items[18].name}}</view>
-				<view class="game-box-1" :class="items[19].check ? 'active':''">{{items[19].name}}</view>
+				<view class="game-box-1" :class="items[16].check ? 'active':''" @click="chooseItem(items[16])">{{items[16].name}}</view>
+				<view class="game-box-2" :class="items[17].check ? 'active':''" @click="chooseItem(items[17])">{{items[17].name}}</view>
+				<view class="game-box-2" :class="items[18].check ? 'active':''" @click="chooseItem(items[18])">{{items[18].name}}</view>
+				<view class="game-box-1" :class="items[19].check ? 'active':''" @click="chooseItem(items[19])">{{items[19].name}}</view>
 			</view>
 			<view class="g-b-6">
 				<view class="g-b-6-v">
-					<view class="g-b-6-1" :class="items[20].check ? 'active':''">{{items[20].name}}</view>
-					<view class="g-b-6-2" :class="items[21].check ? 'active':''">{{items[21].name}}</view>
-					<view class="g-b-6-3" :class="items[22].check ? 'active':''">{{items[22].name}}</view>
-					<view class="g-b-6-4" :class="items[23].check ? 'active':''">{{items[23].name}}</view>
+					<view class="g-b-6-1" :class="items[20].check ? 'active':''" @click="chooseItem(items[20])">
+						<view class="text">{{items[20].name}}</view>
+					</view>
+					<view class="g-b-6-2" :class="items[21].check ? 'active':''" @click="chooseItem(items[21])">
+						<view class="text">{{items[21].name}}</view>
+					</view>
+					<view class="g-b-6-3" :class="items[22].check ? 'active':''" @click="chooseItem(items[22])">
+						<view class="text">{{items[22].name}}</view>
+					</view>
+					<view class="g-b-6-4" :class="items[23].check ? 'active':''" @click="chooseItem(items[23])">
+						<view class="text">{{items[23].name}}</view>
+					</view>
 				</view>
 			</view>
+			<view class="g-b-7"></view>
 		</view>
 	</view>
 </template>
@@ -115,14 +140,18 @@
 					{index:'18',name:'出正卡虎',rate:1,check:false},
 					{index:'19',name:'出正卡龙',rate:1,check:false},
 					{index:'20',name:'龙出角',rate:1,check:false},
-					{index:'21',name:'虎股',rate:3,check:false},
-					{index:'22',name:'入股',rate:3,check:false},
-					{index:'23',name:'龙股',rate:3,check:false},
-					{index:'24',name:'出股',rate:3,check:false}
+					{index:'21',name:'入股',rate:3,check:false},
+					{index:'22',name:'龙股',rate:3,check:false},
+					{index:'23',name:'出股',rate:3,check:false},
+					{index:'24',name:'虎股',rate:3,check:false}
 				]
 			}
 		},
 		methods: {
+			chooseItem(item){
+				console.log(item,'--------')
+				item.check = !item.check
+			},
 			goRecord(){
 				uni.navigateTo({
 					url:''
@@ -311,6 +340,11 @@
 					display: flex;
 					justify-content: center;
 					align-items: center;
+					.text{
+						transform: rotate(-45deg);
+						margin-top: -130upx;
+						margin-left: -44upx;
+					}
 				}
 				.game-box-4-2{
 					overflow: hidden;
@@ -323,6 +357,11 @@
 					display: flex;
 					justify-content: center;
 					align-items: center;
+					.text{
+						transform: rotate(-45deg);
+						margin-top: 100upx;
+						margin-left: -44upx;
+					}
 				}
 			}
 			.game-box-5{
@@ -331,7 +370,134 @@
 				display: flex;
 				position: relative;
 				overflow: hidden;
+				.game-box-5-1{
+					overflow: hidden;
+					position: absolute;
+					width: 150%;
+					height: 100%;
+					background-color: #f35458;
+					-webkit-transform: rotate(135deg) translate(10%, 68.5%);
+					transform: rotate(135deg) translate(10%, 68.5%);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					.text{
+						transform: rotate(-135deg);
+						margin-top: -46px;
+					}
+				}
+				.game-box-5-2{
+					overflow: hidden;
+					position: absolute;
+					width: 150%;
+					height: 100%;
+					background-color: #f35458;
+					-webkit-transform: rotate(135deg) translate(10%, -33%);
+					transform: rotate(135deg) translate(10%, -33%);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					.text{
+						transform: rotate(-135deg);
+						margin-left: -20upx;
+						margin-top: 130upx;
+					}
+					
+				}
 			}
+		}
+		.g-b-6{
+			position: absolute;
+			background-color: #eee;
+			width: 248upx;
+			height: 248upx;
+			margin-left: 238upx;
+			margin-top: 238upx;
+			.g-b-6-v{
+				position: relative;
+				width: 248upx;
+				height: 248upx;
+				overflow: hidden;
+				.g-b-6-1{
+					overflow: hidden;
+					position: absolute;
+					width: 150%;
+					height: 100%;
+					background-color: #f99d3d;
+					-webkit-transform: rotate(135deg) translate(-39%, 68%);
+					transform: rotate(135deg) translate(-39%, 68%);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					.text{
+						transform: rotate(-135deg);
+						margin: -260upx -208upx -114upx 82upx;
+					}
+				}
+				.g-b-6-2{
+					overflow: hidden;
+					position: absolute;
+					width: 150%;
+					height: 100%;
+					background-color: #f99d3d;
+					-webkit-transform: rotate(135deg) translate(-39%, -33%);
+					transform: rotate(135deg) translate(-39%, -33%);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					.text{
+						transform: rotate(-135deg);
+						margin: 144upx -270upx 0upx 0upx;
+					}
+				}
+				.g-b-6-3{
+					overflow: hidden;
+					position: absolute;
+					width: 150%;
+					height: 100%;
+					background-color: #f99d3d;
+					-webkit-transform: rotate(-135deg) translate(-38.5%, -67.5%);
+					transform: rotate(-135deg) translate(-38.5%, -67.5%);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					.text{
+						transform: rotate(135deg);
+						margin: 134upx -260upx 0upx 0upx;
+					}
+				}
+				.g-b-6-4{
+					overflow: hidden;
+					position: absolute;
+					width: 150%;
+					height: 100%;
+					background-color: #f99d3d;
+					-webkit-transform: rotate(-135deg) translate(62%, -67.5%);
+					transform: rotate(-135deg) translate(62%, -67.5%);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					.text{
+						transform: rotate(135deg);
+						margin: 104upx 248upx -30upx 0upx;
+					}
+				}
+			}
+		}
+		.g-b-7{
+			position: absolute;
+			width: 82upx;
+			height: 82upx;
+			background-color: #fff;
+			margin-left: 320upx;
+			margin-top: 330upx;
+			display: flex;
+			justify-content: space-between;
+			background-size: 100%;
+			background-image: url('../../static/images/home/qp.jpg');
+		}
+		.active{
+			background-color: #fff!important;
 		}
 	}
 }
