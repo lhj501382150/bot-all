@@ -5,7 +5,7 @@
  */
 
  // 后台管理系统服务器地址
-export const baseUrl = '/api'
+export const baseUrl = ''
 export const AUTH_TOKEN = "Authorization"
 
 export default {
