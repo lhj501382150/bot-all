@@ -7,7 +7,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.hml</groupId>
-	<artifactId>bot-mg</artifactId>
+	<artifactId>bot-hq</artifactId>
 	<version>1.0.0</version>
 
 	<properties>
