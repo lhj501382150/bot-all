@@ -100,7 +100,14 @@
 			<view class="g-b-7"></view>
 		</view>
 		<view class="form">
-			<uni-forms></uni-forms>
+			<view class="form">
+				<uni-forms ref="form" :modelValue="formData" :rules="rules" label-position="top">
+					<uni-forms-item label="投注金额" name="money">
+						<uni-easyinput type="number" v-model="formData.money" placeholder="请输入投注金额" />
+					</uni-forms-item>
+				</uni-forms>
+				<button class="btn" @click="submit">{{$t('register.confirm.text')}}</button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -147,12 +154,44 @@
 					{index:'22',name:'龙股',rate:3,check:false},
 					{index:'23',name:'出股',rate:3,check:false},
 					{index:'24',name:'虎股',rate:3,check:false}
-				]
+				],
+				formData:{
+					money:'',
+					
+				},
+				rules: {
+					 money: {
+					 	rules: [
+					 		{required: true,errorMessage: this.$t('ruls.xxx.empty',{name:this.$t('register.code.text')})}
+					 	]
+					 }
+				},
 			}
 		},
 		methods: {
+			submit(){
+				this.$refs.form.validate().then(res=>{
+					const para = Object.assign({},this.formData)
+					this.$http.post('/player/mail/bind',para,(res=>{
+						if(res.code ==200){
+							uni.showToast({
+								title:this.$t('oper.tip.success.text'),
+								icon:'none',
+								success() {
+									uni.switchTab({
+										url:'/pages/user/user'
+									})
+								}
+							})
+						}else{
+							this.isSendCode = false
+						}
+					}))
+				}).catch(err =>{
+					console.log( err);
+				})
+			},
 			chooseItem(item){
-				console.log(item,'--------')
 				item.check = !item.check
 			},
 			goRecord(){
@@ -501,6 +540,21 @@
 		}
 		.active{
 			background-color: #fff!important;
+		}
+	}
+	.form{
+		width: 670upx;
+		::v-deep .uni-forms-item__label{
+			color: #fff;
+		}
+		::v-deep .uni-easyinput__content{
+			background-color: rgb(24, 24, 34)!important;
+			border-color: rgb(24, 24, 34)!important;
+			color: rgb(255,255,255)!important;
+		}
+		.btn{
+			background-color: $fontColor;
+			color: #fff;
 		}
 	}
 }
