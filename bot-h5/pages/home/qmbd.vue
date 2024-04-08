@@ -28,7 +28,52 @@
 			<view class="draw-time">未结金额：<text style="color: blue;">0</text></view>
 			<view class="draw-time">今日输赢：<text style="color: red;">0</text></view>
 		</view>
-		<view class=""></view>
+		<view class="game-box">
+			<view class="g-b-1">
+				<view class="game-box-1" :class="items[0].check ? 'active':''">{{items[0].name}}</view>
+				<view class="game-box-2" :class="items[1].check ? 'active':''">{{items[1].name}}</view>
+				<view class="game-box-2" :class="items[2].check ? 'active':''">{{items[2].name}}</view>
+				<view class="game-box-1" :class="items[3].check ? 'active':''">{{items[3].name}}</view>
+			</view>
+			<view class="g-b-2">
+				<view class="game-box-3" :class="items[4].check ? 'active':''">{{items[4].name}}</view>
+				<view class="game-box-4">
+					<view class="game-box-4-1" :class="items[5].check ? 'active':''">{{items[5].name}}</view>
+					<view class="game-box-4-2" :class="items[6].check ? 'active':''">{{items[6].name}}</view>
+				</view>
+				<view class="game-box-5">
+					<view class="game-box-5-1" :class="items[7].check ? 'active':''">{{items[7].name}}</view>
+					<view class="game-box-5-1" :class="items[8].check ? 'active':''">{{items[8].name}}</view>
+				</view>
+				<view class="game-box-3" :class="items[9].check ? 'active':''">{{items[9].name}}</view>
+			</view>
+			<view class="g-b-2">
+				<view class="game-box-3" :class="items[10].check ? 'active':''">{{items[10].name}}</view>
+				<view class="game-box-5">
+					<view class="game-box-5-1" :class="items[11].check ? 'active':''">{{items[11].name}}</view>
+					<view class="game-box-5-1" :class="items[12].check ? 'active':''">{{items[12].name}}</view>
+				</view>
+				<view class="game-box-4">
+					<view class="game-box-4-1" :class="items[13].check ? 'active':''">{{items[13].name}}</view>
+					<view class="game-box-4-2" :class="items[14].check ? 'active':''">{{items[14].name}}</view>
+				</view>
+				<view class="game-box-3" :class="items[15].check ? 'active':''">{{items[15].name}}</view>
+			</view>
+			<view class="g-b-1">
+				<view class="game-box-1" :class="items[16].check ? 'active':''">{{items[16].name}}</view>
+				<view class="game-box-2" :class="items[17].check ? 'active':''">{{items[17].name}}</view>
+				<view class="game-box-2" :class="items[18].check ? 'active':''">{{items[18].name}}</view>
+				<view class="game-box-1" :class="items[19].check ? 'active':''">{{items[19].name}}</view>
+			</view>
+			<view class="g-b-6">
+				<view class="g-b-6-v">
+					<view class="g-b-6-1" :class="items[20].check ? 'active':''">{{items[20].name}}</view>
+					<view class="g-b-6-2" :class="items[21].check ? 'active':''">{{items[21].name}}</view>
+					<view class="g-b-6-3" :class="items[22].check ? 'active':''">{{items[22].name}}</view>
+					<view class="g-b-6-4" :class="items[23].check ? 'active':''">{{items[23].name}}</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -208,6 +253,85 @@
 		}
 		.color10{
 			background-color:#32CD32;
+		}
+	}
+	.game-box{
+		width: 724upx;
+		height: 724upx;
+		margin: 15upx;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		position: relative;
+		background-color: #eee;
+		.g-b-1{
+			display: flex;
+			justify-content: space-between;
+			.game-box-1{
+				background-color: #1785ed;
+				width: 124upx;
+				height: 124upx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.game-box-2{
+				background-color: #07be5e;
+				width: 234upx;
+				height: 124upx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		}
+		.g-b-2{
+			display: flex;
+			justify-content: space-between;
+			.game-box-3{
+				background-color: #07be5e;
+				width: 124upx;
+				height: 234upx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.game-box-4{
+				height: 234upx;
+				width: 234upx;
+				display: flex;
+				position: relative;
+				overflow: hidden;
+				.game-box-4-1{
+					overflow: hidden;
+					position: absolute;
+					width: 150%;
+					height: 100%;
+					background-color: #f35458;
+					transform: rotate(45deg) translate(-10%, 68.5%);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+				}
+				.game-box-4-2{
+					overflow: hidden;
+					position: absolute;
+					width: 150%;
+					height: 100%;
+					background-color: #f35458;
+					-webkit-transform: rotate(45deg) translate(-10%, -33%);
+					transform: rotate(45deg) translate(-10%, -33%);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+				}
+			}
+			.game-box-5{
+				height: 234upx;
+				width: 234upx;
+				display: flex;
+				position: relative;
+				overflow: hidden;
+			}
 		}
 	}
 }
