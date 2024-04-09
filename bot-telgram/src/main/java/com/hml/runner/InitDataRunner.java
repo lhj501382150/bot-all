@@ -21,12 +21,6 @@ public class InitDataRunner implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 	
-//		JSONObject json = new JSONObject();
-//		
-//		json.put("botId", String.valueOf(BotConfig.CHAT_ID));
-//		
-//		backCoreService.addGroupId(json);
-		
 		redisUtils.del(RedisKey.ORDER_QUERY,RedisKey.CURRENT_STATUS);
 		
 	}

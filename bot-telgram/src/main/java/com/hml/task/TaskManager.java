@@ -1,9 +1,9 @@
 package com.hml.task;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +27,8 @@ import com.hml.redis.RedisKey;
 import com.hml.redis.RedisUtils;
 import com.hml.utils.DateTimeUtils;
 import com.hml.utils.StringUtils;
+import com.hml.websocket.config.WebSocketConfig;
+import com.hml.websocket.server.WebSocketServerApp;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,7 +63,9 @@ public class TaskManager {
 			buff.append("下庄成功！从下轮起，重新竞选庄家，请广大玩家踊跃参加庄家竞选。");
 			SendPhoto photo = bossCommand.getSendPhoto(BotConfig.CHAT_ID, buff.toString(), "Markdown");
 			try {
-				baseBot.execute(photo);
+				if(BotConfig.ENABLE) {
+					baseBot.execute(photo);
+				}
 			} catch (TelegramApiException e) {
 				e.printStackTrace();
 			}
@@ -82,7 +86,7 @@ public class TaskManager {
 			 log.info("重新下发结果图：{}-{}",RedisKey.ROB_SEND_PIC,obj);
 			 Object res = redisUtils.hget(getResultKey(), obj.toString());
 			 log.info("下发结果：{}",res);
-			 if(res != null) {
+			 if(res != null && BotConfig.ENABLE) {
 				 RespBean bean = JSONObject.parseObject(res.toString(), RespBean.class);
 				 sendTable(bean,"开奖成功!("+bean.getIWinNo() + CommandTextParser.getText(bean.getIWinNo()) +")\n本期期数： " + bean.getDrawIssue() ,true);
 			 }
@@ -111,7 +115,7 @@ public class TaskManager {
 				 Object res = redisUtils.lGetAndPop(RedisKey.ORDER_QUERY);
 					
 				 log.info("【result】:{}",res);
-				 if(res != null) {
+				 if(res != null && BotConfig.ENABLE) {
 					RespBean bean = JSONObject.parseObject(res.toString(), RespBean.class);
 					String key = getResultKey();
 					redisUtils.hset(key,bean.getDataId(), res);
@@ -119,17 +123,20 @@ public class TaskManager {
 				 }
 				 return;
 			 }
-			 if(!backCoreService.isBotEnable(String.valueOf(BotConfig.CHAT_ID))) {
-				 if(step == 4 || step == 5) {
-					 Object res = redisUtils.lGetAndPop(RedisKey.ORDER_QUERY);
-					 log.info("【result】:{}",res);
-				 }
-				return;
-			 }
+//			 if(!backCoreService.isBotEnable(String.valueOf(BotConfig.CHAT_ID))) {
+//				 if(step == 4 || step == 5) {
+//					 Object res = redisUtils.lGetAndPop(RedisKey.ORDER_QUERY);
+//					 log.info("【result】:{}",res);
+//				 }
+//				return;
+//			 }
 			 if(Flow.START_ROB.getStep() == step) {
 				 log.info("【START_ROB】：{}",step);
 				 DrawInfo.FLOW = Flow.START_ROB;
-				 start();
+				 if(BotConfig.ENABLE) start();
+				 if(WebSocketConfig.ENABLE) {
+					 WebSocketServerApp.sendInfo(Flow.START_ROB.getStep(),"");
+				 }
 			 }else if(Flow.CONFIRM_ROB.getStep() == step) {
 				 log.info("【CONFIRM_ROB】：{}",step);
 				 DrawInfo.FLOW = Flow.CONFIRM_ROB;
@@ -137,18 +144,21 @@ public class TaskManager {
 			 }else if(Flow.DOWN_ORDER.getStep() == step) {
 				 log.info("【DOWN_ORDER】：{}",step);
 				 DrawInfo.FLOW = Flow.DOWN_ORDER;
-				 drawOrder(resp);
+				 if(BotConfig.ENABLE) drawOrder(resp);
 			 }else if(Flow.STOP_ORDER.getStep() == step) {
 				 log.info("【STOP_ORDER】：{}",step);
 				 DrawInfo.FLOW = Flow.STOP_ORDER;
-				 stopOrder();
+				 if(BotConfig.ENABLE) stopOrder();
+				 if(WebSocketConfig.ENABLE) {
+					 WebSocketServerApp.sendInfo(Flow.STOP_ORDER.getStep(),"");
+				 }
 			 }else if(Flow.OVER.getStep() == step) {
 				 log.info("【OVER】：{}",step);
 				 DrawInfo.FLOW = Flow.OVER;
 				 overResult();
 			 }else if(Flow.TIPS.getStep() == step) {
 				 log.info("【TIME TIPS】：{}",step);
-				 timeTips();
+				 if(BotConfig.ENABLE)timeTips();
 			 }
 			 
 			 
@@ -208,7 +218,7 @@ public class TaskManager {
 		}
 		  
 	}
-	private void overResult() throws TelegramApiException {
+	private void overResult() throws TelegramApiException, IOException {
 //		 查询是否有庄
 		boolean flag = true;
 		int index = 0;
@@ -222,11 +232,12 @@ public class TaskManager {
 				redisUtils.hset(key,bean.getDataId(), res);
 				redisUtils.expire(key, 60 * 60 * 24);
 				log.info("存入结果:{}-{}",bean.getDataId(),res);
-//			    if(!String.valueOf(DrawInfo.ID).equals(bean.getDataId())){
-//					 log.info("历史订单期数：{}--{}" ,DrawInfo.ID,bean.getDataId());
-//			    }else {
-//			   }
-			    sendTable(bean,"开奖成功!("+bean.getIWinNo() + CommandTextParser.getText(bean.getIWinNo()) +")\n本期期数： " + (DrawInfo.DRAW_ISSUE - 1) ,true);
+				if(BotConfig.ENABLE) {
+					sendTable(bean,"开奖成功!("+bean.getIWinNo() + CommandTextParser.getText(bean.getIWinNo()) +")\n本期期数： " + (DrawInfo.DRAW_ISSUE - 1) ,true);
+				}
+				if(WebSocketConfig.ENABLE) {
+					 WebSocketServerApp.sendInfo(Flow.STOP_ORDER.getStep(),res.toString());
+				 }
 			    flag = false;
 			}else {
 				index++;
@@ -334,6 +345,6 @@ public class TaskManager {
 		String date = DateTimeUtils.getCurrentDate("yyyyMMdd");
 		String key = RedisKey.ORDER_RESULT + ":" + date;
 		 
-		 return key;
+		return key;
 	}
 }

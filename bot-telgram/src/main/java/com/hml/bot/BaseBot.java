@@ -27,7 +27,6 @@ import com.hml.command.CallBackCommand;
 import com.hml.command.ErrorCommand;
 import com.hml.config.BotCommand;
 import com.hml.config.BotConfig;
-import com.hml.redis.RedisUtils;
 import com.hml.utils.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;

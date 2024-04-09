@@ -15,6 +15,7 @@ public class BotConfig {
 	public static String TX_CHANNEL = "";
 	public static String WF_CHANNEL = "";
 	public static String KJ_CHANNEL = "";
+	public static Boolean ENABLE = false;
 	public static Long CHAT_ID = 0l;
 	
 	public static String FILE_PATH = "";
@@ -55,5 +56,9 @@ public class BotConfig {
 	@Value("${bot.filePath}")
 	public void setFilePath(String filePath) {
 		FILE_PATH = filePath;
+	}
+	@Value("${bot.status}")
+	public void setEnable(String status) {
+		ENABLE = "Y".equals(status);
 	}
 }

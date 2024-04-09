@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import com.hml.bot.BaseBot;
+import com.hml.config.BotConfig;
 import com.hml.thread.GetDataThread;
 
 @SpringBootApplication
@@ -23,8 +24,11 @@ public class BotApplication {
 			BaseBot bot = applicationContext.getBean(BaseBot.class);
 			System.out.println("Token:" + bot.getBotToken());
 			System.out.println("Username:" + bot.getBotUsername());
-			TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-		    botsApi.registerBot(bot);
+			
+			if(BotConfig.ENABLE){
+				TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+				botsApi.registerBot(bot);
+			}
 		    
 		    new GetDataThread().start();
 		} catch (Exception e) {

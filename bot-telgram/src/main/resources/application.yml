@@ -2,7 +2,7 @@ server:
   port: 8002
   #max-http-header-size: 1024000
   servlet: 
-    context-path: /api
+    context-path: /bot
 spring:
   redis: 
     host: 18.212.105.77
@@ -16,14 +16,17 @@ spring:
       max-idle: 10
       min-idle: 5
 backcore: 
-  sendUrl: http://18.212.105.77      
+  sendUrl: http://18.212.105.77     
+websocket: 
+  status: Y 
 bot: 
-  token: 6724044931:AAE47iAPtnsMxdq8rnhrsJfTbVZNDp4uHuQ
-  username: mengfantest_bot
-  kf_chanel: https://t.me/tiantian2013
-  cz_chanel: https://t.me/mimi2013,https://t.me/tiantian2013
-  tx_chanel: https://t.me/tiantian2013
-  wf_chanel: https://t.me/hunhunhundeceshi
-  kj_chanel: https://138130.com/mobile/Lottery_code/index.html?lottery_id=308
-  chatId: -1002046180926
-  filePath: D:/data/pic
+  status: N
+  token:
+  username: 
+  kf_chanel: 
+  cz_chanel: 
+  tx_chanel: 
+  wf_chanel: 
+  kj_chanel: 
+  chatId: 123456
+  filePath: 
