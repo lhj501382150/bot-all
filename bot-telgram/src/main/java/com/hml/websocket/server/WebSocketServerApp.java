@@ -11,7 +11,6 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
@@ -20,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 //这个是客户端访问的接口
 @Slf4j
-@ServerEndpoint("/bot/app/{userno}")
+@ServerEndpoint("/socket/{userno}")
 @Component
 public class WebSocketServerApp {
     /**静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。*/

@@ -135,7 +135,11 @@ public class TaskManager {
 				 DrawInfo.FLOW = Flow.START_ROB;
 				 if(BotConfig.ENABLE) start();
 				 if(WebSocketConfig.ENABLE) {
-					 WebSocketServerApp.sendInfo(Flow.START_ROB.getStep(),"");
+					 JSONObject json = new JSONObject();
+					 json.put("ISSUE", DrawInfo.DRAW_ISSUE);
+					 json.put("CODE", DrawInfo.PRE_DRAW_CODE);
+					 json.put("TIME", DrawInfo.DRAW_TIME);
+					 WebSocketServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
 				 }
 			 }else if(Flow.CONFIRM_ROB.getStep() == step) {
 				 log.info("【CONFIRM_ROB】：{}",step);
