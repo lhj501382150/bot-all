@@ -24,8 +24,8 @@
 			<view class="draw-time">开奖：<text style="color: blue;">{{kjtime}}</text></view>
 		</view>
 		<view class="row qing">
-			<view class="draw-time">信用额度：0</view>
-			<view class="draw-time">未结金额：<text style="color: blue;">0</text></view>
+			<view class="draw-time">信用额度：{{user.enable}}</view>
+			<view class="draw-time">未结金额：<text style="color: blue;">{{user.freeze}}</text></view>
 			<view class="draw-time">今日输赢：<text style="color: red;">0</text></view>
 		</view>
 		<view class="game-box">
@@ -142,6 +142,7 @@
 	export default {
 		data() {
 			return {
+				user:{},
 				tabIndex:0,
 				link:{
 					title:'澳洲10在线直播',
@@ -200,12 +201,22 @@
 			}
 		},
 		onLoad() {
+			this.getUserBalance()
 			this.connectSocketInit()
 		},
 		beforeDestroy() {
 			this.closeSocket()
 		},
 		methods: {
+			getUserBalance(){
+				let userno = uni.getStorageSync('userno')
+				let para = {
+					userNo : userno
+				}
+				this.$http.post('/api/Query/GetBalance',para,res=>{
+					 this.user = res.rData
+				})
+			},
 			// 进入这个页面的时候创建websocket连接【整个页面随时使用】
 			connectSocketInit() {
 				let userno = uni.getStorageSync('userno')
@@ -214,8 +225,11 @@
 						url:'/pages/login/login'
 					})
 				}
+				let url = webSocketUrl  + userno;
+				console.log(url)
 				this.socketTask = uni.connectSocket({
-					url: webSocketUrl + "/bot/app/" + userno ,
+					url: url ,
+					
 					success(data) {
 						console.log("websocket连接成功");
 					},
@@ -303,8 +317,8 @@
 				item.check = !item.check
 			},
 			goRecord(){
-				uni.navigateTo({
-					url:''
+				uni.switchTab({
+					url:'/pages/record/record'
 				})
 			},
 			goUrl(){

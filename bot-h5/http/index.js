@@ -5,22 +5,19 @@ http.setBaseUrl(baseUrl)
 http.beforeRequestFilter = function(res){
 	http.header[AUTH_TOKEN] = '';
 	if(res.url.indexOf("/login") < 0){
-		if (uni.getStorageSync(AUTH_TOKEN)) {
-		    http.header[AUTH_TOKEN] = uni.getStorageSync(AUTH_TOKEN);
+		if (uni.getStorageSync('Token')) {
+		    http.header[AUTH_TOKEN] = 'Bearer ' + uni.getStorageSync('Token');
 		}
 	} 
 	return res;
 }
 http.beforeResponseFilter = function (res) {
-    //X-Auth-Token
-	console.log(res,'-------------')
-    
 	if(res.statusCode==200){
 		res = res.data
-		if(res.code != 200){
+		if(res.iCode != 0){
 			uni.showToast({
 				 icon: 'none',
-				 title: res.message,
+				 title: res.sMsg,
 			})
 		}
 		return res;

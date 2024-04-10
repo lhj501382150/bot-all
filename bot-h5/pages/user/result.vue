@@ -1,22 +1,20 @@
 <template>
-	<view class="order">
-		<uni-nav-bar left-icon="left"  title="投注记录" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
+	<view class="result">
+		<uni-nav-bar left-icon="left"  title="开奖公告" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%;"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
 			<view class="record-list">
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
-					  <view class="row">
-						  <view class="left">类型：{{item.artid}}</view>
-					      <view class="right">金额：{{item.bailmoney}}</view>
+					  <view class="head">
+						  <view class="type">全民宝斗</view>
+						  <view class="draw">{{item.issue}}期</view>
+						   <view class="time">{{item.sTime}}</view>
 					  </view>
 					  <view class="row">
-						  <view class="left">倍数：{{item.cpright}}</view>
-					      <view class="right">本局输赢：<text  :style="{color:item.loss>=0?'red':'green'}">{{item.loss}}</text></view>
-					  </view>
-					  <view class="row2">
-						  <view class="left">编号：{{item.orderno}}</view>
-					      <view class="right">时间：{{item.ordtime}}</view>
+					  	<view class="num-item" v-for="(item,index) in item.nums" :key="index" :class="'color'+item">
+					  		{{item}}
+					  	</view>
 					  </view>
 				 </view>
 			</view>
@@ -57,8 +55,13 @@
 			},
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/api/Query/GetOrderList",this.search,res => {
-					this.records = [...this.records,...res.rData]
+				this.$http.post("/api/Query/ReustList",this.search,res => {
+					let datas = res.rData || []
+					datas.forEach(item=>{
+						const nums = item.sresult.split(',')
+						item.nums = nums
+					})
+					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
 					if (this.search.pageIdx >= this.totalPage) {
@@ -71,8 +74,8 @@
 				})
 			},
 			goBack(){
-				uni.navigateTo({
-					url:'/pages/home/qmbd'
+				uni.switchTab({
+					url:'/pages/user/user'
 				})
 			}
 		}
@@ -80,27 +83,70 @@
 </script>
 
 <style scoped lang="scss">
-.order{
+.result{
 	width: 750upx;
 	height: 100vh;
 	.record-list{
-		padding: 40upx;
+		padding: 20upx;
 		.record-item{
 			background-color: #fff;
 			padding: 20upx;
 			margin-bottom: 20upx;
-			.row,.row2{
+			.head{
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-			}	
-			.row{
-				font-size: 30upx;
-				padding-bottom: 20upx;
 			}
-			.row2{
-				font-size: 26upx;
-				color: #787878;
+			.row{
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 100%;
+				height: 80upx;
+				padding-top: 20upx;
+				padding-bottom: 20upx;
+				border-bottom: 2upx solid #e2e2e2;
+				.num-item{
+					width: 59upx;
+					height: 59upx;
+					margin-left: 10upx;
+					margin-right: 6upx;
+					border-radius: 50%;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					color: #fff;
+				}
+				.color01{
+					background-color:#FFD700;
+				}
+				.color02{
+					background-color:#00BFFF;
+				}
+				.color03{
+					background-color:#8B4513;
+				}
+				.color04{
+					background-color:#FFA500;
+				}
+				.color05{
+					background-color:#48D1CC;
+				}
+				.color06{
+					background-color:#7B68EE;
+				}
+				.color07{
+					background-color:#778899;
+				}
+				.color08{
+					background-color:#DC143C;
+				}
+				.color09{
+					background-color:#FA8072;
+				}
+				.color10{
+					background-color:#32CD32;
+				}
 			}
 		}
 	}
