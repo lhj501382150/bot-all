@@ -28,7 +28,7 @@
 		data() {
 			return {
 				formData:{
-					paypwd :'123456',
+					paypwd :'1234567',
 					userno :'abc00001'
 				},
 				rules: {
