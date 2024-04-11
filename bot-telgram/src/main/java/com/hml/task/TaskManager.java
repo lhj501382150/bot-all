@@ -51,6 +51,24 @@ public class TaskManager {
 	@Autowired
 	private BackCoreService backCoreService;
 	
+	@Scheduled(fixedRate = 1000)
+	public void syncStatusSys() {
+		try {
+			Object obj = redisUtils.get(RedisKey.SYSTEM_STATUS);
+			 if(StringUtils.isBlank(obj)) {
+				 return;
+			 }
+			 String status= obj.toString();
+			 int step = Integer.parseInt(status);
+			 if(WebSocketConfig.ENABLE) {
+				 WebSocketServerApp.sendInfo(step, getMaxMoney());
+			 }
+			 redisUtils.del(RedisKey.SYSTEM_STATUS);
+		} catch (Exception e) {
+			 log.error("发送结果图异常：{}",e);
+		}
+	}
+	
 	@Async
 	@Scheduled(fixedRate = 1000)
 	public void syncRobDown() {

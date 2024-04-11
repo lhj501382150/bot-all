@@ -37,4 +37,6 @@ public class RedisKey {
 	public static String ROB_DOWN = "ROB_DOWN:" + BotConfig.CHAT_ID;
 	
 	public static String USER_INVITE_AUTH = "USER_INVITE_AUTH";
+	
+	public static String SYSTEM_STATUS =  "SYSTEM:STATUS";
 }
