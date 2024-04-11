@@ -6,10 +6,10 @@
 			<view class="tab-item" :class="tabIndex==1 ? 'active':''" @click="goRecord">下注记录</view>
 		</view>
 		<view class="row">
-			<view class="draw-time red">{{result.DRAW}}</view>
+			<view class="draw-time red">{{result.ISSUE-1}}期</view>
 			<view class="draw-num">
-				<view class="tips">{{result.NUM}}</view>
-				<view class="tips">{{result.STR}}</view>
+				<view class="tips">{{result.RESULT}}</view>
+				<view class="tips">{{getStatus(result.RESULT)}}</view>
 			</view>
 			<view class="link-btn" @click="goUrl">{{link.title}}</view>
 		</view>
@@ -19,9 +19,9 @@
 			</view>
 		</view>
 		<view class="row">
-			<view class="draw-time red">202512期</view>
-			<view class="draw-time">封盘：<text style="color: red;">{{fptime}}</text></view>
-			<view class="draw-time">开奖：<text style="color: blue;">{{kjtime}}</text></view>
+			<view class="draw-time red">{{result.ISSUE}}期</view>
+			<view class="draw-time">封盘：<text style="color: red;">{{formatTime(fptime)}}</text></view>
+			<view class="draw-time">开奖：<text style="color: blue;">{{formatTime(kjtime)}}</text></view>
 		</view>
 		<view class="row qing">
 			<view class="draw-time">信用额度：{{user.enable}}</view>
@@ -108,8 +108,8 @@
 			<button :class="isStop?'btn1':'btn'" @click="submit">{{isStop?'封盘中':'确认下注'}}</button>
 		</view>
 		<view class="result">
-			<view class="result-item" v-for="(item,index) in results" :key="index">
-				{{item}}
+			<view class="result-item" :class="'color'+item.no" v-for="(item,index) in results" :key="index">
+				{{item.status}}
 			</view>
 		</view>
 		
@@ -122,7 +122,7 @@
 			<view class="rule-content">
 				<view>宝斗规则</view>
 				<view>玩法：1入、2龙、3出、4虎</view>
-				<view>串、角1:1/筒、粘1:2/股1:3</view>
+				<view>串、角1:1/筒、粘1:2/古1:3</view>
 				<view>粘角下注要分开（没有明宝）</view>
 				<view>中奖平台抽水4%</view>
 				<view>开奖结果以1-2-3-4的先后排名为准，最靠近第一名的为最终开奖结果。</view>
@@ -138,7 +138,8 @@
 </template>
 
 <script>
-	import {webSocketUrl} from '@/static/config/config.js'
+	import { getSecond } from '../../utils/util'
+	import {botId, webSocketUrl} from '@/static/config/config.js'
 	export default {
 		data() {
 			return {
@@ -148,39 +149,34 @@
 					title:'澳洲10在线直播',
 					src:'https://m.228168d.com/html/aozxy10/index.html'
 				},
-				result:{
-					DRAW:'2110322',
-					NUM:1,
-					STR:'入',
-					data:['01','02','03','04','05','06','07','08','09','10']
-				},
+				result:{},
 				fptime:0,
 				kjtime:0,
 				items:[
 					{index:'1',name:'虎入角',rate:1,check:false},
-					{index:'2',name:'入正卡虎',rate:1,check:false},
-					{index:'3',name:'入正卡龙',rate:1,check:false},
+					{index:'2',name:'入正念虎',rate:1,check:false},
+					{index:'3',name:'入正念龙',rate:1,check:false},
 					{index:'4',name:'龙入角',rate:1,check:false},
-					{index:'5',name:'虎正卡入',rate:1,check:false},
+					{index:'5',name:'虎正念入',rate:1,check:false},
 					{index:'6',name:'虎同',rate:1,check:false},
 					{index:'7',name:'入同',rate:1,check:false},
 					{index:'8',name:'入串',rate:1,check:false},
 					{index:'9',name:'龙同',rate:1,check:false},
-					{index:'10',name:'龙正卡入',rate:1,check:false},
-					{index:'11',name:'虎正卡出',rate:1,check:false},
+					{index:'10',name:'龙正念入',rate:1,check:false},
+					{index:'11',name:'虎正念出',rate:1,check:false},
 					{index:'12',name:'虎串',rate:1,check:false},
 					{index:'13',name:'出同',rate:1,check:false},
 					{index:'14',name:'出串',rate:1,check:false},
 					{index:'15',name:'龙串',rate:1,check:false},
-					{index:'16',name:'龙正卡出',rate:1,check:false},
+					{index:'16',name:'龙正念出',rate:1,check:false},
 					{index:'17',name:'虎出角',rate:1,check:false},
-					{index:'18',name:'出正卡虎',rate:1,check:false},
-					{index:'19',name:'出正卡龙',rate:1,check:false},
+					{index:'18',name:'出正念虎',rate:1,check:false},
+					{index:'19',name:'出正念龙',rate:1,check:false},
 					{index:'20',name:'龙出角',rate:1,check:false},
-					{index:'21',name:'入股',rate:3,check:false},
-					{index:'22',name:'龙股',rate:3,check:false},
-					{index:'23',name:'出股',rate:3,check:false},
-					{index:'24',name:'虎股',rate:3,check:false}
+					{index:'21',name:'入古',rate:3,check:false},
+					{index:'22',name:'龙古',rate:3,check:false},
+					{index:'23',name:'出古',rate:3,check:false},
+					{index:'24',name:'虎古',rate:3,check:false}
 				],
 				formData:{
 					money:'',
@@ -197,24 +193,50 @@
 				isStop:false,
 				socketTask: null,
 				// 确保websocket是打开状态
-				is_open_socket: false
+				is_open_socket: false,
+				leftTime:0,
+				timer:'',
+				statusList:[
+					{val:1,name:'入'},
+					{val:2,name:'龙'},
+					{val:3,name:'出'},
+					{val:4,name:'虎'}
+				]
 			}
 		},
 		onLoad() {
 			this.getUserBalance()
+			this.loadData()
 			this.connectSocketInit()
 		},
 		beforeDestroy() {
 			this.closeSocket()
 		},
 		methods: {
+			loadData(){
+				let para = {
+					pageIdx:0,
+					pageSize:50,
+					userno :uni.getStorageSync('userno')
+				}
+				this.$http.post("/api/Query/ReustList",para,res => {
+					let datas = res.rData || []
+					datas.forEach(item=>{
+						let temp ={
+							no:item.bNo,
+							status: this.getStatus(item.bNo)
+						}
+						this.results.push(temp)
+					})
+				})
+			},
 			getUserBalance(){
 				let userno = uni.getStorageSync('userno')
 				let para = {
 					userNo : userno
 				}
 				this.$http.post('/api/Query/GetBalance',para,res=>{
-					 this.user = res.rData
+					 this.user = res.rData || {}
 				})
 			},
 			// 进入这个页面的时候创建websocket连接【整个页面随时使用】
@@ -229,7 +251,6 @@
 				console.log(url)
 				this.socketTask = uni.connectSocket({
 					url: url ,
-					
 					success(data) {
 						console.log("websocket连接成功");
 					},
@@ -249,12 +270,61 @@
 					// 注：只有连接正常打开中 ，才能正常收到消息
 					this.socketTask.onMessage((res) => {
 						console.log("收到服务器内容：" + res.data);
+						try{
+							const data = JSON.parse(res.data);
+							if(data.status==1){
+								clearTimeout(this.timer)
+								this.isStop = false
+								this.result = JSON.parse(data.data)
+								this.result.data = this.result.CODE.split(',') || []
+								this.leftTime = getSecond(this.result.TIME)
+								this.fillTime()
+							}else if(data.status == 4){
+								this.isStop = true
+								this.fptime = 0
+								this.kjtime = 30
+							}
+						}catch(e){
+							console.log('消息处理异常：' + e)
+						}
+						
 					});
 				})
 				// 这里仅是事件监听【如果socket关闭了会执行】
 				this.socketTask.onClose(() => {
 					console.log("已经被关闭了")
 				})
+			},
+			startCount(){
+				if(this.fptime > 0){
+					this.fptime--
+				}else{
+					this.isStop= true
+				}
+				if(this.kjtime > 0){
+					this.kjtime--
+				}
+				this.timer = setTimeout(this.startCount,1000)
+			},
+			fillTime(){
+				this.fptime = this.leftTime - 30 < 0 ? 0 :this.leftTime - 30
+				this.kjtime = this.leftTime
+				this.startCount()
+			},
+			formatTime(time){
+				if(time > 60){
+					const min = parseInt(time / 60) 
+					let sec = time % 60 
+					if(sec < 10) sec = '0' + sec
+					return min +  ':' + sec
+				}else{
+					if(time < 10){
+						return '00:0' + time
+					}else{
+						return '00:' + time
+					}
+					
+				}
 			},
 			// 关闭websocket【离开这个页面的时候执行关闭】
 			closeSocket() {
@@ -279,10 +349,22 @@
 			},
 			confirm() {
 				this.close()
+				let orders = this.formData.selected.map(item=>{
+					let para = {
+						integRal:this.formData.money,
+						ruId:item.name
+					}
+					return para
+				})
 				let para = {
-					
+					botId:botId,
+					dataId:this.result.ID,
+					userId:uni.getStorageSync('userno'),
+					userName:uni.getStorageSync("nickname"),
+					orders:orders
 				}
-				this.$http.post('',para,(res=>{
+				
+				this.$http.post('/api/Order/Order',para,(res=>{
 					if(res.code ==200){
 						this.formData.money = ''
 						this.formData.selected = []
@@ -312,6 +394,10 @@
 				}).catch(err =>{
 					console.log( err);
 				})
+			},
+			getStatus(status){
+				const item = this.statusList.find(item=> item.val==status) || {}
+				return item.name
 			},
 			chooseItem(item){
 				item.check = !item.check
@@ -682,9 +768,33 @@
 	.result{
 		margin-top: 60upx;
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		
+		justify-content: flex-start;
+		flex-wrap: wrap;
+		padding-left: 20upx;
+		padding-right: 20upx;
+		.result-item{
+			width: 60upx;
+			height: 60upx;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-bottom: 20upx;
+			color: #fff;
+			margin-left: 10upx;
+		}
+		.color1{
+			background-color:#FFD700;
+		}
+		.color2{
+			background-color:#00BFFF;
+		}
+		.color3{
+			background-color:#32CD32;
+		}
+		.color4{
+			background-color:#DC143C;
+		}
 	}
 	.rule-content{
 		width: 600upx;

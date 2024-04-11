@@ -21,6 +21,10 @@ http.beforeResponseFilter = function (res) {
 			})
 		}
 		return res;
+	}else if(res.statusCode==401){
+		 uni.navigateTo({
+		 	url:'/pages/login/login'
+		 })
 	}else{
 		uni.showToast({
 			 icon: 'none',
