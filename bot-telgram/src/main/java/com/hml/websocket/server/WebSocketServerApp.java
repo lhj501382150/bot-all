@@ -59,6 +59,7 @@ public class WebSocketServerApp {
 			json.put("CODE", DrawInfo.PRE_DRAW_CODE);
 			json.put("RESULT", DrawInfo.RESULT);
 			json.put("TIME", DrawInfo.DRAW_TIME);
+			json.put("ID", DrawInfo.ID);
             sendMessage(getMsg(1,json.toJSONString()));
         } catch (IOException e) {
             log.error("用户:{},网络异常!!!!!!",userId,e);

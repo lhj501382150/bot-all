@@ -159,6 +159,7 @@ public class TaskManager {
 					 json.put("CODE", DrawInfo.PRE_DRAW_CODE);
 					 json.put("RESULT", DrawInfo.RESULT);
 					 json.put("TIME", DrawInfo.DRAW_TIME);
+					 json.put("ID", DrawInfo.ID);
 					 WebSocketServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
 				 }
 			 }else if(Flow.CONFIRM_ROB.getStep() == step) {
