@@ -28,7 +28,7 @@
 		data() {
 			return {
 				formData:{
-					paypwd :'123456',
+					paypwd :'1234567',
 					userno :'abc00001'
 				},
 				rules: {
@@ -53,9 +53,11 @@
 					const para = Object.assign({},this.formData)
 					para.md5 = md5(this.formData.userno + this.formData.paypwd)
 					this.$http.post('/api/User/Login',para,(res=>{
-						console.log(res,'-------------')
 						if(res.iCode ==0){
 							uni.setStorageSync("Token",res.rData.token)
+							let  user = res.rData
+							delete user.token
+							uni.setStorageSync("userinfo",JSON.stringify(user))
 							uni.setStorageSync("userno",res.rData.userno)
 							uni.switchTab({
 								url:'/pages/home/home'

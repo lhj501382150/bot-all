@@ -71,8 +71,8 @@
 				})
 			},
 			goBack(){
-				uni.navigateTo({
-					url:'/pages/home/qmbd'
+				uni.switchTab({
+					url:'/pages/user/user'
 				})
 			}
 		}

@@ -1,22 +1,18 @@
 <template>
-	<view class="order">
-		<uni-nav-bar left-icon="left"  title="投注记录" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
+	<view class="money-record">
+		<uni-nav-bar left-icon="left"  title="资金明细" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%;"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
 			<view class="record-list">
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
 					  <view class="row">
-						  <view class="left">类型：{{item.artid}}</view>
-					      <view class="right">金额：{{item.bailmoney}}</view>
-					  </view>
-					  <view class="row">
-						  <view class="left">倍数：{{item.cpright}}</view>
-					      <view class="right">本局输赢：<text  :style="{color:item.loss>=0?'red':'green'}">{{item.loss}}</text></view>
+						  <view class="left">流水号：{{item.wartno}}</view>
+					      <view class="right">金额：{{item.chmoney}}</view>
 					  </view>
 					  <view class="row2">
-						  <view class="left">编号：{{item.orderno}}</view>
-					      <view class="right">时间：{{item.ordtime}}</view>
+						  <view class="left">类型：{{item.subno}}</view>
+					      <view class="right">时间：{{item.ctime}}</view>
 					  </view>
 				 </view>
 			</view>
@@ -57,7 +53,7 @@
 			},
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/api/Query/GetOrderList",this.search,res => {
+				this.$http.post("/api/Query/GetMoneyList",this.search,res => {
 					this.records = [...this.records,...res.rData]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
@@ -71,8 +67,8 @@
 				})
 			},
 			goBack(){
-				uni.navigateTo({
-					url:'/pages/home/qmbd'
+				uni.switchTab({
+					url:'/pages/user/user'
 				})
 			}
 		}
@@ -80,7 +76,7 @@
 </script>
 
 <style scoped lang="scss">
-.order{
+.money-record{
 	width: 750upx;
 	height: 100vh;
 	.record-list{

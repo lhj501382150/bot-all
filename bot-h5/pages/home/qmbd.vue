@@ -24,8 +24,8 @@
 			<view class="draw-time">开奖：<text style="color: blue;">{{kjtime}}</text></view>
 		</view>
 		<view class="row qing">
-			<view class="draw-time">信用额度：0</view>
-			<view class="draw-time">未结金额：<text style="color: blue;">0</text></view>
+			<view class="draw-time">信用额度：{{user.enable}}</view>
+			<view class="draw-time">未结金额：<text style="color: blue;">{{user.freeze}}</text></view>
 			<view class="draw-time">今日输赢：<text style="color: red;">0</text></view>
 		</view>
 		<view class="game-box">
@@ -138,9 +138,11 @@
 </template>
 
 <script>
+	import {webSocketUrl} from '@/static/config/config.js'
 	export default {
 		data() {
 			return {
+				user:{},
 				tabIndex:0,
 				link:{
 					title:'澳洲10在线直播',
@@ -192,11 +194,80 @@
 					 }
 				},
 				results:[],
-				isStop:false
-				
+				isStop:false,
+				socketTask: null,
+				// 确保websocket是打开状态
+				is_open_socket: false
 			}
 		},
+		onLoad() {
+			this.getUserBalance()
+			this.connectSocketInit()
+		},
+		beforeDestroy() {
+			this.closeSocket()
+		},
 		methods: {
+			getUserBalance(){
+				let userno = uni.getStorageSync('userno')
+				let para = {
+					userNo : userno
+				}
+				this.$http.post('/api/Query/GetBalance',para,res=>{
+					 this.user = res.rData
+				})
+			},
+			// 进入这个页面的时候创建websocket连接【整个页面随时使用】
+			connectSocketInit() {
+				let userno = uni.getStorageSync('userno')
+				if(!userno){
+					uni.navigateTo({
+						url:'/pages/login/login'
+					})
+				}
+				let url = webSocketUrl  + userno;
+				console.log(url)
+				this.socketTask = uni.connectSocket({
+					url: url ,
+					
+					success(data) {
+						console.log("websocket连接成功");
+					},
+				});
+				console.log(this.socketTask,'-------------')
+				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
+				this.socketTask.onOpen((res) => {
+					console.log("WebSocket连接正常打开中...！");
+					this.is_open_socket = true;
+					// 注：只有连接正常打开中 ，才能正常成功发送消息
+					this.socketTask.send({
+						data: "uni-app发送一条消息",
+						async success() {
+							console.log("消息发送成功");
+						},
+					});
+					// 注：只有连接正常打开中 ，才能正常收到消息
+					this.socketTask.onMessage((res) => {
+						console.log("收到服务器内容：" + res.data);
+					});
+				})
+				// 这里仅是事件监听【如果socket关闭了会执行】
+				this.socketTask.onClose(() => {
+					console.log("已经被关闭了")
+				})
+			},
+			// 关闭websocket【离开这个页面的时候执行关闭】
+			closeSocket() {
+				this.socketTask.close({
+					success(res) {
+						this.is_open_socket = false;
+						console.log("关闭成功", res)
+					},
+					fail(err) {
+						console.log("关闭失败", err)
+					}
+				})
+			},
 			openRule(){
 				this.$refs.rulePopup.open()
 			},
@@ -246,8 +317,8 @@
 				item.check = !item.check
 			},
 			goRecord(){
-				uni.navigateTo({
-					url:''
+				uni.switchTab({
+					url:'/pages/record/record'
 				})
 			},
 			goUrl(){

@@ -1,22 +1,16 @@
 <template>
-	<view class="order">
-		<uni-nav-bar left-icon="left"  title="投注记录" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
+	<view class="notcie">
+		<uni-nav-bar left-icon="left"  title="平台公告" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%;"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
 			<view class="record-list">
-				 <view class="record-item" v-for="(item,index) in records" :key="index">
-					  <view class="row">
-						  <view class="left">类型：{{item.artid}}</view>
-					      <view class="right">金额：{{item.bailmoney}}</view>
+				 <view class="record-item" v-for="(item,index) in records" :key="index" @click="showDetail(item)">
+					  <view class="head">
+						  {{item.title}}
 					  </view>
-					  <view class="row">
-						  <view class="left">倍数：{{item.cpright}}</view>
-					      <view class="right">本局输赢：<text  :style="{color:item.loss>=0?'red':'green'}">{{item.loss}}</text></view>
-					  </view>
-					  <view class="row2">
-						  <view class="left">编号：{{item.orderno}}</view>
-					      <view class="right">时间：{{item.ordtime}}</view>
+					  <view class="time">
+						  {{item.nottime}}
 					  </view>
 				 </view>
 			</view>
@@ -43,6 +37,12 @@
 			this.loadData()
 		},
 		methods: {
+			showDetail(item){
+				let no = item.noticeno
+				uni.navigateTo({
+					url:'./noticeDetail?no='+ no
+				})
+			},
 			scrolltolower() {
 				this.loadData()
 			},
@@ -57,7 +57,7 @@
 			},
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/api/Query/GetOrderList",this.search,res => {
+				this.$http.post("/api/Notice/GetList",this.search,res => {
 					this.records = [...this.records,...res.rData]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
@@ -71,8 +71,8 @@
 				})
 			},
 			goBack(){
-				uni.navigateTo({
-					url:'/pages/home/qmbd'
+				uni.switchTab({
+					url:'/pages/user/user'
 				})
 			}
 		}
@@ -80,25 +80,20 @@
 </script>
 
 <style scoped lang="scss">
-.order{
+.notcie{
 	width: 750upx;
 	height: 100vh;
 	.record-list{
-		padding: 40upx;
+		padding: 20upx;
 		.record-item{
 			background-color: #fff;
 			padding: 20upx;
 			margin-bottom: 20upx;
-			.row,.row2{
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}	
-			.row{
-				font-size: 30upx;
-				padding-bottom: 20upx;
+			.head{
+				font-size: 32upx;
 			}
-			.row2{
+			.time{
+				margin-top: 20upx;
 				font-size: 26upx;
 				color: #787878;
 			}
