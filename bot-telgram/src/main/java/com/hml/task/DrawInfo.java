@@ -16,6 +16,8 @@ public class DrawInfo {
 	
 	public static String DRAW_TIME  = "";
 	
+	public static String RESULT = "";
+	
 	public static Flow FLOW;
 	
 	public static String MIN_MONEY = "10000";

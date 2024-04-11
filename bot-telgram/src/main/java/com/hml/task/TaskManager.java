@@ -51,6 +51,7 @@ public class TaskManager {
 	@Autowired
 	private BackCoreService backCoreService;
 	
+	@Async
 	@Scheduled(fixedRate = 1000)
 	public void syncStatusSys() {
 		try {
@@ -61,7 +62,7 @@ public class TaskManager {
 			 String status= obj.toString();
 			 int step = Integer.parseInt(status);
 			 if(WebSocketConfig.ENABLE) {
-				 WebSocketServerApp.sendInfo(step, getMaxMoney());
+				 WebSocketServerApp.sendInfo(step, "Update");
 			 }
 			 redisUtils.del(RedisKey.SYSTEM_STATUS);
 		} catch (Exception e) {
@@ -156,6 +157,7 @@ public class TaskManager {
 					 JSONObject json = new JSONObject();
 					 json.put("ISSUE", DrawInfo.DRAW_ISSUE);
 					 json.put("CODE", DrawInfo.PRE_DRAW_CODE);
+					 json.put("RESULT", DrawInfo.RESULT);
 					 json.put("TIME", DrawInfo.DRAW_TIME);
 					 WebSocketServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
 				 }
@@ -258,7 +260,8 @@ public class TaskManager {
 					sendTable(bean,"开奖成功!("+bean.getIWinNo() + CommandTextParser.getText(bean.getIWinNo()) +")\n本期期数： " + (DrawInfo.DRAW_ISSUE - 1) ,true);
 				}
 				if(WebSocketConfig.ENABLE) {
-					 WebSocketServerApp.sendInfo(Flow.STOP_ORDER.getStep(),res.toString());
+					DrawInfo.RESULT = String.valueOf(bean.getIWinNo());
+					WebSocketServerApp.sendInfo(Flow.OVER.getStep(),res.toString());
 				 }
 			    flag = false;
 			}else {

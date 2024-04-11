@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hml.task.DrawInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,7 +54,12 @@ public class WebSocketServerApp {
         log.info("用户{}连接,当前在线人数为:{}" ,userId, getOnlineCount());
 
         try {
-            sendMessage(getMsg(this.userId+"连接成功"));
+        	JSONObject json = new JSONObject();
+			json.put("ISSUE", DrawInfo.DRAW_ISSUE);
+			json.put("CODE", DrawInfo.PRE_DRAW_CODE);
+			json.put("RESULT", DrawInfo.RESULT);
+			json.put("TIME", DrawInfo.DRAW_TIME);
+            sendMessage(getMsg(1,json.toJSONString()));
         } catch (IOException e) {
             log.error("用户:{},网络异常!!!!!!",userId,e);
         }
