@@ -170,6 +170,15 @@ public class TaskManager {
 				 log.info("【DOWN_ORDER】：{}",step);
 				 DrawInfo.FLOW = Flow.DOWN_ORDER;
 				 if(BotConfig.ENABLE) drawOrder(resp);
+				 if(WebSocketConfig.ENABLE) {
+					 JSONObject json = new JSONObject();
+					 json.put("ISSUE", DrawInfo.DRAW_ISSUE);
+					 json.put("CODE", DrawInfo.PRE_DRAW_CODE);
+					 json.put("RESULT", DrawInfo.RESULT);
+					 json.put("TIME", DrawInfo.DRAW_TIME);
+					 json.put("ID", DrawInfo.ID);
+					 WebSocketServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
+				 }
 			 }else if(Flow.STOP_ORDER.getStep() == step) {
 				 log.info("【STOP_ORDER】：{}",step);
 				 DrawInfo.FLOW = Flow.STOP_ORDER;
