@@ -21,11 +21,16 @@
 				 </view>
 			</view>
 		</scroll-view>
+		<sys-status></sys-status>
 	</view>
 </template>
 
 <script>
+	import SysStatus from '../../components/sys-status/sys-status.vue'
 	export default {
+		components:{
+			SysStatus
+		},
 		data() {
 			return {
 				records:[],

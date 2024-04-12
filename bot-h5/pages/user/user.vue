@@ -28,11 +28,16 @@
 			<view class="title">退出登录</view>
 			<uni-icons type="right" color="#000" size="22"></uni-icons>
 		</view>
+		<sys-status></sys-status>
 	</view>
 </template>
 
 <script>
+	import SysStatus from '../../components/sys-status/sys-status.vue'
 	export default {
+		components:{
+			SysStatus
+		},
 		data() {
 			return {
 				userinfo:{},

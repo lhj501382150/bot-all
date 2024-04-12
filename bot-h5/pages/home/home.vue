@@ -12,11 +12,16 @@
 				<view class="game-name">{{item.name}}</view>
 			</view>
 		</view>
+		<sys-status></sys-status>
 	</view>
 </template>
 
 <script>
+	import SysStatus from '../../components/sys-status/sys-status.vue'
 	export default {
+		components:{
+			SysStatus
+		},
 		data() {
 			return {
 				notice:'公告：每天下午2:00-2:15系统自动维护15分钟',

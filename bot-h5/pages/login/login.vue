@@ -19,12 +19,17 @@
 				<button class="btn" @click="submit">立即登录</button>
 			</view>
 		</view>
+		<sys-status></sys-status>
 	</view>
 </template>
 
 <script>
+	import SysStatus from '../../components/sys-status/sys-status.vue'
 	import md5 from '@/utils/md5.js'
 	export default {
+		components:{
+			SysStatus
+		},
 		data() {
 			return {
 				formData:{

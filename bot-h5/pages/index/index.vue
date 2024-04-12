@@ -26,11 +26,16 @@
 				 京公网安备11000002000001号
 			 </view>
 		</view>
+		<sys-status></sys-status>
 	</view>
 </template>
 
 <script>
+	import SysStatus from '../../components/sys-status/sys-status.vue'
 	export default {
+		components:{
+			SysStatus
+		},
 		data() {
 			return {
 				mask:'0768',
