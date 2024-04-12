@@ -48,7 +48,7 @@
 		methods: {
 			goHome(){
 				if(this.mask == this.code){
-					uni.setStorageSync("mask")
+					uni.setStorageSync("mask",this.mask)
 					uni.switchTab({
 						url:'/pages/home/home'
 					})

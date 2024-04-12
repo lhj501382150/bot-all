@@ -24,9 +24,9 @@
 			<view class="draw-time">开奖：<text style="color: blue;">{{formatTime(kjtime)}}</text></view>
 		</view>
 		<view class="row qing">
-			<view class="draw-time">信用额度：{{user.enable}}</view>
-			<view class="draw-time">未结金额：<text style="color: blue;">{{user.freeze}}</text></view>
-			<view class="draw-time">今日输赢：<text style="color: red;">0</text></view>
+			<view class="draw-money">信用额度：{{user.enable}}</view>
+			<view class="draw-money">未结金额：<text style="color: blue;">{{user.freeze}}</text></view>
+			<view class="draw-money">今日输赢：<text style="color: red;">0</text></view>
 		</view>
 		<view class="game-box">
 			<view class="g-b-1">
@@ -365,10 +365,11 @@
 				}
 				
 				this.$http.post('/api/Order/Order',para,(res=>{
-					if(res.code ==200){
+					if(res.iCode ==0){
 						this.formData.money = ''
 						this.formData.selected = []
 						this.items.forEach(item=> item.check=false)
+						this.getUserBalance()
 						uni.showToast({
 							title:'下注成功',
 							icon:'success'
@@ -449,10 +450,9 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		width: 100%;
+		width: 710upx;
 		height: 80upx;
-		padding-top: 20upx;
-		padding-bottom: 20upx;
+		padding: 20upx;
 		border-bottom: 2upx solid #e2e2e2;
 		.draw-time{
 			width: 33%;
