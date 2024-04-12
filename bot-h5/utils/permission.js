@@ -15,6 +15,13 @@ export default function initPermission() {
 		uni.addInterceptor(item, {
 			invoke(e) { // 调用前拦截
 				console.log('拦截', e)
+				const mask = uni.getStorageSync('mask')
+				if(!mask){
+					uni.navigateTo({
+						url:'/pages/index/index'
+					})
+					return false
+				}
 				//获取用户的token
 				const token = uni.getStorageSync('Token'),
 					//获取要跳转的页面路径（url去掉"?"和"?"后的参数）

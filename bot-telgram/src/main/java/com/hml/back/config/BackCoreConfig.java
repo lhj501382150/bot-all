@@ -10,18 +10,18 @@ public class BackCoreConfig {
 	 */
 	public static String URL = "";
 	
-	public static String IN_MONEY = "/apis/Account/InMoney";
-	public static String OUT_MONEY = "/apis/Account/OutMoney";
-	public static String QUERY_MONEY = "/apis/Account/QueryMoney";
-	public static String ADD_DATA = "/apis/Data/AddData";
-	public static String ADD_GROUPID = "/apis/Data/AddGroupId";
-	public static String GET_DRAW = "/apis/Data/GetData";
-	public static String QUERY_DATA = "/apis/Data/GetData";
-	public static String ROB_ORDER = "/apis/Order/RobOrder";
-	public static String DOWN_ROB = "/apis/Order/DownRob";
-	public static String ORDER = "/apis/Order/Order";
-	public static String QUERY_ORDRE = "/apis/Order/OrderQuery";
-	public static String ADD_ACCOUNT = "/apis/Account/AddAccount";
+	public static String IN_MONEY = "/Account/InMoney";
+	public static String OUT_MONEY = "/Account/OutMoney";
+	public static String QUERY_MONEY = "/Account/QueryMoney";
+	public static String ADD_DATA = "/Data/AddData";
+	public static String ADD_GROUPID = "/Data/AddGroupId";
+	public static String GET_DRAW = "/Data/GetData";
+	public static String QUERY_DATA = "/Data/GetData";
+	public static String ROB_ORDER = "/Order/RobOrder";
+	public static String DOWN_ROB = "/Order/DownRob";
+	public static String ORDER = "/Order/Order";
+	public static String QUERY_ORDRE = "/Order/OrderQuery";
+	public static String ADD_ACCOUNT = "/Account/AddAccount";
 
 
 	@Value("${backcore.sendUrl}")

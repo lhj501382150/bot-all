@@ -9,15 +9,15 @@ public class BackCoreConfig {
 	 * 后台访问路径
 	 */
 	public static String URL = "";
-	public static String IN_MONEY = "/apis/Account/InMoney";
-	public static String OUT_MONEY = "/apis/Account/OutMoney";
-	public static String DOWN_ROB = "/apis/Order/DownRob";
-	public static String ADD_GROUPID = "/apis/Data/AddGroupId";
-	public static String CLEAR_MONEY = "/apis/Account/ClearAll";
-	public static String ALTER_BOT_INTEGE = "/apis/Data/MdiBodIntege";
-	public static String ALTER_PARA = "/apis/Data/MdiSysPara";
+	public static String IN_MONEY = "/api/Account/InMoney";
+	public static String OUT_MONEY = "/api/Account/OutMoney";
+	public static String DOWN_ROB = "/api/Order/DownRob";
+	public static String ADD_GROUPID = "/api/Data/AddGroupId";
+	public static String CLEAR_MONEY = "/api/Account/ClearAll";
+	public static String ALTER_BOT_INTEGE = "/api/Data/MdiBodIntege";
+	public static String ALTER_PARA = "/api/Data/MdiSysPara";
 	
-	public static String ADD_ACCOUNT = "/apis/Account/AddAccount";
+	public static String ADD_ACCOUNT = "/api/Account/AddAccount";
 //	账户手动金额调整
 	public static String MONEY_CHANGE = "/trade510";
 //	陪玩订单完成
