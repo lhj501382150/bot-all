@@ -182,7 +182,7 @@ public class TaskManager {
 			 }else if(Flow.STOP_ORDER.getStep() == step) {
 				 log.info("【STOP_ORDER】：{}",step);
 				 DrawInfo.FLOW = Flow.STOP_ORDER;
-				 if(BotConfig.ENABLE) stopOrder();
+				 stopOrder();
 				 if(WebSocketConfig.ENABLE) {
 					 WebSocketServerApp.sendInfo(Flow.STOP_ORDER.getStep(),"");
 				 }
@@ -244,7 +244,7 @@ public class TaskManager {
 					 log.info("历史信息当前期数：{}--{}" ,DrawInfo.ID ,bean.getDataId());
 					 return;
 				 }
-				  sendTable(bean,"停止下注！",false);
+				 if(BotConfig.ENABLE) sendTable(bean,"停止下注！",false);
 				  flag = false;
 			  }else {
 				  index++;

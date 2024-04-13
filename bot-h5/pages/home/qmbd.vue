@@ -26,7 +26,7 @@
 		<view class="row qing">
 			<view class="draw-money">信用额度：{{user.enable}}</view>
 			<view class="draw-money">未结金额：<text style="color: blue;">{{user.freeze}}</text></view>
-			<view class="draw-money">今日输赢：<text style="color: red;">0</text></view>
+			<view class="draw-money">今日输赢：<text style="color: red;">{{user.curLoss}}</text></view>
 		</view>
 		<view class="game-box">
 			<view class="g-b-1">
@@ -279,6 +279,7 @@
 								this.result.data = this.result.CODE.split(',') || []
 								this.leftTime = getSecond(this.result.TIME)
 								this.fillTime()
+								this.getUserBalance()
 							}else if(data.status == 4){
 								this.isStop = true
 								this.fptime = 0

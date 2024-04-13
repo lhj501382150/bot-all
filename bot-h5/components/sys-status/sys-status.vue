@@ -38,7 +38,7 @@
 					expire = decrypto(systemid,88,16)
 					const reg = /^\d+$/
 					if(reg.test(expire)){
-						console.log(expire,new Date(expire),time)
+						console.log(expire,new Date(parseInt(expire)),time)
 					}else{
 						expire = 0
 					}
