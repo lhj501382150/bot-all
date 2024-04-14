@@ -1,7 +1,12 @@
 package com.hml.config;
 
+import java.security.PrivateKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.hml.utils.SM2Utils;
+import com.hml.utils.StringUtils;
 
 @Component
 public class BotConfig {
@@ -19,6 +24,7 @@ public class BotConfig {
 	public static Long CHAT_ID = 0l;
 	
 	public static String FILE_PATH = "";
+	public static String EXPIRE_DATE = "";
 	
 	@Value("${bot.token}")
 	public void setToekn(String token) {
@@ -60,5 +66,10 @@ public class BotConfig {
 	@Value("${bot.status}")
 	public void setEnable(String status) {
 		ENABLE = "Y".equals(status);
+	}
+	
+	@Value("${bot.cert}")
+	public void setExpireDate(String cert) {
+		EXPIRE_DATE = cert;
 	}
 }
