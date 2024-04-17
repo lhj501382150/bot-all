@@ -33,8 +33,8 @@
 		data() {
 			return {
 				formData:{
-					paypwd :'1234567',
-					userno :'abc00001'
+					paypwd :'',
+					userno :''
 				},
 				rules: {
 					userno: {
@@ -57,7 +57,7 @@
 				this.$refs.form.validate().then(res=>{
 					const para = Object.assign({},this.formData)
 					para.paypwd = md5(this.formData.userno + this.formData.paypwd)
-					this.$http.post('/api/User/Login',para,(res=>{
+					this.$http.post('/User/Login',para,(res=>{
 						if(res.iCode ==0){
 							uni.setStorageSync("Token",res.rData.token)
 							let  user = res.rData

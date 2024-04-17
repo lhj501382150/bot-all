@@ -67,7 +67,7 @@
 				let para = {
 					sysid:''
 				}
-				this.$http.post('/api/Query/SysPara',para,res=>{
+				this.$http.post('/Query/SysPara',para,res=>{
 					  
 				})
 			},
@@ -81,7 +81,7 @@
 				let para = {
 					userNo : userno
 				}
-				this.$http.post('/api/Query/GetBalance',para,res=>{
+				this.$http.post('/Query/GetBalance',para,res=>{
 					 this.user = res.rData
 				})
 			},

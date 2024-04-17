@@ -55,7 +55,7 @@
 			},
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/api/Query/ReustList",this.search,res => {
+				this.$http.post("/Query/ReustList",this.search,res => {
 					let datas = res.rData || []
 					datas.forEach(item=>{
 						const nums = item.sresult.split(',')

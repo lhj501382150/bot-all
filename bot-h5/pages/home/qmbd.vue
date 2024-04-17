@@ -219,7 +219,7 @@
 					pageSize:50,
 					userno :uni.getStorageSync('userno')
 				}
-				this.$http.post("/api/Query/ReustList",para,res => {
+				this.$http.post("/Query/ReustList",para,res => {
 					let datas = res.rData || []
 					datas.forEach(item=>{
 						let temp ={
@@ -235,7 +235,7 @@
 				let para = {
 					userNo : userno
 				}
-				this.$http.post('/api/Query/GetBalance',para,res=>{
+				this.$http.post('/Query/GetBalance',para,res=>{
 					 this.user = res.rData || {}
 				})
 			},
@@ -365,7 +365,7 @@
 					orders:orders
 				}
 				
-				this.$http.post('/api/Order/Order',para,(res=>{
+				this.$http.post('/Order/Order',para,(res=>{
 					if(res.iCode ==0){
 						this.formData.money = ''
 						this.formData.selected = []

@@ -57,7 +57,7 @@
 			},
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/api/Notice/GetList",this.search,res => {
+				this.$http.post("/Notice/GetList",this.search,res => {
 					this.records = [...this.records,...res.rData]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1

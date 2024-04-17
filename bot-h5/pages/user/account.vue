@@ -3,7 +3,7 @@
 		<uni-nav-bar left-icon="left"  title="代理中心" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
 		 <view class="row">
 			 <button class="add-btn" @click="open">新建普通会员</button>
-			 <view class="text">所属会员：</view>
+			 <view class="text">账户ID：{{userno}}</view>
 		 </view>
 		 <uni-popup ref="popup" type="bottom" background-color="#fff">
 			 <view class="form">
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+	import md5 from '@/utils/md5.js'
 	export default {
 		data() {
 			return {
@@ -54,10 +55,12 @@
 					 		{required: true,errorMessage: '请输入密码'}
 					 	]
 					 },
-				}
+				},
+				userno:''
 			}
 		},
 		onLoad() {
+			this.userno = uni.getStorageSync("userno")
 		},
 		methods: {
 			open() {
@@ -69,7 +72,9 @@
 			submit(){
 				this.$refs.form.validate().then(res=>{
 					const para = Object.assign({},this.formData)
-					this.$http.post('/api/User/AddAccount',para,(res=>{
+					para.tjno = this.userno
+					para.paypwd = md5(this.formData.userno + this.formData.paypwd)
+					this.$http.post('/User/AddAccount',para,(res=>{
 						if(res.iCode ==0){
 							this.formData.userno = ''
 							this.formData.nickname = ''

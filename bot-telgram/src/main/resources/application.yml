@@ -16,7 +16,7 @@ spring:
       max-idle: 10
       min-idle: 5
 backcore: 
-  sendUrl: http://18.212.105.77:800/api     
+  sendUrl: http://18.212.105.77:8000/apis     
 websocket: 
   status: Y
 bot: 

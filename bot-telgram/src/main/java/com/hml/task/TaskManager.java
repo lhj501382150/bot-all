@@ -193,7 +193,7 @@ public class TaskManager {
 				 log.info("【STOP_ORDER】：{}",step);
 				 DrawInfo.FLOW = Flow.STOP_ORDER;
 				 stopOrder();
-				 if(WebSocketConfig.ENABLE) {
+				 if(WebSocketConfig.ENABLE && IS_AUTH) {
 					 WebSocketServerApp.sendInfo(Flow.STOP_ORDER.getStep(),"");
 				 }
 			 }else if(Flow.OVER.getStep() == step) {

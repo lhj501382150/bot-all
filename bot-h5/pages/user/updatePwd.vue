@@ -71,7 +71,7 @@
 						return
 					}
 					const para = Object.assign({},this.formData)
-					this.$http.post('/api/User/MdiPwd',para,(res=>{
+					this.$http.post('/User/MdiPwd',para,(res=>{
 						if(res.iCode ==0){
 							 uni.showToast({
 							 	title:'修改成功，请重新登录',

@@ -34,7 +34,7 @@
 				let para = {
 					noticeno:this.noticeno
 				}
-				this.$http.post("/api/Notice/GetNotice",para,res => {
+				this.$http.post("/Notice/GetNotice",para,res => {
 					 this.notice = res.rData
 				})
 			},
