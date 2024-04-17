@@ -3,7 +3,7 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "全民宝斗",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -12,7 +12,6 @@
 			"path" : "pages/home/home",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -21,7 +20,6 @@
 			"path" : "pages/user/user",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -30,7 +28,6 @@
 			"path" : "pages/record/record",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -39,7 +36,6 @@
 			"path" : "pages/home/qmbd",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -48,7 +44,6 @@
 			"path" : "pages/login/login",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -57,7 +52,6 @@
 			"path" : "pages/user/moneyRecord",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -66,7 +60,6 @@
 			"path" : "pages/user/order",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -75,7 +68,6 @@
 			"path" : "pages/user/updatePwd",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -84,7 +76,6 @@
 			"path" : "pages/user/notice",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -93,7 +84,6 @@
 			"path" : "pages/user/noticeDetail",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -102,7 +92,6 @@
 			"path" : "pages/user/account",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -111,7 +100,6 @@
 			"path" : "pages/user/result",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
@@ -120,7 +108,6 @@
 			"path" : "components/sys-status/sys-status",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
 				"enablePullDownRefresh" : false
 			}
 		}
@@ -154,7 +141,7 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
+		"navigationBarTitleText": "全民宝斗",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
