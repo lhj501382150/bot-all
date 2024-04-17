@@ -49,21 +49,21 @@ public class NoticeController {
     @RequestMapping("/save")
     public HttpResult save(@RequestBody Notice model) {
     	
-    	if(!StringUtils.isBlank(model.getContent())){
-    		log.info("上传公告信息:"+fileServicePath);
-    		Map<String, Object> paraMap = new HashMap<>();	
-    		paraMap.put("type", "html");
-    		String content = fillContent(model.getContent(), model.getTitle());
-    		paraMap.put("content", content);
-    		String str = HttpClientUtils.doPost(fileServicePath+"/uploadContent", paraMap);
-    		JSONObject ret = JSONObject.parseObject(str);
-    		if("0".equals(ret.get("error").toString())){
-    			String url = ret.get("url").toString();
-    			model.setPath(url);
-    		}else{
-    			return HttpResult.error(ret.get("msg").toString());
-    		}
-    	}
+//    	if(!StringUtils.isBlank(model.getContent())){
+//    		log.info("上传公告信息:"+fileServicePath);
+//    		Map<String, Object> paraMap = new HashMap<>();	
+//    		paraMap.put("type", "html");
+//    		String content = fillContent(model.getContent(), model.getTitle());
+//    		paraMap.put("content", content);
+//    		String str = HttpClientUtils.doPost(fileServicePath+"/uploadContent", paraMap);
+//    		JSONObject ret = JSONObject.parseObject(str);
+//    		if("0".equals(ret.get("error").toString())){
+//    			String url = ret.get("url").toString();
+//    			model.setPath(url);
+//    		}else{
+//    			return HttpResult.error(ret.get("msg").toString());
+//    		}
+//    	}
         noticeService.save(model);
         return HttpResult.ok();
     }
@@ -76,22 +76,22 @@ public class NoticeController {
     @PreAuthorize("hasAuthority('info:notice:edit')")
     @RequestMapping("/edit")
     public HttpResult edit(@RequestBody Notice model) {
-    	if(!StringUtils.isBlank(model.getContent())){
-    		log.info("上传公告信息:"+fileServicePath);
-    		Map<String, Object> paraMap = new HashMap<>();	
-    		paraMap.put("type", "html");
-    		String content = fillContent(model.getContent(), model.getTitle());
-    		paraMap.put("content", content);
-    		paraMap.put("path", model.getPath());
-    		String str = HttpClientUtils.doPost(fileServicePath+"/uploadContent", paraMap);
-    		JSONObject ret = JSONObject.parseObject(str);
-    		if("0".equals(ret.get("error").toString())){
-    			String url = ret.get("url").toString();
-    			model.setPath(url);
-    		}else{
-    			return HttpResult.error(ret.get("msg").toString());
-    		}
-    	}
+//    	if(!StringUtils.isBlank(model.getContent())){
+//    		log.info("上传公告信息:"+fileServicePath);
+//    		Map<String, Object> paraMap = new HashMap<>();	
+//    		paraMap.put("type", "html");
+//    		String content = fillContent(model.getContent(), model.getTitle());
+//    		paraMap.put("content", content);
+//    		paraMap.put("path", model.getPath());
+//    		String str = HttpClientUtils.doPost(fileServicePath+"/uploadContent", paraMap);
+//    		JSONObject ret = JSONObject.parseObject(str);
+//    		if("0".equals(ret.get("error").toString())){
+//    			String url = ret.get("url").toString();
+//    			model.setPath(url);
+//    		}else{
+//    			return HttpResult.error(ret.get("msg").toString());
+//    		}
+//    	}
         noticeService.updateById(model);
         return HttpResult.ok();
     }
@@ -116,14 +116,14 @@ public class NoticeController {
     @PreAuthorize("hasAuthority('info:notice:view')")
     @RequestMapping("/getContent")
     public HttpResult getContent(@RequestBody Notice model) {
-    	String path = model.getPath();
-    	String content = "";
-    	if(!StringUtils.isBlank(path)){
-    		Map<String,Object> paraMap = new HashMap<>();
-    		paraMap.put("path", path);
-    		content = HttpClientUtils.doPost(fileServicePath + "/downloadFile", paraMap);
-    	}
-        return HttpResult.ok(content);
+//    	String path = model.getPath();
+//    	String content = "";
+//    	if(!StringUtils.isBlank(path)){
+//    		Map<String,Object> paraMap = new HashMap<>();
+//    		paraMap.put("path", path);
+//    		content = HttpClientUtils.doPost(fileServicePath + "/downloadFile", paraMap);
+//    	}
+        return HttpResult.ok(model.getContent());
     }
 
 

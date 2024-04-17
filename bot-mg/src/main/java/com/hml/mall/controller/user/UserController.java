@@ -20,6 +20,7 @@ import com.hml.mall.entity.user.User;
 import com.hml.mall.iface.money.IUsermoneyChangeApplyService;
 import com.hml.mall.iface.user.IUserService;
 import com.hml.mall.util.IPUtils;
+import com.hml.mall.util.PasswordEncoder;
 import com.hml.mall.util.SecurityUtils;
 import com.hml.utils.DateTimeUtils;
 import com.hml.utils.StringUtils;
@@ -135,7 +136,30 @@ public class UserController {
     @RequestMapping("/edit")
     public HttpResult edit(@RequestBody User model) {
         try {
+        	User item = userService.getById(model.getUserno());
+        	if(item == null) {
+        		return HttpResult.error("用户不能为空");
+        	}
+        	model.setPaypwd(item.getPaypwd());
 			userService.updateUser(model);
+			return HttpResult.ok();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return HttpResult.error(e.getMessage());
+		}
+    }
+    @PreAuthorize("hasAuthority('firm:member:edit')")
+    @RequestMapping("/editPwd")
+    public HttpResult editPwd(@RequestBody User model) {
+        try {
+        	User item = userService.getById(model.getUserno());
+        	if(item == null) {
+        		return HttpResult.error("用户不能为空");
+        	}
+        	String pwd = model.getUserno() + model.getPaypwd();
+        	pwd = new PasswordEncoder("").encode(pwd);
+        	item.setPaypwd(pwd);
+			userService.updateById(item);
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();

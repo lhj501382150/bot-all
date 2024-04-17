@@ -56,7 +56,7 @@
 			submit(){
 				this.$refs.form.validate().then(res=>{
 					const para = Object.assign({},this.formData)
-					para.md5 = md5(this.formData.userno + this.formData.paypwd)
+					para.paypwd = md5(this.formData.userno + this.formData.paypwd)
 					this.$http.post('/api/User/Login',para,(res=>{
 						if(res.iCode ==0){
 							uni.setStorageSync("Token",res.rData.token)

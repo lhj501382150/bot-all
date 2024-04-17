@@ -10,8 +10,7 @@
 					{{notice.nottime}}
 				</view>
 			</view>
-			<view class="content">
-				{{notice.content}}
+			<view class="content" v-html="notice.content">
 			</view>
 			 
 		</view>

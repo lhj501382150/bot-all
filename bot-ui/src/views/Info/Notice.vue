@@ -53,14 +53,14 @@
 				<el-input v-model="dataForm.noticeno" :disabled="!operation" auto-complete="off"></el-input>
 			</el-form-item>
 
-			<el-form-item label="机构级别" prop="userlevel">
+			<!-- <el-form-item label="机构级别" prop="userlevel">
 				<el-input v-model="dataForm.userlevel" auto-complete="off" @blur="findParent"></el-input>
 			</el-form-item>
 			<el-form-item v-if="dataForm.userlevel > 0" label="机构对象" prop="userno">
         <el-select v-model="dataForm.userno" multiple placeholder="请选择" clearable style="width: 100%">
             <el-option v-for="(item,index) in parentnos" :key="index" :label="item.username" :value="item.userno"></el-option>
         </el-select>
-			</el-form-item>
+			</el-form-item> -->
       <el-form-item label="公告类型" prop="ntype">
         <el-select v-model="dataForm.ntype  " placeholder="公告类型" style="width: 100%;" clearable>
           <el-option v-for="item in noticetype" :key="item.key" :label="item.val" :value="item.key"></el-option>
@@ -143,14 +143,14 @@ export default {
 			},
 			// 新增编辑界面数据
 			dataForm: {
-        noticeno: '',
-        userlevel: '',
-        userno: '',
-        ntype: '',
-        title: '',
-        content: '',
-        seq: '',
-        isvalid: 'Y'
+			noticeno: '',
+			userlevel: '',
+			userno: '',
+			ntype: '',
+			title: '',
+			content: '',
+			seq: '',
+			isvalid: 'Y'
 			},
       parentnos: []
 		}
@@ -196,11 +196,11 @@ export default {
 			this.dialogVisible = true
 			this.operation = false
 			this.dataForm = Object.assign({}, params.row)
-      this.loadContent()
-      this.findParent()
-      if(params.row.userno){
-        this.dataForm.userno = params.row.userno.split(",")
-      }
+			// this.loadContent()
+			// this.findParent()
+			// if(params.row.userno){
+			// 	this.dataForm.userno = params.row.userno.split(",")
+			// }
 		},
     //加载内容
     loadContent: function(){
@@ -295,13 +295,13 @@ export default {
 	initColumns: function () {
 			this.columns = [
 				{prop:"noticeno", label:"公告编号", minWidth:120},
-        {prop:"userlevel", label:"机构级别", minWidth:120},
-        {prop:"userno", label:"机构编号", minWidth:150},
+				// {prop:"userlevel", label:"机构级别", minWidth:120},
+				// {prop:"userno", label:"机构编号", minWidth:150},
 				{prop:"ntype", label:"公告类型", minWidth:100,formatter:this.ntypeFormat},
-        {prop:"title", label:"公告标题", minWidth:120},
-        {prop:"seq", label:"排序", minWidth:60},
-        {prop:"path", label:"访问路径", minWidth:200},
-        {prop:"isvalid", label:"是否启用", minWidth:70,formatter:this.isvalidFormat}
+				{prop:"title", label:"公告标题", minWidth:120},
+				{prop:"seq", label:"排序", minWidth:60},
+				{prop:"content", label:"公告内容", minWidth:200},
+				{prop:"isvalid", label:"是否启用", minWidth:70,formatter:this.isvalidFormat}
 			]
 			this.filterColumns = this.columns;
 	}

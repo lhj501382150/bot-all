@@ -20,6 +20,13 @@ export const edit = (data) => {
     data
   })
 }
+export const editPwd = (data) => {
+  return axios({
+    url: '/user/editPwd',
+    method: 'post',
+    data
+  })
+}
 // 删除
 export const batchDelete = (data) => {
   return axios({

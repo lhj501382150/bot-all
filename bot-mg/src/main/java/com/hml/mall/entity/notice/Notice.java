@@ -57,14 +57,8 @@ private static final long serialVersionUID=1L;
     * 公告内容
     */
     @TableField("CONTENT")
-    private String path;
+    private String content;
     
-    /**
-     * 公告内容
-     */
-     @TableField(exist = false)
-     private String content;
-
     /**
     * 排序
     */

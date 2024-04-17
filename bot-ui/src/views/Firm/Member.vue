@@ -69,8 +69,8 @@
 	</div>
 	<!--表格内容栏-->
 	<kt-table permsEdit="firm:member:edit"
-		:data="pageResult" :columns="filterColumns" :buttons="buttons" @addMoney="addMoney" @subMoney="subMoney"
-		@findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete" @openupdatePasswordDialog="openupdatePasswordDialog">
+		:data="pageResult" :columns="filterColumns" :buttons="buttons" @addMoney="addMoney" @subMoney="subMoney" @editPwd="editPwd"
+		@findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete"  >
     <template #sex="scope">
           <el-switch
             :value="scope.row.sex"
@@ -131,7 +131,25 @@
 			<el-button :size="size" type="primary" @click.native="submitForm" :loading="editLoading">{{$t('action.submit')}}</el-button>
 		</div>
 	</el-dialog>
-
+  <el-dialog title="密码修改" width="40%" :visible.sync="updatePwdDialogVisible" :close-on-click-modal="false" :destroy-on-close="true"  v-dialogDrag>
+		<el-form :model="updatePwdDataForm" label-width="120px" :rules="updatePwdDataFormRules" ref="updatePwdDataForm" :size="size" class="dialog_height"
+			label-position="right">
+			<el-form-item label="用户编号" prop="userno">
+				<el-input v-model="updatePwdDataForm.userno" :disabled="true" auto-complete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="新密码" prop="paypwd">
+				<el-input type="password" v-model="updatePwdDataForm.paypwd" auto-complete="off"></el-input>
+			</el-form-item>
+      <el-form-item label="确认密码" prop="comfirmPwd">
+				<el-input type="password" v-model="updatePwdDataForm.comfirmPwd" auto-complete="off"></el-input>
+			</el-form-item>
+      
+		</el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button :size="size" @click.native="updatePwdDialogVisible = false">{{$t('action.cancel')}}</el-button>
+			<el-button :size="size" type="primary" @click.native="updatePassword" :loading="updatePwdLoading">{{$t('action.submit')}}</el-button>
+		</div>
+	</el-dialog>
 
   </div>
 </template>
@@ -189,10 +207,26 @@ export default {
       updatePwdLoading: false,
       updatePwdDataForm: {
 			  userno: '',
-        newPassword: '',
-        comfirmPassword: ''
+        paypwd: '',
+        comfirmPwd: ''
       },
       updatePwdDataFormRules: {
+        userno: [
+					{ required: true, message: '请输入用户编号', trigger: 'blur' }
+				],
+        paypwd: [
+          { required: true, message: '请输入新密码', trigger: 'blur' }
+        ],
+        comfirmPwd: [
+          { required: true, message: '请输入确认密码', trigger: 'blur' },
+          {validator:(rule,value,callback)=>{
+            if(value != this.updatePwdDataForm.paypwd){
+              callback(new Error("两次密码输入不一致"))
+            }else{
+              callback()
+            }
+          },trigger:'blur'}
+        ]
       },
       exportColumns:[],
       exportData:[],
@@ -311,6 +345,10 @@ export default {
 					})
 				})
     },
+    editPwd(data){
+      this.updatePwdDataForm.userno = data.row.userno
+      this.updatePwdDialogVisible = true
+    },
     exportExcel(){
     },
     //查询上级信息
@@ -388,12 +426,27 @@ export default {
 				}
 			})
 		},
-// 打开修改密码对话框
-    openupdatePasswordDialog: function (data) {
-    },
     // 修改密码
     updatePassword: function () {
-
+      this.$refs.updatePwdDataForm.validate((valid) => {
+				if (valid) {
+					this.$confirm('确认提交吗？', '提示', {}).then(() => {
+						this.updatePwdLoading = true
+            let params = Object.assign({}, this.updatePwdDataForm)
+            this.$api.firm.editPwd(params).then((res) => {
+                this.updatePwdLoading = false
+                if(res.code == 200) {
+                  this.$message({ message: '操作成功', type: 'success' })
+                  this.updatePwdDialogVisible = false
+                  this.$refs['updatePwdDataForm'].resetFields()
+                } else {
+                  this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+                }
+                this.findPage(null)
+              })
+					})
+				}
+			})
     },
 		// 是否有效格式化
     sexFormat: function (row, column, cellValue, index){
@@ -447,7 +500,8 @@ export default {
     initButtons(){
 		  this.buttons=[
          {icon:'fa fa-edit',label:'上分',perms:'firm:member:addMoney',type:'primary',callback:'addMoney'},
-         {icon:'fa fa-edit',label:'下分',perms:'firm:member:subMoney',type:'danger',callback:'subMoney'}
+         {icon:'fa fa-edit',label:'下分',perms:'firm:member:subMoney',type:'danger',callback:'subMoney'},
+         {icon:'fa fa-edit',label:'修改密码',perms:'firm:member:edit',type:'warning',callback:'editPwd'}
       ];
     },
     initData(){}

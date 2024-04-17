@@ -22,13 +22,11 @@ export default {
       uploadUrl:  fileUrl + '/uploadImg',
       text: '',
       items:[
-        'source', '|', 'undo', 'redo', '|', 'preview', 'print', 'cut', 'copy', 'paste',
+        'source', '|', 'undo', 'redo', '|', 'preview',  'cut', 'copy', 'paste',
         'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
-        'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
-        'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen',
+        'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent',  'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen',
         'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
-        'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image','table', 'hr', 'emoticons',  'pagebreak',
-        'anchor', 'link', 'unlink', '|'
+        'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'table', 'emoticons',   '|'
       ]
     }
   },

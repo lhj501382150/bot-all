@@ -161,6 +161,10 @@ private static final long serialVersionUID=1L;
     @TableField("REGDATE")
     private String regdate;
 
+    
+    @TableField("PAYPWD")
+    private String paypwd;
+
     /**
     * 最后更新时间
     */
