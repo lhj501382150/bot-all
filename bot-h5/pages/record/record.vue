@@ -43,8 +43,12 @@
 				refresherTriggered:false,
 			}
 		},
-		onLoad() {
+		onShow() {
 			this.records = []
+			this.search={
+				pageIdx:0,
+				pageSize:10
+			}
 			this.loadData()
 		},
 		methods: {
