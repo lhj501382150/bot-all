@@ -103,6 +103,5 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "2",
-    "locale" : "en"
+    "vueVersion" : "2"
 }
