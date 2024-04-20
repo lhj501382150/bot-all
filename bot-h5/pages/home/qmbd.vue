@@ -385,7 +385,7 @@
 			submit(){
 				if(this.orgtype==1){
 					uni.showToast({
-						text:'代理不能下注',
+						title:'代理不能下注',
 						icon:'error',
 						duration:2000
 					})

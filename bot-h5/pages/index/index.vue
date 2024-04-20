@@ -51,7 +51,9 @@
 					sysid:7
 				}
 				this.$http.post('/Query/SysPara',para,res=>{
-					  console.log(res)
+					  if(res.iCode==0){
+						  this.mask = res.rData.sval
+					  }
 				})
 			},
 			goHome(){
