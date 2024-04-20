@@ -14,7 +14,9 @@ import com.hml.core.http.HttpResult;
 import com.hml.core.page.PageRequest;
 import com.hml.mall.constant.SysConstants;
 import com.hml.mall.entity.sys.Login;
+import com.hml.mall.entity.user.User;
 import com.hml.mall.iface.sys.ILoginService;
+import com.hml.mall.iface.user.IUserService;
 import com.hml.mall.util.PasswordUtils;
 import com.hml.mall.util.SecurityUtils;
 
@@ -32,6 +34,10 @@ public class LoginUserController {
 
     @Autowired
     private ILoginService  loginService;
+    
+    @Autowired
+    private IUserService userService;
+    
 	
 	@PreAuthorize("hasAuthority('sys:user:add')")
 	@PostMapping(value="/save")
@@ -123,6 +129,12 @@ public class LoginUserController {
 		
 		String newPwd = PasswordUtils.encode(newPassword, user.getUserno()); 
 		user.setLoginpwd(newPwd);
+		
+		User item = userService.getById(user.getLoginno());
+		if(item != null) {
+			item.setPaypwd(newPwd);
+			userService.updateById(item);
+		}
 		
 		return HttpResult.ok(loginService.saveOrUpdate(user));
 	}
