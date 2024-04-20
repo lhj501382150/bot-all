@@ -30,7 +30,7 @@
           </div>
 
           <!--表格内容栏-->
-          <kt-table :data="pageResult" :columns="filterColumns"
+          <kt-table :data="pageResult" :columns="filterColumns" :showOperation="false"
             @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
             <template #sex="scope">
               <el-tag type="success" v-if="scope.row.sex==0">正常</el-tag>
@@ -154,6 +154,9 @@ export default {
 				{prop:"nickname", label:"昵称", minWidth:100},
 				{prop:"sex", label:"状态", minWidth:120},
         {prop:"parentno", label:"所属上级", minWidth:120},
+        {prop:"balance", label:"当前余额", width:100},
+        {prop:"enable", label:"可用余额", width:100},
+        {prop:"freeze", label:"冻结余额", width:100},
 			]
 			this.filterColumns = this.columns;
 	}

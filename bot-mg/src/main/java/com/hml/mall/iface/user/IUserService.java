@@ -2,6 +2,7 @@ package com.hml.mall.iface.user;
 
 
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -53,4 +54,6 @@ public interface IUserService extends IService<User> {
   	List<User> initRelation() throws Exception;
   	
   	List<Map<String,Object>> findOrgCount()throws Exception;
+  	
+  	BigDecimal checkMoney() throws Exception;
 }

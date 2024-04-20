@@ -3,6 +3,7 @@ package com.hml.mall.service.user;
 
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -492,5 +493,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 			paraMap.put("clevel", user.getClevel());
 		}
 		return userMapper.findOrgNumByUser(paraMap);
+	}
+  
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+	public BigDecimal checkMoney() throws Exception {
+		LoginUser user = SecurityUtils.getLoginInfo();
+		if(user.getType() > 0) {
+			String userno = user.getUserno();
+			BigDecimal enableSelf = userMapper.findEnableSelf(userno);
+			Map<String,Object> paraMap = new HashMap<String, Object>();
+			paraMap.put(user.getQueryNo(), userno);
+			Map<String, Object> data = userMapper.findUseMoney(paraMap);
+			if(data != null) {
+				BigDecimal used = new BigDecimal(data.get("enable").toString());
+				log.info("校验可用额度：【{}】：{}-{}",userno,enableSelf,used);
+				enableSelf = enableSelf.subtract(used);
+			}
+			return enableSelf;
+		}else {
+			return new BigDecimal(1);
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.hml.mall.controller.user;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +70,12 @@ public class UserController {
 	   	   		 qw.eq("userno", model.getUserno());
 	   	   		 Integer count = userRelationService.count(qw);
 	   	   		 if(count <= 0) {
-	   	   			 throw new Exception("暂无权限执行此操作");
+	   	   			 return HttpResult.error("暂无权限执行此操作");
+	   	   		 }
+	   	   		 
+	   	   		 BigDecimal money = userService.checkMoney();
+	   	   		 if(money.doubleValue() < 0) {
+	   	   			 return HttpResult.error("可支配额度不足");
 	   	   		 }
         	}
         	
@@ -106,7 +112,7 @@ public class UserController {
 	   	   		 qw.eq("userno", model.getUserno());
 	   	   		 Integer count = userRelationService.count(qw);
 	   	   		 if(count <= 0) {
-	   	   			 throw new Exception("暂无权限执行此操作");
+	   	   			 return HttpResult.error("暂无权限执行此操作");
 	   	   		 }
         	}
         	model.setAcctno("100");
@@ -131,7 +137,7 @@ public class UserController {
         try {
         	LoginUser user = SecurityUtils.getLoginInfo();
         	if(user.getType() > 0) {
-   	   			 throw new Exception("暂无权限执行此操作");
+        		return HttpResult.error("暂无权限执行此操作");
         	}
         	userService.clearMoney();
         	log.info("清除积分：【{}】",user.getUserno());
@@ -229,7 +235,7 @@ public class UserController {
  	   	   		 qw.eq("userno", model.getUserno());
  	   	   		 Integer count = userRelationService.count(qw);
  	   	   		 if(count <= 0) {
- 	   	   			 throw new Exception("暂无权限执行此操作");
+ 	   	   			 return HttpResult.error("暂无权限执行此操作");
  	   	   		 }
          	}
  			userService.updateStatus(model);

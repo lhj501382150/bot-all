@@ -104,4 +104,56 @@
 				and parentno =#{userno}
 			</if>
 	</select>
+	
+	<select id="findUseMoney" parameterType="java.util.Map" resultType="java.util.Map">
+			select coalesce(sum(COALESCE(t3.ENABLE,0)),0) as enable from (
+				SELECT USERNO, max( FDATE ) AS FDATE FROM tb_zj_usermoney GROUP BY USERNO
+			) t2
+			LEFT JOIN tb_zj_usermoney t3 ON t2.FDATE = t3.FDATE and t2.userno = t3.userno
+			left join tb_hy_user_relation t5 on t2.userno = t5.userno
+			<where>
+				<if test="uno1 != null and uno1 != ''">
+					and t5.uno1 = #{uno1}
+				</if>
+				<if test="uno2 != null and uno2 != ''">
+					and t5.uno2 = #{uno2}
+				</if>
+				<if test="uno3 != null and uno3 != ''">
+					and t5.uno3 = #{uno3}
+				</if>
+				<if test="uno4 != null and uno4 != ''">
+					and t5.uno4 = #{uno4}
+				</if>
+				<if test="uno5 != null and uno5 != ''">
+					and t5.uno5 = #{uno5}
+				</if>
+				<if test="uno6 != null and uno6 != ''">
+					and t5.uno6 = #{uno6}
+				</if>
+				<if test="uno7 != null and uno7 != ''">
+					and t5.uno7 = #{uno7}
+				</if>
+				<if test="uno8 != null and uno8 != ''">
+					and t5.uno8 = #{uno8}
+				</if>
+				<if test="uno9 != null and uno9 != ''">
+					and t5.uno9 = #{uno9}
+				</if>
+				<if test="uno10 != null and uno10 != ''">
+					and t5.uno10 = #{uno10}
+				</if>
+				<if test="uno11 != null and uno11 != ''">
+					and t5.uno11 = #{uno11}
+				</if>
+				<if test="uno12 != null and uno12 != ''">
+					and t5.uno12 = #{uno12}
+				</if>
+				<if test="uno13 != null and uno13 != ''">
+					and t5.uno13 = #{uno13}
+				</if>
+				<if test="uno14 != null and uno14 != ''">
+					and t5.uno14 = #{uno14}
+				</if>
+			</where>
+	</select>
 </mapper>
