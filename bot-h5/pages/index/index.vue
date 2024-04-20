@@ -43,9 +43,17 @@
 			}
 		},
 		onLoad() {
-
+			this.getSysPara()
 		},
 		methods: {
+			getSysPara(){
+				let para = {
+					sysid:7
+				}
+				this.$http.post('/Query/SysPara',para,res=>{
+					  console.log(res)
+				})
+			},
 			goHome(){
 				if(this.mask == this.code){
 					uni.setStorageSync("mask",this.mask)

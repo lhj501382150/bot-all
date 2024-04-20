@@ -201,13 +201,16 @@
 					{val:2,name:'龙'},
 					{val:3,name:'出'},
 					{val:4,name:'虎'}
-				]
+				],
+				orgtype:''
 			}
 		},
 		onLoad() {
 			this.getUserBalance()
 			this.loadData()
 			this.connectSocketInit()
+			let user = JSON.parse(uni.getStorageSync('userinfo'))
+			this.orgtype = user.orgtype
 		},
 		beforeDestroy() {
 			this.closeSocket()
@@ -380,6 +383,14 @@
 				
 			},
 			submit(){
+				if(this.orgtype==1){
+					uni.showToast({
+						text:'代理不能下注',
+						icon:'error',
+						duration:2000
+					})
+					return
+				}
 				if(this.isStop) return;
 				
 				this.$refs.form.validate().then(res=>{

@@ -60,8 +60,14 @@
 		onLoad() {
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
 			this.getUserBalance()
+			this.initMenus()
 		},
 		methods: {
+			initMenus(){
+				if(this.userinfo.orgtype==2){
+					this.menus.splice(2,1)
+				}
+			},
 			/*获取系统参数*/
 			getSysPara(){
 				let para = {
