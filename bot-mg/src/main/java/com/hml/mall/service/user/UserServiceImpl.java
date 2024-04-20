@@ -195,9 +195,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     		throw new Exception("该账号已存在");
     	}
     	
-//    	保存用户信息
-    	userMapper.insert(entity);
-//    	保存用户层级关系
+
     	 
 //    	插入登陆用户
     	login = new Login();
@@ -212,6 +210,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	login.setTelno(entity.getTelno());//同步手机号
     	login.setIsvalid("Y");
     	loginMapper.insert(login);
+    	
+//    	保存用户信息
+    	entity.setPaypwd(pwd);
+    	userMapper.insert(entity);
 //    	保存客户关系
     	saveUserRelation(entity);
     	

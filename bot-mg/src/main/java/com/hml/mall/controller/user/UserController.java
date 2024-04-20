@@ -18,9 +18,11 @@ import com.hml.core.http.HttpResult;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
 import com.hml.mall.entity.money.UsermoneyChangeApply;
+import com.hml.mall.entity.sys.Login;
 import com.hml.mall.entity.user.User;
 import com.hml.mall.entity.user.UserRelation;
 import com.hml.mall.iface.money.IUsermoneyChangeApplyService;
+import com.hml.mall.iface.sys.ILoginService;
 import com.hml.mall.iface.user.IUserRelationService;
 import com.hml.mall.iface.user.IUserService;
 import com.hml.mall.security.LoginUser;
@@ -53,6 +55,9 @@ public class UserController {
     @Autowired
     private IUsermoneyChangeApplyService userMoneyChangeApplyService;
     
+    @Autowired
+    private ILoginService loginService;
+    
     @PreAuthorize("hasAuthority('firm:member:addMoney')")
     @RequestMapping("/addMoney")
     public HttpResult addMoney(@RequestBody UsermoneyChangeApply model,HttpServletRequest request) {
@@ -66,7 +71,7 @@ public class UserController {
         	LoginUser user = SecurityUtils.getLoginInfo();
         	if(user.getType() > 0) {
         		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
-	   	   		 qw.eq("uno" + user.getClevel(), user.getUserno());
+	   	   		 qw.eq("parentno", user.getUserno());
 	   	   		 qw.eq("userno", model.getUserno());
 	   	   		 Integer count = userRelationService.count(qw);
 	   	   		 if(count <= 0) {
@@ -108,7 +113,7 @@ public class UserController {
         	LoginUser user = SecurityUtils.getLoginInfo();
         	if(user.getType() > 0) {
         		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
-	   	   		 qw.eq("uno" + user.getClevel(), user.getUserno());
+	   	   		 qw.eq("parentno", user.getUserno());
 	   	   		 qw.eq("userno", model.getUserno());
 	   	   		 Integer count = userRelationService.count(qw);
 	   	   		 if(count <= 0) {
@@ -212,6 +217,10 @@ public class UserController {
         	pwd = new PasswordEncoder("").encode(pwd);
         	item.setPaypwd(pwd);
 			userService.updateById(item);
+			
+			Login login = loginService.getById(item.getUserno());
+			login.setLoginpwd(pwd);
+			
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
