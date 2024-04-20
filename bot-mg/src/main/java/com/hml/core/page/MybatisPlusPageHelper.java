@@ -105,6 +105,8 @@ public class MybatisPlusPageHelper {
 					qw.ge(paras[0], val);
 				}else if("LE".equals(temp)){//<=
 					qw.le(paras[0], val);
+				}else if("NE".equals(temp)){//<=
+					qw.ne(paras[0], val);
 				}else if("LIKE".equals(temp)){
 					qw.like(paras[0], val);
 				}else if("ASC".equals(temp)){

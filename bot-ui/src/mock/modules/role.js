@@ -251,7 +251,7 @@ export function findRoleMenus(params) {
         "lastUpdateBy": null,
         "lastUpdateTime": null,
         "parentId": 1,
-        "name": "机构管理",
+        "name": "代理管理",
         "url": "/sys/dept",
         "perms": null,
         "type": 1,

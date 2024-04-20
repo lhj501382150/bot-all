@@ -37,7 +37,9 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
     @Override
 	public PageResult findPage(PageRequest pageRequest) {
 		 
-		return MybatisPlusPageHelper.findPage(pageRequest, DataSourceMapper,"findPage");
+//		return MybatisPlusPageHelper.findPage(pageRequest, DataSourceMapper,"findPage");
+		
+		return MybatisPlusPageHelper.findPage(pageRequest, DataSourceMapper);
 	}
 
 }

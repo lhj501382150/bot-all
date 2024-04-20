@@ -30,7 +30,7 @@
 		</table-column-filter-dialog>
 	</div>
 	<!--表格内容栏-->
-	<kt-table :data="pageResult" :columns="filterColumns" :buttons="buttons"
+	<kt-table :data="pageResult" :columns="filterColumns" :buttons="buttons" :showOperation="false"
 		@findPage="findPage" @handleEdit="handleEdit">
 	</kt-table>
 	<!--新增编辑界面-->
@@ -180,10 +180,11 @@ export default {
 		// 处理表格列过滤显示
 	initColumns: function () {
 			this.columns = [
-       			 {prop:"wareno", label:"群号", minWidth:120},
 				{prop:"issue", label:"期数", minWidth:120},
-				{prop:"contnum", label:"DataId", minWidth:120},
-				{prop:"sTime", label:"开奖时间", minWidth:120},
+				{prop:"dataId", label:"DataId", minWidth:120},
+				{prop:"stime", label:"时间", minWidth:120},
+				{prop:"sresult", label:"号码", minWidth:120},
+				{prop:"bno", label:"结果", minWidth:120},
 			]
 			this.filterColumns = this.columns;
 	},

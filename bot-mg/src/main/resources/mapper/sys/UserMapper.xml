@@ -1,5 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hml.mall.mapper.sys.UserMapper">
-	
+<mapper namespace="com.hml.mall.mapper.user.UserMapper">
+	<select id="findOrgNumByUser" parameterType="java.util.Map" resultType="java.util.Map">
+		select t.* from (
+		select clevel,count(1) as num, concat(clevel , ' 级代理') as name  from tb_hy_user_relation 
+		where userno in (select userno  from tb_hy_user where orgtype =1)
+			<if test="clevel != null and clevel != ''">
+					and clevel &gt; #{clevel}
+				</if>
+			<if test="uno1 != null and uno1 != ''">
+					and uno1 = #{uno1}
+				</if>
+				<if test="uno2 != null and uno2 != ''">
+					and uno2 = #{uno2}
+				</if>
+				<if test="uno3 != null and uno3 != ''">
+					and uno3 = #{uno3}
+				</if>
+				<if test="uno4 != null and uno4 != ''">
+					and uno4 = #{uno4}
+				</if>
+				<if test="uno5 != null and uno5 != ''">
+					and uno5 = #{uno5}
+				</if>
+				<if test="uno6 != null and uno6 != ''">
+					and uno6 = #{uno6}
+				</if>
+				<if test="uno7 != null and uno7 != ''">
+					and uno7 = #{uno7}
+				</if>
+				<if test="uno8 != null and uno8 != ''">
+					and uno8 = #{uno8}
+				</if>
+				<if test="uno9 != null and uno9 != ''">
+					and uno9 = #{uno9}
+				</if>
+				<if test="uno10 != null and uno10 != ''">
+					and uno10 = #{uno10}
+				</if>
+				<if test="uno11 != null and uno11 != ''">
+					and uno11 = #{uno11}
+				</if>
+				<if test="uno12 != null and uno12 != ''">
+					and uno12 = #{uno12}
+				</if>
+				<if test="uno13 != null and uno13 != ''">
+					and uno13 = #{uno13}
+				</if>
+				<if test="uno14 != null and uno14 != ''">
+					and uno14 = #{uno14}
+				</if>
+		group by CLEVEL order by clevel
+		) t
+		union all 
+		select '-1' as clevel,count(1) as num,'全部会员' as name from  tb_hy_user_relation 
+		where userno in (select userno  from tb_hy_user where orgtype =2)
+			<if test="uno1 != null and uno1 != ''">
+					and uno1 = #{uno1}
+				</if>
+				<if test="uno2 != null and uno2 != ''">
+					and uno2 = #{uno2}
+				</if>
+				<if test="uno3 != null and uno3 != ''">
+					and uno3 = #{uno3}
+				</if>
+				<if test="uno4 != null and uno4 != ''">
+					and uno4 = #{uno4}
+				</if>
+				<if test="uno5 != null and uno5 != ''">
+					and uno5 = #{uno5}
+				</if>
+				<if test="uno6 != null and uno6 != ''">
+					and uno6 = #{uno6}
+				</if>
+				<if test="uno7 != null and uno7 != ''">
+					and uno7 = #{uno7}
+				</if>
+				<if test="uno8 != null and uno8 != ''">
+					and uno8 = #{uno8}
+				</if>
+				<if test="uno9 != null and uno9 != ''">
+					and uno9 = #{uno9}
+				</if>
+				<if test="uno10 != null and uno10 != ''">
+					and uno10 = #{uno10}
+				</if>
+				<if test="uno11 != null and uno11 != ''">
+					and uno11 = #{uno11}
+				</if>
+				<if test="uno12 != null and uno12 != ''">
+					and uno12 = #{uno12}
+				</if>
+				<if test="uno13 != null and uno13 != ''">
+					and uno13 = #{uno13}
+				</if>
+				<if test="uno14 != null and uno14 != ''">
+					and uno14 = #{uno14}
+				</if>
+			<if test="userno != null and userno != ''">
+				union all 
+				select '-2' as clevel,count(1) as num,'直属会员' as name from  tb_hy_user_relation 
+				where userno in (select userno  from tb_hy_user where orgtype =2)
+				and parentno =#{userno}
+			</if>
+	</select>
 </mapper>

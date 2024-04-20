@@ -33,12 +33,12 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="filters.uno1" v-if="uno1s.length > 0" placeholder="一级机构" style="width: 100%;" clearable>
+        <el-select v-model="filters.uno1" v-if="uno1s.length > 0" placeholder="一级代理" style="width: 100%;" clearable>
           <el-option v-for="(item,index) in uno1s" :key="index" :label="item.username" :value="item.userno"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="filters.uno2" v-if="uno2s.length > 0"  placeholder="二级机构" style="width: 100%;" clearable>
+        <el-select v-model="filters.uno2" v-if="uno2s.length > 0"  placeholder="二级代理" style="width: 100%;" clearable>
           <el-option v-for="(item,index) in uno2s" :key="index" :label="item.username" :value="item.userno"></el-option>
         </el-select>
       </el-form-item>
@@ -425,8 +425,8 @@ buysaleformat: function (row, column, cellValue, index){
         {prop:"sendstatus", label:"发货状态", minWidth:100,formatter: this.sendformat},
         {prop:"invoicestatus", label:"发票状态", minWidth:100,formatter: this.invoiceformat},
          {prop:"artid", label:"资产编号", minWidth:80},
-        {prop:"uno1", label:"一级机构", minWidth:150},
-        {prop:"uno2", label:"二级机构", minWidth:150},
+        {prop:"uno1", label:"一级代理", minWidth:150},
+        {prop:"uno2", label:"二级代理", minWidth:150},
         {prop:"tjno", label:"推荐人", minWidth:150}
 			]
       if(userType != 0){

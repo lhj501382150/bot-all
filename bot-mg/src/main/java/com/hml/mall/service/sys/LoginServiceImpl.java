@@ -19,12 +19,14 @@ import com.hml.mall.entity.sys.Menu;
 import com.hml.mall.entity.sys.Role;
 import com.hml.mall.entity.sys.UserRole;
 import com.hml.mall.entity.user.User;
+import com.hml.mall.entity.user.UserRelation;
 import com.hml.mall.iface.sys.ILoginService;
 import com.hml.mall.mapper.sys.LoginMapper;
 import com.hml.mall.mapper.sys.MenuMapper;
 import com.hml.mall.mapper.sys.RoleMapper;
 import com.hml.mall.mapper.sys.UserRoleMapper;
 import com.hml.mall.mapper.user.UserMapper;
+import com.hml.mall.mapper.user.UserRelationMapper;
 import com.hml.mall.security.LoginUser;
 import com.hml.utils.StringUtils;
 
@@ -56,6 +58,9 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, Login> implements
 	@Autowired
 	private UserMapper userMapper;
 	
+	@Autowired
+	private UserRelationMapper userRelationMapper;
+	
 	 @Override
 	 @Transactional(rollbackFor=Exception.class)
 	public boolean saveOrUpdate(Login user) {
@@ -83,6 +88,12 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapper, Login> implements
 			if(userRole!=null) {
 				user.setUserRole(userRole);
 				user.setRoleName(getRoleName(userRole));
+			}
+			if(user.getType() > 0) {
+				UserRelation ur = userRelationMapper.selectById(user.getUserno());
+				if(ur != null) {
+					user.setClevel(ur.getClevel());
+				}
 			}
 		}
 		return user;

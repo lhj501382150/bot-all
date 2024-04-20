@@ -32,6 +32,11 @@
           </el-select>
         </el-form-item>
         <el-form-item>
+        <el-select v-model="filters.orgtype" placeholder="类型" clearable>
+          <el-option v-for="(item,index) in orgtypes" :key="index" :label="item.val" :value="item.key"></el-option>
+        </el-select>
+			</el-form-item>
+        <el-form-item>
           <kt-button icon="fa fa-search" :label="$t('action.search')" perms="firm:member:view" type="primary" @click="findPage(null)"/>
         </el-form-item>
         <el-form-item>
@@ -102,6 +107,10 @@
         <el-tag type="success" v-if="scope.row.usertype==1">开启</el-tag>
         <el-tag type="danger" v-else>关闭</el-tag>
     </template>
+    <template #clevel="scope">
+        <el-tag type="danger" v-if="scope.row.orgtype==1">{{ scope.row.clevel }}</el-tag>
+        <span v-if="scope.row.orgtype==2"></span>
+    </template>
 	</kt-table>
 	<!--新增编辑界面-->
 	<el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true"  v-dialogDrag>
@@ -117,7 +126,7 @@
 				<el-input v-model="dataForm.nickname" auto-complete="off"></el-input>
 			</el-form-item>
       <el-form-item label="类型" prop="orgtype">
-        <el-select v-model="dataForm.orgtype" placeholder="请选择" style="width: 100%;">
+        <el-select v-model="dataForm.orgtype" placeholder="请选择" style="width: 98%;">
           <el-option v-for="(item,index) in orgtypes" :key="index" :label="item.val" :value="item.key"></el-option>
         </el-select>
 			</el-form-item>
@@ -125,7 +134,7 @@
         <el-input type="number" v-model="dataForm.clevel" auto-complete="off" @blur="findParent"></el-input>
       </el-form-item>
       <el-form-item v-if="dataForm.clevel > 1 || dataForm.orgtype==2" label="所属代理" prop="parentno">
-        <el-select  v-model="dataForm.parentno" placeholder="请选择" style="width: 100%;">
+        <el-select  v-model="dataForm.parentno" placeholder="请选择" style="width: 98%;">
           <el-option v-for="(item,index) in parentnos" :key="index" :label="item.username" :value="item.userno"></el-option>
         </el-select>
       </el-form-item>
@@ -189,7 +198,8 @@ export default {
 				userno: '',
         sex:'',
         openid: '',
-        balance:''
+        balance:'',
+        orgtype:''
 			},
 			columns: [],
       buttons: [],
@@ -220,7 +230,7 @@ export default {
       parentnos:[],
       orgtypes:[
         {key:1,val:'代理'},
-        {key:2,val:'客户'}
+        {key:2,val:'普通会员'}
       ],
       updatePwdDialogVisible: false,
       updatePwdLoading: false,
@@ -310,7 +320,9 @@ export default {
             this.$message({message: '操作失败,'+ res.msg, type: 'error'})
           }
           this.loading = false
-          this.findPage(null)
+          setTimeout(() => {
+            this.findPage(null)
+          }, 2000);
         })
       }).catch(() => {
       })
@@ -337,7 +349,9 @@ export default {
             this.$message({message: '操作失败,'+ res.msg, type: 'error'})
           }
           this.loading = false
-          this.findPage(null)
+          setTimeout(() => {
+            this.findPage(null)
+          }, 2000);
         })
       }).catch(() => {
       })
@@ -374,16 +388,29 @@ export default {
     findParent(){
       this.$data.dataForm.parentno = ''
 		  let level = this.dataForm.clevel
+      if(level == '') return
       if(level > 14 || level < 1){
         this.$message.error("请输入正确的层级")
         return
       }
-      if(level > 1){
-        let para = {clevel:level-1}
+      if(!this.dataForm.orgtype){
+        this.$message.error("请选择类型")
+        return
+      }
+      debugger
+      let para = {}
+        if(this.dataForm.orgtype==2){
+          para = {clevel:level}
+        }else{
+          if(level > 1){
+            para = {clevel:level-1}
+          }else{
+            return
+          }
+        }
         this.$api.firm.findParent(para).then(res =>{
             this.parentnos = res.data
         })
-      }
     },
     // 加载用户角色信息
 		findUserRoles: function () {
@@ -519,16 +546,17 @@ export default {
 	initColumns: function () {
 			this.columns = [
 				{prop:"userno", label:"用户信息", width:120},
-        {prop:"openid", label:"邀请人信息", width:120},
+        {prop:"orgtype", label:"类型", width:120,formatter:this.orgtypeFormat},
+        {prop:"clevel", label:"层级", width:120},
+        // {prop:"openid", label:"邀请人信息", width:120},
         {prop:"balance", label:"当前余额", width:100},
         {prop:"enable", label:"可用余额", width:100},
         {prop:"freeze", label:"冻结余额", width:100},
         {prop:"sex", label:"状态", width:100},
         // {prop:"usertype", label:"邀请权限", width:100},
         {prop:"chmoney", label:"变动金额", width:120},
-        {prop:"orgtype", label:"类型", width:120,formatter:this.orgtypeFormat},
-        {prop:"uno1", label:"所属代理", width:120},
-        {prop:"parentno", label:"直属上级", width:120},
+        // {prop:"uno1", label:"所属代理", width:120},
+        {prop:"parentno", label:"所属代理", width:120},
 
 			]
 			this.filterColumns = this.columns;
@@ -557,7 +585,7 @@ export default {
 
 <style scoped>
 .dialog_height{
-  height: 300px;
+  height: 400px;
   overflow: auto;
 }
 </style>

@@ -2,6 +2,7 @@ package com.hml.mall.controller.user;
 
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,19 +12,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hml.core.http.HttpResult;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
-import com.hml.mall.entity.money.UsermoneyChange;
 import com.hml.mall.entity.money.UsermoneyChangeApply;
 import com.hml.mall.entity.user.User;
+import com.hml.mall.entity.user.UserRelation;
 import com.hml.mall.iface.money.IUsermoneyChangeApplyService;
+import com.hml.mall.iface.user.IUserRelationService;
 import com.hml.mall.iface.user.IUserService;
+import com.hml.mall.security.LoginUser;
 import com.hml.mall.util.IPUtils;
 import com.hml.mall.util.PasswordEncoder;
 import com.hml.mall.util.SecurityUtils;
 import com.hml.utils.DateTimeUtils;
 import com.hml.utils.StringUtils;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -32,13 +38,16 @@ import com.hml.utils.StringUtils;
 * @since 2021-04-11
 */
 
-
+@Slf4j
 @RestController
 @RequestMapping("/user" )
 public class UserController {
 
     @Autowired
     private IUserService  userService;
+    
+    @Autowired
+    private IUserRelationService userRelationService;
     
     @Autowired
     private IUsermoneyChangeApplyService userMoneyChangeApplyService;
@@ -53,6 +62,17 @@ public class UserController {
         	if(StringUtils.isBlank(model.getChmoney())) {
         		return HttpResult.error("变动金额不能为空！");
         	}
+        	LoginUser user = SecurityUtils.getLoginInfo();
+        	if(user.getType() > 0) {
+        		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+	   	   		 qw.eq("uno" + user.getClevel(), user.getUserno());
+	   	   		 qw.eq("userno", model.getUserno());
+	   	   		 Integer count = userRelationService.count(qw);
+	   	   		 if(count <= 0) {
+	   	   			 throw new Exception("暂无权限执行此操作");
+	   	   		 }
+        	}
+        	
         	model.setAcctno("100");
         	model.setSubno("100");
         	model.setChkip(IPUtils.getIpAddr(request));
@@ -60,6 +80,7 @@ public class UserController {
         	model.setChkuser(SecurityUtils.getUsername());
         	model.setStatus(0);
         	userMoneyChangeApplyService.saveAndAudit(model);
+        	log.info("客户上分：【{}】-{}：{}",user.getUserno(),model.getUserno(),model.getChmoney());
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,6 +99,16 @@ public class UserController {
         	if(StringUtils.isBlank(model.getChmoney())) {
         		return HttpResult.error("变动金额不能为空！");
         	}
+        	LoginUser user = SecurityUtils.getLoginInfo();
+        	if(user.getType() > 0) {
+        		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+	   	   		 qw.eq("uno" + user.getClevel(), user.getUserno());
+	   	   		 qw.eq("userno", model.getUserno());
+	   	   		 Integer count = userRelationService.count(qw);
+	   	   		 if(count <= 0) {
+	   	   			 throw new Exception("暂无权限执行此操作");
+	   	   		 }
+        	}
         	model.setAcctno("100");
         	model.setSubno("101");
         	model.setChkip(IPUtils.getIpAddr(request));
@@ -85,6 +116,7 @@ public class UserController {
         	model.setChkuser(SecurityUtils.getUsername());
         	model.setStatus(0);
         	userMoneyChangeApplyService.saveAndAudit(model);
+        	log.info("客户下分：【{}】-{}：{}",user.getUserno(),model.getUserno(),model.getChmoney());
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -97,8 +129,12 @@ public class UserController {
     @RequestMapping("/clean")
     public HttpResult clean() {
         try {
-        	  
+        	LoginUser user = SecurityUtils.getLoginInfo();
+        	if(user.getType() > 0) {
+   	   			 throw new Exception("暂无权限执行此操作");
+        	}
         	userService.clearMoney();
+        	log.info("清除积分：【{}】",user.getUserno());
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -152,6 +188,16 @@ public class UserController {
     @RequestMapping("/editPwd")
     public HttpResult editPwd(@RequestBody User model) {
         try {
+        	LoginUser user = SecurityUtils.getLoginInfo();
+        	if(user.getType() > 0) {
+        		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+	   	   		 qw.eq("uno" + user.getClevel(), user.getUserno());
+	   	   		 qw.eq("userno", model.getUserno());
+	   	   		 Integer count = userRelationService.count(qw);
+	   	   		 if(count <= 0) {
+	   	   			 throw new Exception("暂无权限执行此操作");
+	   	   		 }
+        	}
         	User item = userService.getById(model.getUserno());
         	if(item == null) {
         		return HttpResult.error("用户不能为空");
@@ -176,6 +222,16 @@ public class UserController {
      @RequestMapping("/editStatus")
      public HttpResult editStatus(@RequestBody User model) {
          try {
+        	 LoginUser user = SecurityUtils.getLoginInfo();
+         	if(user.getType() > 0) {
+         		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+ 	   	   		 qw.eq("uno" + user.getClevel(), user.getUserno());
+ 	   	   		 qw.eq("userno", model.getUserno());
+ 	   	   		 Integer count = userRelationService.count(qw);
+ 	   	   		 if(count <= 0) {
+ 	   	   			 throw new Exception("暂无权限执行此操作");
+ 	   	   		 }
+         	}
  			userService.updateStatus(model);
  			return HttpResult.ok();
  		} catch (Exception e) {
@@ -206,9 +262,20 @@ public class UserController {
     *
     * @param id
     * @return
+     * @throws Exception 
     */
     @RequestMapping("/getById")
-    public HttpResult getById(@RequestBody User model) {
+    public HttpResult getById(@RequestBody User model) throws Exception {
+    	LoginUser user = SecurityUtils.getLoginInfo();
+    	if(user.getType() > 0) {
+    		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+   	   		 qw.eq("uno" + user.getClevel(), user.getUserno());
+   	   		 qw.eq("userno", model.getUserno());
+   	   		 Integer count = userRelationService.count(qw);
+   	   		 if(count <= 0) {
+   	   			 throw new Exception("暂无权限执行此操作");
+   	   		 }
+    	}
       model = userService.getById(model.getUserno());
         // todo 再包装一层
         return HttpResult.ok(model);
@@ -241,7 +308,7 @@ public class UserController {
          // todo 再包装一层
          return HttpResult.ok(list);
      }
-
+ 
     /**
     * 列表查询（分页）
     *
@@ -251,7 +318,12 @@ public class UserController {
     @RequestMapping("/findPage")
     public HttpResult findPage(@RequestBody PageRequest pageRequest) {
         PageResult page = userService.findPage(pageRequest);
-        // todo 再包装一层
+        return HttpResult.ok(page);
+    }
+    
+    @RequestMapping("/findOrgNum")
+    public HttpResult findOrgNum() throws Exception {
+        List<Map<String, Object>> page = userService.findOrgCount();
         return HttpResult.ok(page);
     }
 

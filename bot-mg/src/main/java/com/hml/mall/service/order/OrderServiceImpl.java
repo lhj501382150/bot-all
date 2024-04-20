@@ -44,17 +44,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		if(user==null) {
 			return null;
 		}
-		return MybatisPlusPageHelper.findPage(pageRequest, orderMapper,"findPage");
+		if(user.getType()<=0) {
+			return MybatisPlusPageHelper.findPage(pageRequest, orderMapper,"findPage");
+		}else {
+			pageRequest.getParams().put(user.getQueryNo(), SecurityUtils.getUsername());
+			return MybatisPlusPageHelper.findPage(pageRequest, orderMapper,"findPageByUser");
+		}
 	}
     @Override
     public PageResult findCount(PageRequest pageRequest) {
+    	LoginUser user = SecurityUtils.getLoginInfo();
+		if(user==null) {
+			return null;
+		}
     	Map<String, Object> params = pageRequest.getParams();
     	int pageNum = pageRequest.getPageNum();
      	int size = pageRequest.getPageSize();
      	int pageIdx = (pageNum - 1) * size;
      	params.put("pageIndex", pageIdx);
      	params.put("pageSize", size);
-    	
+     	if(user.getType() > 0) {
+     		params.put(user.getQueryNo(), SecurityUtils.getUsername());
+     	}
      	Map<String, Object> count = orderMapper.findCountSum(params);
      	List<Map<String, Object>> datas = orderMapper.findCount(params);
      	
@@ -72,13 +83,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     
     @Override
     public PageResult findFYCount(PageRequest pageRequest) {
+    	LoginUser user = SecurityUtils.getLoginInfo();
+		if(user==null) {
+			return null;
+		}
     	Map<String, Object> params = pageRequest.getParams();
     	int pageNum = pageRequest.getPageNum();
      	int size = pageRequest.getPageSize();
      	int pageIdx = (pageNum - 1) * size;
      	params.put("pageIndex", pageIdx);
      	params.put("pageSize", size);
-    	
+     	if(user.getType() > 0) {
+     		params.put(user.getQueryNo(), SecurityUtils.getUsername());
+     	}
      	Map<String, Object> count = orderMapper.findFYCountSum(params);
      	List<Map<String, Object>> datas = orderMapper.findFYCount(params);
      	

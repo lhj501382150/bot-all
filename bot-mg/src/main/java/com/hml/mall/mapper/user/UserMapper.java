@@ -1,6 +1,7 @@
 package com.hml.mall.mapper.user;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
@@ -24,7 +25,8 @@ public interface UserMapper extends BaseMapper<User> {
 
 	@Select("select t.* from (	select t1.* ,COALESCE(t3.BALANCE,0) as BALANCE,COALESCE(t3.ENABLE,0) as ENABLE,COALESCE(t3.FREEZE,0) as FREEZE"
 			+ "  ,t4.username as tjusername,t4.nickname as tjnickname "
-			+ " ,t5.CLEVEL as clevel,t5.PARENTNO as parentno,t5.TJNO as tjno " 
+			+ " ,t5.CLEVEL as clevel,t5.PARENTNO as parentno,t5.TJNO as tjno "
+			+ " ,t5.uno1,t5.uno2,t5.uno3,t5.uno4,t5.uno5,t5.uno6,t5.uno7,t5.uno8,t5.uno9,t5.uno10,t5.uno11,t5.uno12,t5.uno13,t5.uno14 "
 			+ "  from tb_hy_user t1  " + 
 			"	left join ( SELECT USERNO, max( FDATE ) AS FDATE FROM tb_zj_usermoney GROUP BY USERNO ) t2 ON t1.USERNO = t2.USERNO " + 
 			"	LEFT JOIN tb_zj_usermoney t3 ON t2.FDATE = t3.FDATE and t2.userno = t3.userno " + 
@@ -59,5 +61,7 @@ public interface UserMapper extends BaseMapper<User> {
 	
 	@Select("select t.* from tb_hy_user t where userno not in (select userno from TB_HY_USER_RELATION )")
 	List<User> findUnInitUser();
+	
+	List<Map<String,Object>> findOrgNumByUser(Map<String,Object> paraMap);
 }
 

@@ -3,11 +3,11 @@ package com.hml.mall.iface.user;
 
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
-import com.hml.mall.entity.money.UsermoneyChangeApply;
 import com.hml.mall.entity.user.User;
 
 /**
@@ -51,4 +51,6 @@ public interface IUserService extends IService<User> {
   	public void clearMoney() throws Exception;
   	
   	List<User> initRelation() throws Exception;
+  	
+  	List<Map<String,Object>> findOrgCount()throws Exception;
 }

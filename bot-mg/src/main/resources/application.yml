@@ -53,7 +53,7 @@ sms:
   signature: 
 #后端访问路径
 backcore: 
-  sendUrl: http://18.212.105.77/apis
+  sendUrl: http://18.212.105.77:8000/api
 heepay: 
   url: 
   agent_id: 

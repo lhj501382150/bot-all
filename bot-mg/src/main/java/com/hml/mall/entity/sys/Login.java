@@ -105,7 +105,8 @@ private static final long serialVersionUID=1L;
     @TableField("INOROUT")
     private Integer inorout;
     
-    
+    @TableField(exist = false)
+    private Integer clevel;
 
     @TableField(exist = false)
     private UserRole userRole;

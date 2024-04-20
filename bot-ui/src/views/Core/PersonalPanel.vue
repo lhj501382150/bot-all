@@ -2,7 +2,8 @@
   <div class="personal-panel">
     <div class="personal-desc" :style="{'background':this.$store.state.app.themeColor}">
         <div class="name-role">
-          <span class="sender">{{ user.loginname }} - {{ rolename }}</span>
+          <span class="sender" v-if="user.type > 0">{{ user.loginname }} - {{ user.clevel }}级{{ rolename }}</span>
+          <span class="sender" v-else>{{ user.loginname }} - {{ rolename }}</span>
         </div>
         <div class="registe-info">
           <span class="registe-info">
@@ -176,7 +177,7 @@ export default {
         if(this.user.type == 0){
           this.rolename = this.user.roleName
         }else if(this.user.type==1){
-          this.rolename = "机构"
+          this.rolename = "代理"
         }else if(this.user.type==2){
           this.rolename = "客户"
         }

@@ -45,6 +45,10 @@ public class UsermoneyServiceImpl extends ServiceImpl<UsermoneyMapper, Usermoney
 		if(user==null) {
 			return null;
 		}
+		if(user.getType() > 0) {
+//			分销商/客户 查询 配置当前登陆信息
+			pageRequest.getParams().put(user.getQueryNo(), SecurityUtils.getUsername());
+		}
 		PageResult result = MybatisPlusPageHelper.findPage(pageRequest, usermoneyMapper,"findPageByUser");
 		if(result.getContent() !=null && result.getContent().size() > 0){
 			QueryWrapper<?> qw = MybatisPlusPageHelper.getQueryWrapper(pageRequest);

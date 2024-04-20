@@ -63,8 +63,8 @@ public class SysLogAspect {
 		Object[] args = joinPoint.getArgs();
 		try {
 			String param = JSONObject.toJSONString(args);
-			logger.info("请求路径：" + log.getMethod());
-			logger.info("请求参数为：" + param);
+//			logger.info("请求路径：" + log.getMethod());
+//			logger.info("请求参数为：" + param);
 			if(param.length()>200){
 				param = param.substring(0,200)+"...";
 			}

@@ -15,12 +15,12 @@ public class TaskManager {
 	@Autowired
 	private IUserService userService;
 
-	@Scheduled(cron ="0 0/1 * * * *")
-	public void initAddUser(){
-		 try {
-			 userService.initRelation();
-		} catch (Exception e) {
-			log.error("添加用户关系异常：{}",e);
-		}
-	}
+//	@Scheduled(cron ="0 0/1 * * * *")
+//	public void initAddUser(){
+//		 try {
+//			 userService.initRelation();
+//		} catch (Exception e) {
+//			log.error("添加用户关系异常：{}",e);
+//		}
+//	}
 }

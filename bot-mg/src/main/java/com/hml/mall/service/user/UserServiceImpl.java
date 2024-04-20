@@ -107,7 +107,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     		int level = user.getClevel();
     		wrapper.eq("UNO" + level, user.getUserno());
     		 if(model.getClevel()!=null) {
-      		   wrapper.eq("clevel", model.getClevel()+1);
+      		   wrapper.eq("clevel", model.getClevel());
       	 }
     	 }else {
     		 if(model.getClevel()!=null) {
@@ -144,12 +144,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 				wrapper.eq("openid", userno).or().like("tjusername", userno).or().like("tjnickname", userno);
 			});
 		}
-		return MybatisPlusPageHelper.findPage(pageRequest, userMapper,"findPage",qw);
+		if(!StringUtils.isBlank(pageRequest.getParam("clevel"))) {
+    		Integer clevel = Integer.parseInt(pageRequest.getParam("clevel").toString());
+    		if(clevel < 0) {
+    			if(clevel == -2) {
+    				pageRequest.getParams().put("parentno",user.getUserno());
+    			}
+    			pageRequest.getParams().remove("clevel");
+    		}
+    	}
+		if(user.getType() <= 0) {
+			return MybatisPlusPageHelper.findPage(pageRequest, userMapper,"findPage");
+		}else {
+//			机构/客户 查询 配置当前登陆信息
+			pageRequest.getParams().put("userno@ne",user.getUserno());
+			pageRequest.getParams().put(user.getQueryNo(), SecurityUtils.getUsername());
+			return MybatisPlusPageHelper.findPage(pageRequest, userMapper,"findPageByUser");
+			
+		}
 	}
 
     @Override
     @Transactional(rollbackFor = Exception.class)
 	public boolean saveUser(User entity)throws Exception {
+    	LoginUser loginUser = SecurityUtils.getLoginInfo();
+    	if(loginUser.getType() > 0) {
+    		if(StringUtils.isBlank(entity.getParentno())) {
+    			throw new Exception("所属代理不能为空");
+    		}
+    	}
 //		判断账号是否已存在
     	User user = userMapper.selectById(entity.getUserno());
     	if(user != null) {
@@ -192,13 +215,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	saveUserRelation(entity);
     	
 //    	保存角色
-    	if(!StringUtils.isBlank(entity.getRoleId())){
-    		UserRole userRole = new UserRole();
-    		userRole.setLoginno(entity.getUserno());
-    		userRole.setRoleId(entity.getRoleId());
-    		userRoleMapper.insert(userRole);
+    	UserRole userRole = new UserRole();
+		userRole.setLoginno(entity.getUserno());
+    	if(entity.getOrgtype()==1) {
+    		userRole.setRoleId(-1);
+    	}else if(entity.getOrgtype()==2) {
+    		userRole.setRoleId(-2);
     	}
-    	
+		userRoleMapper.insert(userRole);
     	syncUser(entity);
     	redisUtils.hset(RedisKey.USER_INVITE_AUTH, entity.getUserno(), String.valueOf(entity.getUsertype()));
 		return true;
@@ -207,6 +231,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     @Transactional(rollbackFor = Exception.class)
 	public boolean updateUser(User entity)throws Exception  {
+    	LoginUser loginUser = SecurityUtils.getLoginInfo();
+    	if(loginUser.getType() > 0) {
+    		if(StringUtils.isBlank(entity.getParentno())) {
+    			throw new Exception("所属代理不能为空");
+    		}
+    		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+	   		 qw.eq("uno" + loginUser.getClevel(), loginUser.getUserno());
+	   		 qw.eq("userno", entity.getUserno());
+	   		 Integer count = userRelationMapper.selectCount(qw);
+	   		 if(count <= 0) {
+	   			 throw new Exception("暂无权限执行此操作");
+	   		 }
+    	}
 //		判断用户是否存在
     	User user = userMapper.selectById(entity.getUserno());
     	if(user==null) {
@@ -235,12 +272,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	QueryWrapper<UserRole> qw = new QueryWrapper<>();
     	qw.eq("LOGINNO", entity.getUserno());
     	userRoleMapper.delete(qw);
-    	if(!StringUtils.isBlank(entity.getRoleId())){
-    		UserRole userRole = new UserRole();
-    		userRole.setLoginno(entity.getUserno());
-    		userRole.setRoleId(entity.getRoleId());
-    		userRoleMapper.insert(userRole);
+//    	保存角色
+    	UserRole userRole = new UserRole();
+		userRole.setLoginno(entity.getUserno());
+    	if(entity.getOrgtype()==1) {
+    		userRole.setRoleId(-1);
+    	}else if(entity.getOrgtype()==2) {
+    		userRole.setRoleId(-2);
     	}
+		userRoleMapper.insert(userRole);
+    	 
     	//调整关系
 //    	if(!user.getOpenid().equals(entity.getOpenid())) {
 //    		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
@@ -264,6 +305,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateStatus(User entity) throws Exception {
+    	LoginUser loginUser = SecurityUtils.getLoginInfo();
+    	if(loginUser.getType() > 0) {
+    		 QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+    		 qw.eq("uno" + loginUser.getClevel(), loginUser.getUserno());
+    		 qw.eq("userno", entity.getUserno());
+    		 Integer count = userRelationMapper.selectCount(qw);
+    		 if(count <= 0) {
+    			 throw new Exception("暂无权限执行此操作");
+    		 }
+    	}
     	User item = userMapper.selectById(entity.getUserno());
     	if("0".equals(item.getSex())) {
     		item.setSex("1");
@@ -278,6 +329,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteUser(User entity)throws Exception  {
+    	LoginUser loginUser = SecurityUtils.getLoginInfo();
+    	if(loginUser.getType() > 0) {
+    		 QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+    		 qw.eq("uno" + loginUser.getClevel(), loginUser.getUserno());
+    		 qw.eq("userno", entity.getUserno());
+    		 Integer count = userRelationMapper.selectCount(qw);
+    		 if(count <= 0) {
+    			 throw new Exception("暂无权限执行此操作");
+    		 }
+    	}
 //		判断用户是否存在
     	User user = userMapper.selectById(entity.getUserno());
     	if(user==null) {
@@ -402,6 +463,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
   		UserRelation parentur = userRelationMapper.selectById(parent.getUserno());
   		ur = parentur;
   		ur.setParentno(user.getParentno());
+  		user.setClevel(ur.getClevel() + 1);
   		ur = setClevelVal(user.getClevel(), user.getUserno(), ur);
   	}
   	ur.setUserno(user.getUserno());
@@ -419,4 +481,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
   	 field.set(ur, userno);
   	 return ur;
   }
+  
+  @Override
+	public List<Map<String, Object>> findOrgCount() throws Exception {
+		LoginUser user = SecurityUtils.getLoginInfo();
+		Map<String,Object> paraMap = new HashMap<String, Object>();
+		if(user.getType() > 0) {
+			paraMap.put(user.getQueryNo(), user.getUserno());
+			paraMap.put("userno", user.getUserno());
+			paraMap.put("clevel", user.getClevel());
+		}
+		return userMapper.findOrgNumByUser(paraMap);
+	}
 }

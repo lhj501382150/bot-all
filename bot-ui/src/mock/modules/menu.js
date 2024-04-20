@@ -124,7 +124,7 @@ export function findMenuTree() {
             "lastUpdateBy": null,
             "lastUpdateTime": null,
             "parentId": 1,
-            "name": "机构管理",
+            "name": "代理管理",
             "url": "/sys/dept",
             "perms": null,
             "type": 1,
@@ -148,7 +148,7 @@ export function findMenuTree() {
                 "icon": null,
                 "orderNum": 0,
                 "delFlag": 0,
-                "parentName": "机构管理",
+                "parentName": "代理管理",
                 "level": 2,
                 "children": []
               },
@@ -166,7 +166,7 @@ export function findMenuTree() {
                 "icon": null,
                 "orderNum": 0,
                 "delFlag": 0,
-                "parentName": "机构管理",
+                "parentName": "代理管理",
                 "level": 2,
                 "children": []
               },
@@ -184,7 +184,7 @@ export function findMenuTree() {
                 "icon": null,
                 "orderNum": 0,
                 "delFlag": 0,
-                "parentName": "机构管理",
+                "parentName": "代理管理",
                 "level": 2,
                 "children": []
               },
@@ -202,7 +202,7 @@ export function findMenuTree() {
                 "icon": null,
                 "orderNum": 0,
                 "delFlag": 0,
-                "parentName": "机构管理",
+                "parentName": "代理管理",
                 "level": 2,
                 "children": []
               }

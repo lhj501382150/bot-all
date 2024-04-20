@@ -23,22 +23,27 @@ import com.hml.mall.entity.money.Usermoney;
 public interface UsermoneyMapper extends BaseMapper<Usermoney> {
 
 	
-	@Select("select t.* from (select t1.*,t2.username,t2.nickname,t3.acctname "
-			+ " from tb_zj_usermoney t1 left join TB_HY_USER t2 on t1.USERNO = t2.USERNO"
+	@Select("select t.* from (select t1.*,t2.username,t2.CLEVEL as clevel,t2.PARENTNO as parentno,t2.TJNO as tjno,t3.acctname,"
+			+ "t2.uno1,t2.uno2,t2.uno3,t2.uno4,t2.uno5,t2.uno6,t2.uno7,t2.uno8,t2.uno9,t2.uno10,t2.uno11,t2.uno12,t2.uno13,t2.uno14 "
+			+ " from tb_zj_usermoney t1 left join TB_HY_USER_RELATION t2 on t1.USERNO = t2.USERNO"
 			+ " left join tb_zj_account t3 on t1.acctno = t3.acctno "
 			+ ") t ${ew.customSqlSegment} order by fdate desc ")
 	Page<Usermoney> findPageByUser(Page<Usermoney> page,@Param(Constants.WRAPPER)Wrapper wrapper);
 	@Select("select sum(start) as start,sum(inmoney) as inmoney,sum(outmoney) as outmoney,sum(income) as income,sum(payment) as payment,sum(`in`) as `in`,sum(`out`) as `out` "
 			+ " ,sum(balance) as balance,sum(freeze) as freeze,sum(lose) as lose,sum(enable) as enable,sum(allquity) as allquity, sum(limtout) as limtout,sum(canout) as canout "
-			+ " from (select t1.*,t2.username,t2.nickname ,t3.acctname "
-			+ " from tb_zj_usermoney t1 left join TB_HY_USER t2 on t1.USERNO = t2.USERNO"
+			+ " from (select t1.*,t2.username,t2.CLEVEL as clevel,t2.PARENTNO as parentno,t2.TJNO as tjno,t3.acctname,t4.orgtype,"
+			+ "t2.uno1,t2.uno2,t2.uno3,t2.uno4,t2.uno5,t2.uno6,t2.uno7,t2.uno8,t2.uno9,t2.uno10,t2.uno11,t2.uno12,t2.uno13,t2.uno14 "
+			+ " from tb_zj_usermoney t1 left join TB_HY_USER_RELATION t2 on t1.USERNO = t2.USERNO"
+			+ " left join tb_hy_user t4 on t1.userno = t4.userno "
 			+ " left join tb_zj_account t3 on t1.acctno = t3.acctno "
 			+ ") t ${ew.customSqlSegment} order by fdate desc ")
 	Usermoney findSum(@Param(Constants.WRAPPER)Wrapper wrapper);
 	
 	
 	@Select("select t.* from ("
-			+ " select t1.* ,t2.freeze,t2.balance,t2.enable,t3.inmoney,t3.outmoney,t3.income,t3.payment,t4.username,t4.uno1,t4.uno2,t4.uno3,t5.acctname,t6.orgtype  "
+			+ " select t1.* ,t2.freeze,t2.balance,t2.enable,t3.inmoney,t3.outmoney,t3.income,t3.payment"
+			+ " ,t4.username,t4.uno1,t4.uno2,t4.uno3,t4.uno4,t4.uno5,t4.uno6,t4.uno7,t4.uno8,t4.uno9,t4.uno10,t4.uno11,t4.uno12,t4.uno13,t4.uno14 "
+			+ " ,t5.acctname,t6.orgtype  "
 			+ " from (                                                                                                "
 			+ " 	select left(fdate,7) as fdate,userno,acctno, start from tb_zj_usermoney                           "
 			+ " 	where (fdate,userno,acctno) in (                                                                  "

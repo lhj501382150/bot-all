@@ -19,16 +19,17 @@ import com.hml.mall.entity.money.UsermoneyChange;
  */
 public interface UsermoneyChangeMapper extends BaseMapper<UsermoneyChange> {
 
-	@Select("select t.* from (select t1.*,t2.username,t2.nickname,t3.acctname,t4.subname "
-			+ " from tb_zj_usermoney_change t1 left join TB_HY_USER t2 on t1.USERNO = t2.USERNO "
+	@Select("select t.* from (select t1.*,t2.username,t2.CLEVEL as clevel,t2.PARENTNO as parentno,t2.TJNO as tjno,t3.acctname,t4.subname,"
+			+ "t2.uno1,t2.uno2,t2.uno3,t2.uno4,t2.uno5,t2.uno6,t2.uno7,t2.uno8,t2.uno9,t2.uno10,t2.uno11,t2.uno12,t2.uno13,t2.uno14 "
+			+ " from tb_zj_usermoney_change t1 left join TB_HY_USER_RELATION t2 on t1.USERNO = t2.USERNO "
 			+ " left join tb_zj_account t3 on t1.acctno = t3.acctno "
 			+ " left join tb_zj_subject t4 on t1.subno = t4.sunno "
-			+ ") t ${ew.customSqlSegment} order by userno asc ")
+			+ ") t ${ew.customSqlSegment} order by wartno desc ")
 	Page<UsermoneyChange> findPageByUser(Page<UsermoneyChange> page,@Param(Constants.WRAPPER)Wrapper wrapper);
 	
-	@Select("select sum(chmoney) as chmoney,sum(befmoney) as befmoney,sum(aftmoney) as aftmoney from ("
-			+ " select t1.*,t2.username,t2.nickname,t3.acctname,t4.subname "
-			+ " from tb_zj_usermoney_change t1 left join TB_HY_USER t2 on t1.USERNO = t2.USERNO "
+	@Select("select sum(chmoney) as chmoney,sum(befmoney) as befmoney,sum(aftmoney) as aftmoney from (select t1.*,t2.username,t2.CLEVEL as clevel,t2.PARENTNO as parentno,t2.TJNO as tjno,t3.acctname,t4.subname,"
+			+ "t2.uno1,t2.uno2,t2.uno3,t2.uno4,t2.uno5,t2.uno6,t2.uno7,t2.uno8,t2.uno9,t2.uno10,t2.uno11,t2.uno12,t2.uno13,t2.uno14 "
+			+ " from tb_zj_usermoney_change t1 left join TB_HY_USER_RELATION t2 on t1.USERNO = t2.USERNO "
 			+ " left join tb_zj_account t3 on t1.acctno = t3.acctno "
 			+ " left join tb_zj_subject t4 on t1.subno = t4.sunno "
 			+ ") t ${ew.customSqlSegment} order by wartno desc ")

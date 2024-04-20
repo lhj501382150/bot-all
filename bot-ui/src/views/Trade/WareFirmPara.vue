@@ -96,7 +96,7 @@
           <el-input v-model="firm.username" placeholder="客户名称"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="firm.parentno" placeholder="所属机构"></el-input>
+          <el-input v-model="firm.parentno" placeholder="所属代理"></el-input>
         </el-form-item>
         <el-form-item>
           <el-input v-model="firm.tjno" placeholder="推荐人编号"></el-input>
@@ -128,7 +128,7 @@
         <el-table-column prop="userno" label="客户编号" width="120"></el-table-column>
         <el-table-column prop="username" label="客户名称" width="120"></el-table-column>
         <el-table-column prop="regdate" label="注册时间" width="180"></el-table-column>
-        <el-table-column prop="parentno" label="所属机构" width="100"></el-table-column>
+        <el-table-column prop="parentno" label="所属代理" width="100"></el-table-column>
         <el-table-column prop="tjno" label="推荐人" width="150"></el-table-column>
         <el-table-column prop="tjnum" label="推荐人数" width="120"></el-table-column>
         <el-table-column prop="realstatus" label="状态" width="150">

@@ -51,6 +51,13 @@ export const findList = (data) => {
     data
   })
 }
+export const findOrgNum = (data) => {
+  return axios({
+    url: '/user/findOrgNum',
+    method: 'post',
+    data
+  })
+}
 //查询层级信息
 export const findParent = (data) => {
   return axios({

@@ -66,10 +66,10 @@
       <el-form-item label="发送手机号" prop="mobileno">
         <el-input v-model="dataForm.mobileno" auto-complete="off"></el-input>
       </el-form-item>
-			<!--<el-form-item label="机构级别" prop="userlevel">
+			<!--<el-form-item label="代理级别" prop="userlevel">
 				<el-input v-model="dataForm.userlevel" auto-complete="off" @blur="findParent"></el-input>
 			</el-form-item>
-			<el-form-item v-if="dataForm.userlevel > 0" label="机构对象" prop="userno">
+			<el-form-item v-if="dataForm.userlevel > 0" label="代理对象" prop="userno">
         <el-select v-model="dataForm.userno" placeholder="请选择" clearable style="width: 100%">
             <el-option v-for="(item,index) in parentnos" :key="index" :label="item.username" :value="item.userno"></el-option>
         </el-select>
@@ -281,7 +281,7 @@ export default {
 	initColumns: function () {
 			this.columns = [
 				{prop:"msgno", label:"短信编号", minWidth:120},
-      //  {prop:"userlevel", label:"机构级别", minWidth:120},
+      //  {prop:"userlevel", label:"代理级别", minWidth:120},
         {prop:"userno", label:"客户编号", minWidth:150},
         {prop:"mobileno", label:"发送手机号", minWidth:150},
 				{prop:"ntype", label:"短信类型", minWidth:100,formatter:this.ntypeFormat},

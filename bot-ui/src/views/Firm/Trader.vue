@@ -244,7 +244,7 @@ export default {
     // 是否有效格式化
   typeFormat: function (row, column, cellValue, index){
       if(cellValue===1) {
-        return '机构'
+        return '代理'
       } else if(cellValue===2) {
         return "普通用户"
       }
