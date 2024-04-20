@@ -9,7 +9,7 @@
             <!-- 主题切换 -->
             <theme-picker style="float:right;" class="theme-picker" :default="themeColor" @onThemeChange="onThemeChange"></theme-picker>
           </span>
-          <h2 class="title" style="padding-left:22px;" >系统登录</h2>
+          <h2 class="title" style="padding-left:22px;" >四方宝斗管理系统</h2>
           <el-form-item prop="account">
             <el-input type="text" v-model="loginForm.account" auto-complete="off" placeholder="账号"></el-input>
           </el-form-item>

@@ -2,6 +2,7 @@ package com.hml.mall.service.user;
 
 
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import com.hml.backcore.config.BackCoreConfig;
 import com.hml.core.page.MybatisPlusPageHelper;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
+import com.hml.mall.entity.sys.Login;
+import com.hml.mall.entity.sys.UserRole;
 import com.hml.mall.entity.user.User;
 import com.hml.mall.entity.user.UserRelation;
 import com.hml.mall.iface.user.IUserService;
@@ -25,6 +28,7 @@ import com.hml.mall.mapper.sys.UserRoleMapper;
 import com.hml.mall.mapper.user.UserMapper;
 import com.hml.mall.mapper.user.UserRelationMapper;
 import com.hml.mall.security.LoginUser;
+import com.hml.mall.util.PasswordEncoder;
 import com.hml.mall.util.SecurityUtils;
 import com.hml.redis.RedisKey;
 import com.hml.redis.RedisUtils;
@@ -98,7 +102,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     		   wrapper.eq("ISVALID", model.getIsvalid());
     	   }
        }
-       
+       LoginUser user = SecurityUtils.getLoginInfo();
+    	 if(user.getType() > 0) {
+    		int level = user.getClevel();
+    		wrapper.eq("UNO" + level, user.getUserno());
+    		 if(model.getClevel()!=null) {
+      		   wrapper.eq("clevel", model.getClevel()+1);
+      	 }
+    	 }else {
+    		 if(model.getClevel()!=null) {
+    		   wrapper.eq("clevel", model.getClevel());
+    	   }
+    	 }
+  	   
        List<User> list = userMapper.findUserList(wrapper);
        return list;
     }
@@ -147,10 +163,43 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     		}
     	}
     	
+//    	判断登陆账号是否存在
+    	QueryWrapper<Login> qw = new QueryWrapper<Login>(); 
+    	qw.eq("LOGINNO", entity.getUserno());
+    	Login login = loginMapper.selectOne(qw);
+    	if(login != null) {
+    		throw new Exception("该账号已存在");
+    	}
+    	
 //    	保存用户信息
     	userMapper.insert(entity);
-    	syncUser(entity);
+//    	保存用户层级关系
+    	 
+//    	插入登陆用户
+    	login = new Login();
+    	login.setLoginno(entity.getUserno());
+    	login.setUserno(entity.getUserno());
+    	login.setLoginname(entity.getUsername());
+//    	初始化密码 默认证件号码后6 位，不足6位 为 111111
+    	String card = "111111";;
+    	String pwd = new PasswordEncoder(entity.getUserno()).encode(card);
+    	login.setLoginpwd(pwd);
+    	login.setType(entity.getOrgtype());// 1 机构 2 客户
+    	login.setTelno(entity.getTelno());//同步手机号
+    	login.setIsvalid("Y");
+    	loginMapper.insert(login);
+//    	保存客户关系
+    	saveUserRelation(entity);
     	
+//    	保存角色
+    	if(!StringUtils.isBlank(entity.getRoleId())){
+    		UserRole userRole = new UserRole();
+    		userRole.setLoginno(entity.getUserno());
+    		userRole.setRoleId(entity.getRoleId());
+    		userRoleMapper.insert(userRole);
+    	}
+    	
+    	syncUser(entity);
     	redisUtils.hset(RedisKey.USER_INVITE_AUTH, entity.getUserno(), String.valueOf(entity.getUsertype()));
 		return true;
 	}
@@ -169,22 +218,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     			throw new Exception("推荐用户不存在");
     		}
     	}
-    	userMapper.updateById(entity);
-    	//调整关系
-    	if(!user.getOpenid().equals(entity.getOpenid())) {
-    		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
-    		qw.like("tjno", user.getUserno());
-    		qw.or().eq("userno", user.getUserno());
-    		userRelationMapper.delete(qw);
-    		
-    		List<User> users = userMapper.findUnInitUser();
-	   		 Map<String,UserRelation> relationMap = new HashMap<String,UserRelation>();
-	   		 for(User item : users) {
-   				 UserRelation relation = getUserRelation(item,relationMap);
-   				 userRelationMapper.insert(relation);
-   				 log.info("初始化层级信息：【{}】-{}",relation.getUserno(),relation.getTjno());
-	   		}
+    	if(!user.getUsername().equals(entity.getUsername())) {
+    		QueryWrapper<Login> qw = new QueryWrapper<Login>(); 
+        	qw.eq("LOGINNO", entity.getUserno());
+        	Login login = loginMapper.selectOne(qw);
+        	login.setLoginname(entity.getUsername());
+        	if(!user.getTelno().equals(entity.getTelno())){
+        		login.setTelno(entity.getTelno());
+        	}
+        	loginMapper.updateById(login);
     	}
+    	userMapper.updateById(entity);
+//    	保存客户关系
+    	saveUserRelation(entity);
+//    	保存角色
+    	QueryWrapper<UserRole> qw = new QueryWrapper<>();
+    	qw.eq("LOGINNO", entity.getUserno());
+    	userRoleMapper.delete(qw);
+    	if(!StringUtils.isBlank(entity.getRoleId())){
+    		UserRole userRole = new UserRole();
+    		userRole.setLoginno(entity.getUserno());
+    		userRole.setRoleId(entity.getRoleId());
+    		userRoleMapper.insert(userRole);
+    	}
+    	//调整关系
+//    	if(!user.getOpenid().equals(entity.getOpenid())) {
+//    		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
+//    		qw.like("tjno", user.getUserno());
+//    		qw.or().eq("userno", user.getUserno());
+//    		userRelationMapper.delete(qw);
+//    		
+//    		List<User> users = userMapper.findUnInitUser();
+//	   		 Map<String,UserRelation> relationMap = new HashMap<String,UserRelation>();
+//	   		 for(User item : users) {
+//   				 UserRelation relation = getUserRelation(item,relationMap);
+//   				 userRelationMapper.insert(relation);
+//   				 log.info("初始化层级信息：【{}】-{}",relation.getUserno(),relation.getTjno());
+//	   		}
+//    	}
     	syncUser(entity);
     	redisUtils.hset(RedisKey.USER_INVITE_AUTH, entity.getUserno(), String.valueOf(entity.getUsertype()));
 		return true;
@@ -212,8 +283,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	if(user==null) {
     		throw new Exception("客户不存在");
     	}
-    	userMapper.deleteById(entity.getUserno());
-    	 redisUtils.hdel(RedisKey.USER_INVITE_AUTH, entity.getUserno());
+//    	userMapper.deleteById(entity.getUserno());
+//		判断用户是否存在
+    	user.setIsvalid("N");
+    	userMapper.updateById(user);
+    	
+//    	更新登陆账号
+    	QueryWrapper<Login> qw = new QueryWrapper<Login>(); 
+    	qw.eq("LOGINNO", entity.getUserno());
+    	Login login = loginMapper.selectOne(qw);
+    	login.setIsvalid("N");
+    	loginMapper.updateById(login);
+    	
+    	redisUtils.hdel(RedisKey.USER_INVITE_AUTH, entity.getUserno());
     	return true;
     }
     
@@ -242,6 +324,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		data.put("openid", user.getOpenid());
 		data.put("sex", user.getSex());
 		data.put("devType", 1);		
+		data.put("parentno", user.getParentno());
 		String ret = HttpClientUtils.doPost(BackCoreConfig.URL + BackCoreConfig.ADD_ACCOUNT, data.toJSONString(),null);
 		JSONObject json = JSONObject.parseObject(ret);
 		if(!"0".equals(json.getString("iCode"))){
@@ -297,4 +380,43 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	}
     	return relation;
     }
+    
+    
+//  根据推荐人获取 层级关系
+  private void saveUserRelation(User user)throws Exception{
+  	UserRelation ur = new UserRelation();
+  	
+//  	删除历史数据
+  	userRelationMapper.deleteById(user.getUserno());
+  	if(StringUtils.isBlank(user.getParentno())) {//一级 
+  		if(user.getClevel()==1) {
+  			ur.setUno1(user.getUserno());
+  		}else {
+  			throw new Exception("请选择所属代理");
+  		}
+  	}else {
+  		User parent = userMapper.selectById(user.getParentno());
+  		if(parent == null) {
+  			throw new Exception("所属代理不存在");
+  		}
+  		UserRelation parentur = userRelationMapper.selectById(parent.getUserno());
+  		ur = parentur;
+  		ur.setParentno(user.getParentno());
+  		ur = setClevelVal(user.getClevel(), user.getUserno(), ur);
+  	}
+  	ur.setUserno(user.getUserno());
+	ur.setUsername(user.getUsername());
+	ur.setClevel(user.getClevel());
+	ur.setTjno(user.getOpenid());
+
+  	userRelationMapper.insert(ur);
+  }
+//  为曾级赋值
+  private UserRelation setClevelVal(int level,String userno,UserRelation ur)throws Exception{
+  	String fieldName = "uno" + level;
+  	Field field = ur.getClass().getDeclaredField(fieldName);
+  	 field.setAccessible(true);
+  	 field.set(ur, userno);
+  	 return ur;
+  }
 }

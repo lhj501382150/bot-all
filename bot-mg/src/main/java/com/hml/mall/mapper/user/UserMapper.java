@@ -23,26 +23,29 @@ import com.hml.mall.entity.user.User;
 public interface UserMapper extends BaseMapper<User> {
 
 	@Select("select t.* from (	select t1.* ,COALESCE(t3.BALANCE,0) as BALANCE,COALESCE(t3.ENABLE,0) as ENABLE,COALESCE(t3.FREEZE,0) as FREEZE"
-			+ "  ,t4.username as tjusername,t4.nickname as tjnickname  " 
+			+ "  ,t4.username as tjusername,t4.nickname as tjnickname "
+			+ " ,t5.CLEVEL as clevel,t5.PARENTNO as parentno,t5.TJNO as tjno " 
 			+ "  from tb_hy_user t1  " + 
 			"	left join ( SELECT USERNO, max( FDATE ) AS FDATE FROM tb_zj_usermoney GROUP BY USERNO ) t2 ON t1.USERNO = t2.USERNO " + 
 			"	LEFT JOIN tb_zj_usermoney t3 ON t2.FDATE = t3.FDATE and t2.userno = t3.userno " + 
-			"	LEFT JOIN tb_hy_user t4 ON t4.userno = t1.openid " + 
+			"	LEFT JOIN tb_hy_user t4 ON t4.userno = t1.openid "
+			+ " left join TB_HY_USER_RELATION t5 on t1.USERNO = t5.USERNO " + 
 			"  ) t ${ew.customSqlSegment}")
 	Page<User> findPage(Page<User> page,@Param(Constants.WRAPPER)Wrapper wrapper);
 	
 	@Select("select t1.*,t2.CLEVEL as clevel,t2.PARENTNO as parentno,t2.TJNO as tjno from TB_HY_USER t1 left join TB_HY_USER_RELATION t2 on t1.USERNO = t2.USERNO ${ew.customSqlSegment}")
 	List<User> findUserList(@Param(Constants.WRAPPER)Wrapper wrapper);
 	
-	@Select("select t.* from (select t1.*,t2.CLEVEL as clevel,t2.PARENTNO as parentno,t2.TJNO as tjno"
-			+ ",t3.tjnum,(case when t4.userno is null then 'N' else 'Y' end) as isCARD,t5.ROLE_ID as roleId "
-			+ ",t2.uno1,t2.uno2,t2.uno3,t2.uno4,t2.uno5,t2.uno6,t2.uno7,t2.uno8,t2.uno9,t2.uno10,t2.uno11,t2.uno12,t2.uno13,t2.uno14 "
-			+ " from TB_HY_USER t1 "
-			+ " left join TB_SYS_USER_ROLE t5 on t1.USERNO = t5.LOGINNO "
-			+ " left join TB_HY_USER_RELATION t2 on t1.USERNO = t2.USERNO "
-			+ " left join (select tjno as userno,count(1) as tjnum from tb_hy_user_relation where tjno != '' group by tjno) t3 on t1.userno = t3.userno "
-			+ " left join (select distinct userno from tb_hy_user_cardinfo where CTYPE = 'C') t4 on t1.userno = t4.userno "
-			+ " ) t ${ew.customSqlSegment}")
+	@Select("select t.* from (	select t1.* ,COALESCE(t3.BALANCE,0) as BALANCE,COALESCE(t3.ENABLE,0) as ENABLE,COALESCE(t3.FREEZE,0) as FREEZE"
+			+ "  ,t4.username as tjusername,t4.nickname as tjnickname "
+			+ " ,t5.CLEVEL as clevel,t5.PARENTNO as parentno,t5.TJNO as tjno " 
+			+ " ,t5.uno1,t5.uno2,t5.uno3,t5.uno4,t5.uno5,t5.uno6,t5.uno7,t5.uno8,t5.uno9,t5.uno10,t5.uno11,t5.uno12,t5.uno13,t5.uno14 "
+			+ "  from tb_hy_user t1  " + 
+			"	left join ( SELECT USERNO, max( FDATE ) AS FDATE FROM tb_zj_usermoney GROUP BY USERNO ) t2 ON t1.USERNO = t2.USERNO " + 
+			"	LEFT JOIN tb_zj_usermoney t3 ON t2.FDATE = t3.FDATE and t2.userno = t3.userno " + 
+			"	LEFT JOIN tb_hy_user t4 ON t4.userno = t1.openid "
+			+ " left join TB_HY_USER_RELATION t5 on t1.USERNO = t5.USERNO " + 
+			"  ) t ${ew.customSqlSegment}")
 	Page<User> findPageByUser(Page<User> page,@Param(Constants.WRAPPER)Wrapper wrapper);
 	
 	@Delete("delete from tb_zj_usermoney")

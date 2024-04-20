@@ -116,15 +116,29 @@
       <el-form-item label="昵称" prop="nickname">
 				<el-input v-model="dataForm.nickname" auto-complete="off"></el-input>
 			</el-form-item>
+      <el-form-item label="类型" prop="orgtype">
+        <el-select v-model="dataForm.orgtype" placeholder="请选择" style="width: 100%;">
+          <el-option v-for="(item,index) in orgtypes" :key="index" :label="item.val" :value="item.key"></el-option>
+        </el-select>
+			</el-form-item>
+      <el-form-item :label="dataForm.orgtype==2?'所属代理级别':'当前代理级别'" prop="clevel">
+        <el-input type="number" v-model="dataForm.clevel" auto-complete="off" @blur="findParent"></el-input>
+      </el-form-item>
+      <el-form-item v-if="dataForm.clevel > 1 || dataForm.orgtype==2" label="所属代理" prop="parentno">
+        <el-select  v-model="dataForm.parentno" placeholder="请选择" style="width: 100%;">
+          <el-option v-for="(item,index) in parentnos" :key="index" :label="item.username" :value="item.userno"></el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="邀请人USERID" prop="openid">
 				<el-input v-model="dataForm.openid" auto-complete="off" maxlength="16"></el-input>
 			</el-form-item>
-      <el-form-item label="邀请权限" prop="usertype">
+      <!-- <el-form-item label="邀请权限" prop="usertype">
           <el-select v-model="dataForm.usertype" placeholder="邀请权限" style="width:98%">
             <el-option label="关闭" :value="0"></el-option>
             <el-option label="开启" :value="1"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 		</el-form>
 		<div slot="footer" class="dialog-footer">
 			<el-button :size="size" @click.native="dialogVisible = false">{{$t('action.cancel')}}</el-button>
@@ -194,7 +208,10 @@ export default {
         ],
         nickname: [
           { required: true, message: '请输入昵称', trigger: 'blur' }
-        ]
+        ],
+        orgtype:[
+          { required: true, message: '请选择类型', trigger: 'blur' }
+        ],
 
 			},
 			// 新增编辑界面数据
@@ -202,6 +219,8 @@ export default {
 			roles: [],
       parentnos:[],
       orgtypes:[
+        {key:1,val:'代理'},
+        {key:2,val:'客户'}
       ],
       updatePwdDialogVisible: false,
       updatePwdLoading: false,
@@ -353,6 +372,18 @@ export default {
     },
     //查询上级信息
     findParent(){
+      this.$data.dataForm.parentno = ''
+		  let level = this.dataForm.clevel
+      if(level > 14 || level < 1){
+        this.$message.error("请输入正确的层级")
+        return
+      }
+      if(level > 1){
+        let para = {clevel:level-1}
+        this.$api.firm.findParent(para).then(res =>{
+            this.parentnos = res.data
+        })
+      }
     },
     // 加载用户角色信息
 		findUserRoles: function () {
@@ -459,7 +490,7 @@ export default {
     // 是否有效格式化
     orgtypeFormat: function (row, column, cellValue, index){
       switch (cellValue) {
-        case 1: return "机构";
+        case 1: return "代理";
         case 2: return "普通用户";
         default: return cellValue;
       }
@@ -477,7 +508,10 @@ export default {
     initFormData(){
 		  this.dataForm = {
         userno: '',
-        username: ''
+        username: '',
+        orgtype:'',
+        clevel:'',
+        parentno:''
 
       }
     },
@@ -490,8 +524,11 @@ export default {
         {prop:"enable", label:"可用余额", width:100},
         {prop:"freeze", label:"冻结余额", width:100},
         {prop:"sex", label:"状态", width:100},
-        {prop:"usertype", label:"邀请权限", width:100},
-        {prop:"chmoney", label:"变动金额", width:120}
+        // {prop:"usertype", label:"邀请权限", width:100},
+        {prop:"chmoney", label:"变动金额", width:120},
+        {prop:"orgtype", label:"类型", width:120,formatter:this.orgtypeFormat},
+        {prop:"uno1", label:"所属代理", width:120},
+        {prop:"parentno", label:"直属上级", width:120},
 
 			]
 			this.filterColumns = this.columns;

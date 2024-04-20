@@ -35,6 +35,5 @@ public class LoginUser {
 		}else {
 			return null;
 		}
-		
 	}
 }
