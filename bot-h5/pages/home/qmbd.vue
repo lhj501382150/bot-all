@@ -218,7 +218,7 @@
 		},
 		methods: {
 			loadData(){
-				this.result = []
+				this.results = []
 				let para = {
 					pageIdx:0,
 					pageSize:50,
@@ -282,7 +282,7 @@
 								this.isStop = false
 								this.result = JSON.parse(data.data)
 								this.result.data = this.result.CODE.split(',') || []
-								this.leftTime = getSecond(this.result.TIME)
+								this.leftTime = getSecond(this.result.TIME) + 15
 								this.fillTime()
 								this.getUserBalance()
 								this.loadData()
