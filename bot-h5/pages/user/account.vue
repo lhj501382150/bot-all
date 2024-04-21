@@ -3,7 +3,8 @@
 		<uni-nav-bar left-icon="left"  title="代理中心" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
 		 <view class="row">
 			 <button class="add-btn" @click="open">新建普通会员</button>
-			 <view class="text">账户ID：{{userinfo.parentno || userno}}</view>
+			 <view class="text" v-if="userinfo.parentNo">所属代理：{{userinfo.parentNo}}</view>
+			 <view class="text" v-else>账户ID：{{userno}}</view>
 		 </view>
 		 <uni-popup ref="popup" type="bottom" background-color="#fff">
 			 <view class="form">

@@ -211,12 +211,14 @@
 			this.connectSocketInit()
 			let user = JSON.parse(uni.getStorageSync('userinfo'))
 			this.orgtype = user.orgtype
+			console.log(this.orgtype,'------------')
 		},
 		beforeDestroy() {
 			this.closeSocket()
 		},
 		methods: {
 			loadData(){
+				this.result = []
 				let para = {
 					pageIdx:0,
 					pageSize:50,
@@ -283,6 +285,7 @@
 								this.leftTime = getSecond(this.result.TIME)
 								this.fillTime()
 								this.getUserBalance()
+								this.loadData()
 							}else if(data.status == 4){
 								this.isStop = true
 								this.fptime = 0

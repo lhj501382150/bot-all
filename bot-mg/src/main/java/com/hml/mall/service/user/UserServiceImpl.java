@@ -203,8 +203,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	login.setUserno(entity.getUserno());
     	login.setLoginname(entity.getUsername());
 //    	初始化密码 默认证件号码后6 位，不足6位 为 111111
-    	String card = "111111";;
-    	String pwd = new PasswordEncoder(entity.getUserno()).encode(card);
+    	String card = entity.getUserno() + "111111";;
+    	String pwd = new PasswordEncoder("").encode(card);
     	login.setLoginpwd(pwd);
     	login.setType(entity.getOrgtype());// 1 机构 2 客户
     	login.setTelno(entity.getTelno());//同步手机号
@@ -504,14 +504,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		if(user.getType() > 0) {
 			String userno = user.getUserno();
 			BigDecimal enableSelf = userMapper.findEnableSelf(userno);
+			if(enableSelf == null) {
+				enableSelf = new BigDecimal(0);
+			}
 			Map<String,Object> paraMap = new HashMap<String, Object>();
-			paraMap.put(user.getQueryNo(), userno);
+			paraMap.put("parentno", userno);
 			Map<String, Object> data = userMapper.findUseMoney(paraMap);
+			BigDecimal used = new BigDecimal(0);
 			if(data != null) {
-				BigDecimal used = new BigDecimal(data.get("enable").toString());
-				log.info("校验可用额度：【{}】：{}-{}",userno,enableSelf,used);
+				used = new BigDecimal(data.get("enable").toString());
 				enableSelf = enableSelf.subtract(used);
 			}
+			log.info("校验可用额度：【{}】：{}-{}",userno,enableSelf,used);
 			return enableSelf;
 		}else {
 			return new BigDecimal(1);

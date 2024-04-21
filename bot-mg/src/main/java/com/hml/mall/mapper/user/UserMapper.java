@@ -65,14 +65,14 @@ public interface UserMapper extends BaseMapper<User> {
 	
 	List<Map<String,Object>> findOrgNumByUser(Map<String,Object> paraMap);
 	
-	@Select("select COALESCE(t3.ENABLE,0) as ENABLE from ( "
+	@Select("select COALESCE(t3.ALLQUITY,0) as ENABLE from ( "
 			+ "SELECT USERNO, max( FDATE ) AS FDATE FROM tb_zj_usermoney GROUP BY USERNO "
 			+ ") t2 "
 			+ "LEFT JOIN tb_zj_usermoney t3 ON t2.FDATE = t3.FDATE and t2.userno = t3.userno "
 			+ "where t2.userno =#{userno} ")
 	BigDecimal findEnableSelf(@Param("userno")String userno);
 	
-	 
+	
 	Map<String,Object> findUseMoney(Map<String,Object> paraMap);
 }
 

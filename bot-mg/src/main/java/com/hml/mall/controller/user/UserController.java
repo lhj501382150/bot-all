@@ -78,10 +78,12 @@ public class UserController {
 	   	   			 return HttpResult.error("暂无权限执行此操作");
 	   	   		 }
 	   	   		 
-	   	   		 BigDecimal money = userService.checkMoney();
+	   	   		 BigDecimal leftmoney = userService.checkMoney();
+	   	   		 BigDecimal money = leftmoney.subtract(model.getChmoney());
 	   	   		 if(money.doubleValue() < 0) {
-	   	   			 return HttpResult.error("可支配额度不足");
+	   	   			 return HttpResult.error("可支配额度不足,当前剩余额度:" + leftmoney);
 	   	   		 }
+	   	   		 
         	}
         	
         	model.setAcctno("100");
