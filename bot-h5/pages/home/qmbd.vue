@@ -30,10 +30,22 @@
 		</view>
 		<view class="game-box">
 			<view class="g-b-1">
-				<view class="game-box-1" :class="items[0].check ? 'active':''" @click="chooseItem(items[0])">{{items[0].name}}</view>
-				<view class="game-box-2" :class="items[1].check ? 'active':''" @click="chooseItem(items[1])">{{items[1].name}}</view>
-				<view class="game-box-2" :class="items[2].check ? 'active':''" @click="chooseItem(items[2])">{{items[2].name}}</view>
-				<view class="game-box-1" :class="items[3].check ? 'active':''" @click="chooseItem(items[3])">{{items[3].name}}</view>
+				<view class="game-box-1" :class="items[0].check ? 'active':''" @click="chooseItem(items[0])">
+					<view>{{items[0].name}} </view>
+					<view>{{items[0].rate}}</view>
+				</view>
+				<view class="game-box-2" :class="items[1].check ? 'active':''" @click="chooseItem(items[1])">
+					<view>{{items[1].name}} </view>
+					<view>{{items[1].rate}}</view>
+				</view>
+				<view class="game-box-2" :class="items[2].check ? 'active':''" @click="chooseItem(items[2])">
+					<view>{{items[2].name}} </view>
+					<view>{{items[2].rate}}</view>
+				</view>
+				<view class="game-box-1" :class="items[3].check ? 'active':''" @click="chooseItem(items[3])">
+					<view>{{items[3].name}} </view>
+					<view>{{items[3].rate}}</view>
+				</view>
 			</view>
 			<view class="g-b-2">
 				<view class="game-box-3" :class="items[4].check ? 'active':''" @click="chooseItem(items[4])">{{items[4].name}}</view>
@@ -113,6 +125,11 @@
 			</view>
 		</view>
 		
+		<uni-popup ref="errPopup" type="dialog">
+			<uni-popup-dialog mode="base" :duration="2000" :before-close="true"  @close="refresh"  @confirm="refresh">
+			{{errMsg}}
+			</uni-popup-dialog>
+		</uni-popup>
 		<uni-popup ref="popup" type="dialog">
 			<uni-popup-dialog mode="base" :duration="2000" :before-close="true" @close="close" @confirm="confirm">
 			共选择了{{formData.selected.length}}注，共计{{formData.money * formData.selected.length}}元
@@ -153,30 +170,30 @@
 				fptime:0,
 				kjtime:0,
 				items:[
-					{index:'1',name:'虎入角',rate:1,check:false},
-					{index:'2',name:'入正念虎',rate:1,check:false},
-					{index:'3',name:'入正念龙',rate:1,check:false},
-					{index:'4',name:'龙入角',rate:1,check:false},
-					{index:'5',name:'虎正念入',rate:1,check:false},
-					{index:'6',name:'虎同',rate:1,check:false},
-					{index:'7',name:'入同',rate:1,check:false},
-					{index:'8',name:'入串',rate:1,check:false},
-					{index:'9',name:'龙同',rate:1,check:false},
-					{index:'10',name:'龙正念入',rate:1,check:false},
-					{index:'11',name:'虎正念出',rate:1,check:false},
-					{index:'12',name:'虎串',rate:1,check:false},
-					{index:'13',name:'出同',rate:1,check:false},
-					{index:'14',name:'出串',rate:1,check:false},
-					{index:'15',name:'龙串',rate:1,check:false},
-					{index:'16',name:'龙正念出',rate:1,check:false},
-					{index:'17',name:'虎出角',rate:1,check:false},
-					{index:'18',name:'出正念虎',rate:1,check:false},
-					{index:'19',name:'出正念龙',rate:1,check:false},
-					{index:'20',name:'龙出角',rate:1,check:false},
-					{index:'21',name:'入古',rate:3,check:false},
-					{index:'22',name:'龙古',rate:3,check:false},
-					{index:'23',name:'出古',rate:3,check:false},
-					{index:'24',name:'虎古',rate:3,check:false}
+					{index:'1',name:'虎入角',rate:1.97,rate1:0,check:false},
+					{index:'2',name:'入正念虎',rate:2.94,rate1:1,check:false},
+					{index:'3',name:'入正念龙',rate:2.94,rate1:1,check:false},
+					{index:'4',name:'龙入角',rate:1.97,rate1:0,check:false},
+					{index:'5',name:'虎正念入',rate:2.94,rate1:1,check:false},
+					{index:'6',name:'虎同',rate:2.94,rate1:1,check:false},
+					{index:'7',name:'入同',rate:2.94,rate1:1,check:false},
+					{index:'8',name:'入串',rate:1.97,rate1:0,check:false},
+					{index:'9',name:'龙同',rate:2.94,rate1:1,check:false},
+					{index:'10',name:'龙正念入',rate:2.94,rate1:1,check:false},
+					{index:'11',name:'虎正念出',rate:2.94,rate1:1,check:false},
+					{index:'12',name:'虎串',rate:1.97,rate1:0,check:false},
+					{index:'13',name:'出同',rate:2.94,rate1:1,check:false},
+					{index:'14',name:'出串',rate:1.97,rate1:0,check:false},
+					{index:'15',name:'龙串',rate:1.97,rate1:0,check:false},
+					{index:'16',name:'龙正念出',rate:2.94,rate1:1,check:false},
+					{index:'17',name:'虎出角',rate:1.97,rate1:0,check:false},
+					{index:'18',name:'出正念虎',rate:2.94,rate1:1,check:false},
+					{index:'19',name:'出正念龙',rate:2.94,rate1:1,check:false},
+					{index:'20',name:'龙出角',rate:1.97,rate1:0,check:false},
+					{index:'21',name:'入古',rate:3.91,rate1:0,check:false},
+					{index:'22',name:'龙古',rate:3.91,rate1:0,check:false},
+					{index:'23',name:'出古',rate:3.91,rate1:0,check:false},
+					{index:'24',name:'虎古',rate:3.91,rate1:0,check:false}
 				],
 				formData:{
 					money:'',
@@ -202,7 +219,8 @@
 					{val:3,name:'出'},
 					{val:4,name:'虎'}
 				],
-				orgtype:''
+				orgtype:'',
+				errMsg:''
 			}
 		},
 		onLoad() {
@@ -211,7 +229,6 @@
 			this.connectSocketInit()
 			let user = JSON.parse(uni.getStorageSync('userinfo'))
 			this.orgtype = user.orgtype
-			console.log(this.orgtype,'------------')
 		},
 		beforeDestroy() {
 			this.closeSocket()
@@ -260,7 +277,6 @@
 						console.log("websocket连接成功");
 					},
 				});
-				console.log(this.socketTask,'-------------')
 				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
 				this.socketTask.onOpen((res) => {
 					console.log("WebSocket连接正常打开中...！");
@@ -354,6 +370,10 @@
 			close(){
 				this.$refs.popup.close()
 			},
+			refresh(){
+				this.$refs.errPopup.close()
+				window.location.reload()
+			},
 			confirm() {
 				this.close()
 				let orders = this.formData.selected.map(item=>{
@@ -381,6 +401,9 @@
 							title:'下注成功',
 							icon:'success'
 						})
+					}else if(res.iCode == -100){
+						 this.errMsg = res.sMsg
+						 this.$refs.errPopup.open()
 					}
 				}))
 				
@@ -424,7 +447,8 @@
 				})
 			},
 			goUrl(){
-				window.location.href = this.link.src
+				// window.location.href = this.link.src
+				window.open(this.link.src,'_blank')
 			},
 			goBack(){
 				uni.switchTab({
@@ -469,6 +493,7 @@
 		height: 80upx;
 		padding: 20upx;
 		border-bottom: 2upx solid #e2e2e2;
+		margin:0 auto;
 		.draw-time{
 			width: 33%;
 			text-align: center;
@@ -549,12 +574,12 @@
 	.game-box{
 		width: 724upx;
 		height: 724upx;
-		margin: 15upx;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		position: relative;
 		background-color: #eee;
+		margin:15upx auto;
 		.g-b-1{
 			display: flex;
 			justify-content: space-between;
@@ -563,6 +588,7 @@
 				width: 124upx;
 				height: 124upx;
 				display: flex;
+				flex-direction: column;
 				align-items: center;
 				justify-content: center;
 			}
@@ -572,6 +598,7 @@
 				height: 124upx;
 				display: flex;
 				align-items: center;
+				flex-direction: column;
 				justify-content: center;
 			}
 		}
@@ -766,6 +793,7 @@
 		width: 670upx;
 		border-top: 10upx solid #e2e2e2;
 		padding: 40upx;
+		margin: 0 auto;
 		::v-deep .uni-easyinput__content{
 			height: 100upx;
 			font-size: 30upx;

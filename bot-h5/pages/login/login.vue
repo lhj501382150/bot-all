@@ -3,7 +3,7 @@
 		<uni-nav-bar  title="登录" background-color="rgb(40,148,255)" color="#fff" :border="false" right-text="客服" @clickRight="goWeb"></uni-nav-bar>
 		<view class="content">
 			<view class="title">
-				全民宝斗
+				四方通宝
 			</view>
 			<view class="form">
 				<uni-forms ref="form" :modelValue="formData" :rules="rules" >
