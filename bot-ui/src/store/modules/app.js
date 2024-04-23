@@ -1,6 +1,6 @@
 export default {
     state: {
-        appName: "四方宝斗管理",  // 应用名称
+        appName: "四方通宝管理",  // 应用名称
         themeColor: "#113D87",  // 主题颜色#
         oldThemeColor: "#0F9AF1",   // 上一次主题颜色
         collapse:false,  // 导航栏收缩状态
