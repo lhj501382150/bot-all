@@ -10,47 +10,70 @@
 				{{item.name}}
 			</view>
 		</view>
-		<view class="row">
-			<button class="add-btn" @click="open" size="mini" v-if="tabIndex == 99 || tabIndex==userinfo.clevel + 1">新建{{getStatus(tabIndex)}}</button>
+		<view class="row" v-if="tabIndex == 99 || tabIndex==userinfo.clevel + 1">
+			<button class="add-btn" @click="open" size="mini">新建{{getStatus(tabIndex)}}</button>
 		</view>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 80%;"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
-			<view class="record-list" v-if="tabIndex < 99">
-				 <view class="record-item" v-for="(item,index) in records" :key="index" @click="showDetail(item)">
-					  <view class="head">
-						  {{item.title}}
+			<view class="record-list">
+				 <view class="record-item" v-for="(item,index) in records" :key="index">
+					  <view class="user-info">
+					  	<view class="left">
+					  		<image src="../../static/images/user/tou.png" mode="scaleToFill"></image>
+					  		<view class="user-name">
+					  			<view class="row-item">用户ID：{{item.userno}}</view>
+					  			<view class="row-item">昵称：{{item.nickname}}</view>
+					  			<view class="row-item" v-if="item.orgtype==2">普通会员</view>
+								<view class="row-item" v-else>{{getStatus(tabIndex)}}</view>
+					  		</view>
+					  	</view>
+					  	<view class="right">
+					  		<view class="row-item">信用额度：{{item.enable}}</view>
+					  		<button type="primary" size="mini" @click="editBalance(item)" v-if="item.parentno == userinfo.userno">修改信用额度</button>
+					  	</view>
 					  </view>
-					  <view class="time">
-						  {{item.nottime}}
+					  <view class="report-row">
+					  	<view>本周下注金额:{{item.curBail}}</view>
+					  	<view>本周盈亏:{{item.curLoss}}</view>
+					  </view>
+					  <view class="report-row">
+					  	<view>上周下注金额:{{item.curBail}}</view>
+					  	<view>上周盈亏:{{item.curLoss}}</view>
 					  </view>
 				 </view>
 			</view>
-			<view class="user-list" v-else>
-				<view class="user-item" v-for="(item,index) in records" :key="index">
-					<view class="user-info">
-						<view class="left">
-							<image src="../../static/images/user/tou.png" mode="scaleToFill"></image>
-							<view class="user-name">
-								<view class="row-item">昵称：{{item.nickname}}</view>
-								<view class="row-item">用户名：{{item.username}}</view>
-								<view class="row-item">普通会员</view>
-							</view>
-						</view>
-						<view class="right">
-							<view class="row-item">信用额度：{{item.balance}}</view>
-							<button type="primary" size="mini" @click="editBalance(item)">修改信用额度</button>
-						</view>
-					</view>
-					<view class="report-row">
-						<view>本周下注金额:</view>
-						<view>本周盈亏:</view>
-					</view>
-				</view>
-			</view>
+			 
 		</scroll-view>
 		
-		 
+		 <uni-popup ref="scorePopup" type="center" background-color="#fff">
+		 			 <view class="form">
+		 				 <view class="form-title">修改信用额度</view>
+						 <view class="form-sub-title">操作账号：{{scoreForm.userno}}</view>
+		 			 	<uni-forms ref="scoreForm" :modelValue="scoreForm" :rules="scoreFormRules" >
+		 			 		<uni-forms-item  name="type">
+		 			 			<view class="radio-box">
+									<radio-group @change="radioChange">
+										<label>
+											<radio value="1" :checked="scoreForm.type==1"/><text>上分</text>
+										</label>
+										<label>
+												<radio value="2" :checked="scoreForm.type==2"/><text>下分</text>
+										</label>
+									</radio-group>
+								</view>
+		 			 		</uni-forms-item>
+		 			 		<uni-forms-item label="分数" name="money">
+		 			 			<uni-easyinput type="number" v-model="scoreForm.money" placeholder="请输入分数"/>
+		 			 		</uni-forms-item>
+		 			 	</uni-forms>
+		 			 	 
+		 			 	<view class="form-btn">
+		 					<button class="cal-btn" size="mini" @click="closeScorePopup">取消</button>
+		 					<button class="sub-btn"  size="mini" @click="submitScore">确认</button>
+		 				</view>
+		 			 </view>
+		 </uni-popup>
 		 <uni-popup ref="popup" type="bottom" background-color="#fff">
 			 <view class="form">
 				 <view class="form-title">新建{{getStatus(tabIndex)}}</view>
@@ -110,32 +133,88 @@
 					{clevel:2,name:'股东'},
 					{clevel:3,name:'总代理'},
 					{clevel:4,name:'代理'},
-					{clevel:99,name:'会员'}
+					{clevel:99,name:'普通会员'}
 				],
 				tabIndex:4,
 				records:[],
 				search:{
+					orgtype:'',
+					userno:'',
+					clevel:'',
 					pageIdx:0,
 					pageSize:10
 				},
 				totalPage:1,
 				totalCount:0,
 				refresherTriggered:false,
-				clevelName:''
+				clevelName:'',
+				scoreForm:{
+					type:1,
+					userno:'',
+					money:''
+				},
+				scoreFormRules: {
+					 money: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入分数'}
+					 	]
+					 }
+					 
+				},
 			}
 		},
 		onLoad() {
 			this.userno = uni.getStorageSync("userno")
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
-			this.userinfo.clevel = 2
 			this.tabIndex = this.userinfo.clevel + 1
+			this.loadData()
 		},
 		methods: {
+			radioChange(value){
+				this.scoreForm.type= value
+			},
+			closeScorePopup(){
+				this.$refs.scorePopup.close()
+				this.scoreForm.userno = ''
+				this.scoreForm.type = 1
+			},
 			editBalance(item){
-				
+				this.scoreForm.userno = item.userno
+				this.$refs.scorePopup.open()
+			},
+			submitScore(){
+				this.$refs.scoreForm.validate().then(res=>{
+					const para = Object.assign({},this.scoreForm)
+					 
+					this.$http.post('/User/AddAccount',para,(res=>{
+						if(res.iCode ==0){
+							this.scoreForm.userno = ''
+							this.scoreForm.type = 1
+							this.scoreForm.money = ''
+							 uni.showToast({
+							 	title:'操作成功',
+							 	icon:'success',
+								duration:3000
+							 })
+							 this.closeScorePopup()
+						}else{
+							uni.showToast({
+								title:res.sMsg,
+								icon:'error'
+							})
+						}
+					}))
+				}).catch(err =>{
+					console.log(err);
+				})
 			},
 			findData(item){
 				this.tabIndex = item.clevel
+				this.search.pageIdx = 0
+				this.totalPage = 1
+				this.totalCount = 0
+				this.records = []
+				this.loadData()
 			},
 			scrolltolower() {
 				if (this.search.pageIdx > this.totalPage){
@@ -145,17 +224,25 @@
 			},
 			//下拉刷新
 			getRefresherrefresh(){
-				this.refresherTriggered = true
-				this.search.pageIdx = 1
+				// this.refresherTriggered = true
+				this.search.pageIdx = 0
 				this.totalPage = 1
 				this.totalCount = 0
 				this.records = []
 				this.loadData()
 			},
 			loadData(){
-				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/Notice/GetList",this.search,res => {
-					this.records = [...this.records,...res.rData]
+				this.search.userno = this.userinfo.userno
+				if(this.tabIndex == 99){
+					this.search.orgtype = 2
+					this.search.clevel = null
+				}else{
+					this.search.clevel = this.tabIndex
+					this.search.orgtype = 1
+				}
+				this.$http.post("/Query/SubFirmList",this.search,res => {
+					let datas = res.rData || []
+					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
 					if (this.search.pageIdx >= this.totalPage) {
@@ -184,6 +271,11 @@
 				this.$refs.form.validate().then(res=>{
 					const para = Object.assign({},this.formData)
 					para.tjno = this.userno
+					if(this.tabIndex == 99){
+						para.orgtype = 2
+					}else{
+						para.orgtype = 1
+					}
 					para.paypwd = md5(this.formData.userno + this.formData.paypwd)
 					this.$http.post('/User/AddAccount',para,(res=>{
 						if(res.iCode ==0){
@@ -195,7 +287,8 @@
 							 	icon:'success',
 								duration:3000
 							 })
-							 setTimeout(this.close,2000)
+							 this.getRefresherrefresh()
+							 this.close()
 						}else{
 							uni.showToast({
 								title:res.sMsg,
@@ -248,6 +341,43 @@
 			border-bottom: 5upx solid rgb(40,148,255);
 		}
 	}
+	.record-list{
+		.record-item{
+			margin-bottom:20upx;
+			padding:20upx;
+			border-bottom:5upx solid #eeeeee;
+			.user-info{
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom:10upx;
+				.left{
+					width: 60%;
+					display: flex;
+					justify-content: flex-start;
+					align-items: center;
+					image{
+						width: 100upx;
+						height: 100upx;
+					}
+					.user-name{
+						margin-left: 30upx ;
+					}
+				}
+				.right{
+					padding-right:20upx;
+				}
+			}
+			.report-row{
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-top:10upx;
+				font-size:26upx;
+			}
+		}
+		
+	}
 	.form{
 		 padding: 40upx;
 		 .form-title{
@@ -256,6 +386,17 @@
 			 text-align: center;
 			 width:100%;
 			 margin-bottom:10px;
+		 }
+		 .form-sub-title{
+			 font-size: 14px;
+			 text-align: center;
+			 width:100%;
+			 margin-bottom:10px;
+		 }
+		 .radio-box{
+			 text-align: center;
+			 width:100%;
+			 margin-top: 20upx;
 		 }
 		 .form-btn{
 			width: 100%;

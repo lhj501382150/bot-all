@@ -58,10 +58,10 @@
 			}
 		},
 		onShow() {
+			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
 			this.getUserBalance()
 			this.initMenus()
-			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
-			this.userinfo.clevel = 1
+			console.log(this.menus)
 		},
 		methods: {
 			getClevel(clevel){
