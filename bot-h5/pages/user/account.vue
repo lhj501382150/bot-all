@@ -16,7 +16,7 @@
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 80%;"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
-			<view class="record-list">
+			<view class="record-list" v-if="tabIndex < 99">
 				 <view class="record-item" v-for="(item,index) in records" :key="index" @click="showDetail(item)">
 					  <view class="head">
 						  {{item.title}}
@@ -25,6 +25,28 @@
 						  {{item.nottime}}
 					  </view>
 				 </view>
+			</view>
+			<view class="user-list" v-else>
+				<view class="user-item" v-for="(item,index) in records" :key="index">
+					<view class="user-info">
+						<view class="left">
+							<image src="../../static/images/user/tou.png" mode="scaleToFill"></image>
+							<view class="user-name">
+								<view class="row-item">昵称：{{item.nickname}}</view>
+								<view class="row-item">用户名：{{item.username}}</view>
+								<view class="row-item">普通会员</view>
+							</view>
+						</view>
+						<view class="right">
+							<view class="row-item">信用额度：{{item.balance}}</view>
+							<button type="primary" size="mini" @click="editBalance(item)">修改信用额度</button>
+						</view>
+					</view>
+					<view class="report-row">
+						<view>本周下注金额:</view>
+						<view>本周盈亏:</view>
+					</view>
+				</view>
 			</view>
 		</scroll-view>
 		
@@ -109,6 +131,9 @@
 			this.tabIndex = this.userinfo.clevel + 1
 		},
 		methods: {
+			editBalance(item){
+				
+			},
 			findData(item){
 				this.tabIndex = item.clevel
 			},
