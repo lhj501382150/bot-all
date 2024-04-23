@@ -26,7 +26,7 @@
 			return {
 				notice:'公告：每天下午2:00-2:15系统自动维护15分钟',
 				games:[
-					{name:'全民宝斗',img:'../../static/images/home/logo.png',path:'./qmbd'}
+					{name:'四方通宝',img:'../../static/images/home/logo.png',path:'./qmbd'}
 					
 				]
 			}

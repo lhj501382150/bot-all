@@ -73,14 +73,19 @@
 
 <style scoped lang="scss">
 	.content{
+		width: 100%;
+		height: 100vh;
+		 background-color: #fff;
 		.body {
-			width: 670upx;
+			min-width: 670upx;
+			max-width: 1200px;
 			padding: 40upx;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
 			 background-color: #fff;
+			 margin: 0 auto;
 			.top{
 				width: 100%;
 				height: 100upx;
@@ -132,7 +137,8 @@
 			}
 		}
 		.tips{
-			width: 670upx;
+			min-width: 670upx;
+			max-width: 1200px;
 			padding: 40upx;
 			display: flex;
 			flex-direction: column;
@@ -141,6 +147,8 @@
 			background-color: rgb(248,248,248);
 			color: rgb(102,102,102);
 			font-size: 26upx;
+			margin:0 auto;
+			margin-top: 1vh;
 			.row1,.row2,.row3{
 				margin-top: 20upx;
 			}

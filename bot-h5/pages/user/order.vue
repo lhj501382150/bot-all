@@ -1,22 +1,28 @@
 <template>
 	<view class="order">
 		<uni-nav-bar left-icon="left"  title="投注记录" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
-		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%;"
+		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
 			<view class="record-list">
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
-					  <view class="row">
-						  <view class="left">类型：{{item.artid}}</view>
-					      <view class="right">金额：{{item.bailmoney}}</view>
+					  <view class="left">
+						 <view class="row" v-if="userinfo.orgtype==1">所属账号：{{item.userno}}</view>
+						  <view class="row">下注单号：No.{{item.orderno}}</view>
+						  <view class="row">期数：{{item.contnum}}</view>
+						  <view class="row">开奖号码：{{item.artid}}</view>
+						  <view class="row">龙虎出入：{{item.artid}}</view>
+						  <view class="row">游戏：<text class="red">宝斗</text></view>
+						  <view class="row">玩法：<text class="red">{{item.artid}}</text></view>
+						  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
+						  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
+						  <view class="row">中奖金额：<text class="red">{{item.loss + item.bailmoney}}</text></view>
+						  <view class="row">下注时间：{{item.ordtime}}</view>
 					  </view>
-					  <view class="row">
-						  <view class="left">倍数：{{item.cpright}}</view>
-					      <view class="right">本局输赢：<text  :style="{color:item.loss>=0?'red':'green'}">{{item.loss}}</text></view>
-					  </view>
-					  <view class="row2">
-						  <view class="left">编号：{{item.orderno}}</view>
-					      <view class="right">时间：{{item.ordtime}}</view>
+					  <view class="right">
+						  <view class="red" v-if="item.loss < 0 ">未中奖</view>
+						  <view class="blue" v-else-if="item.loss==0">打和</view>
+						  <view class="blue" v-else>中奖</view>
 					  </view>
 				 </view>
 			</view>
@@ -36,14 +42,17 @@
 				totalPage:1,
 				totalCount:0,
 				refresherTriggered:false,
+				userinfo:{}
 			}
 		},
 		onLoad() {
+			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
 			this.records = []
 			this.loadData()
 		},
 		methods: {
 			scrolltolower() {
+				if (this.search.pageIdx > this.totalPage) return
 				this.loadData()
 			},
 			//下拉刷新
@@ -58,7 +67,8 @@
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
 				this.$http.post("/Query/GetOrderList",this.search,res => {
-					this.records = [...this.records,...res.rData]
+					let datas = res.rData || []
+					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
 					if (this.search.pageIdx >= this.totalPage) {
@@ -84,23 +94,25 @@
 	width: 750upx;
 	height: 100vh;
 	.record-list{
-		padding: 40upx;
+		padding: 20upx;
 		.record-item{
 			background-color: #fff;
 			padding: 20upx;
-			margin-bottom: 20upx;
-			.row,.row2{
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}	
-			.row{
-				font-size: 30upx;
-				padding-bottom: 20upx;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 670upx;
+			margin: 10upx auto;
+			.blue{
+				color:blue;
 			}
-			.row2{
-				font-size: 26upx;
-				color: #787878;
+			.red{
+				color:red;
+			}
+			.right{
+				font-size: 40upx;
+				font-weight: 600;
+				padding-right: 40upx;
 			}
 		}
 	}

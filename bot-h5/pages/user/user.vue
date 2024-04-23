@@ -7,8 +7,9 @@
 			</view>
 			<view class="right">
 				<view class="name">{{userinfo.nickname}}</view>
-				<view class="id">ID:{{userinfo.userno}}</view>
-				<view class="level">类型:{{userinfo.orgtype == 1 ? '代理':'普通用户'}}</view>
+				<view class="id">ID: {{userinfo.userno}}</view>
+				<view class="level" v-if="userinfo.orgtype==1">类型: {{getClevel(userinfo.clevel)}}</view>
+				<view class="level" v-else>类型: 普通会员</view>
 			</view>
 		</view>
 		<view class="user-money">
@@ -46,26 +47,53 @@
 					enable:'',
 					blance:0
 				},
-				menus:[
-					{name:'交易记录',icon:'../../static/images/user/record.png',path:'./moneyRecord'},
-					{name:'开奖公告',icon:'../../static/images/user/kjgg.png',path:'./result'},
-					{name:'代理中心',icon:'../../static/images/user/dlzx.png',path:'./account'},
-					{name:'投注记录',icon:'../../static/images/user/tzjl.png',path:'./order'},
-					{name:'平台公告',icon:'../../static/images/user/ptgg.png',path:'./notice'},
-					// {name:'报表查询',icon:'../../static/images/user/bbcx.png',path:''},
-					{name:'修改密码',icon:'../../static/images/user/pwd.png',path:'./updatePwd'},
-				]
+				menus:[],
+				clevels:[
+					{clevel:1,name:'分公司'},
+					{clevel:2,name:'股东'},
+					{clevel:3,name:'总代理'},
+					{clevel:3,name:'代理'},
+					{clevel:-1,name:'普通会员'}
+				],
 			}
 		},
-		onLoad() {
-			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
+		onShow() {
 			this.getUserBalance()
 			this.initMenus()
+			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
+			this.userinfo.clevel = 1
 		},
 		methods: {
+			getClevel(clevel){
+				if(!clevel) clevel  = -1
+				console.log(clevel)
+				let item = this.clevels.find(item => item.clevel==clevel)
+				if(item){
+					return item.name
+				}else{
+					return '普通会员'
+				}
+			},
 			initMenus(){
-				if(this.userinfo.orgtype==2){
-					this.menus.splice(2,1)
+				if(this.userinfo.orgtype==1){
+					this.menus = [
+						{name:'交易记录',icon:'../../static/images/user/record.png',path:'./moneyRecord'},
+						{name:'开奖公告',icon:'../../static/images/user/kjgg.png',path:'./result'},
+						{name:'代理中心',icon:'../../static/images/user/dlzx.png',path:'./account'},
+						{name:'投注记录',icon:'../../static/images/user/tzjl.png',path:'./order'},
+						{name:'平台公告',icon:'../../static/images/user/ptgg.png',path:'./notice'},
+						{name:'报表查询',icon:'../../static/images/user/bbcx.png',path:''},
+						{name:'修改密码',icon:'../../static/images/user/pwd.png',path:'./updatePwd'},
+					]
+				}else{
+					this.menus = [
+						{name:'交易记录',icon:'../../static/images/user/record.png',path:'./moneyRecord'},
+						{name:'开奖公告',icon:'../../static/images/user/kjgg.png',path:'./result'},
+						{name:'投注记录',icon:'../../static/images/user/tzjl.png',path:'./order'},
+						{name:'平台公告',icon:'../../static/images/user/ptgg.png',path:'./notice'},
+						{name:'报表查询',icon:'../../static/images/user/bbcx.png',path:''},
+						{name:'修改密码',icon:'../../static/images/user/pwd.png',path:'./updatePwd'},
+					]
 				}
 			},
 			/*获取系统参数*/
