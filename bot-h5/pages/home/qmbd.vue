@@ -32,80 +32,140 @@
 			<view class="g-b-1">
 				<view class="game-box-1" :class="items[0].check ? 'active':''" @click="chooseItem(items[0])">
 					<view>{{items[0].name}} </view>
-					<view>{{items[0].rate}}</view>
+					<view class="rate">{{items[0].rate}}</view>
 				</view>
 				<view class="game-box-2" :class="items[1].check ? 'active':''" @click="chooseItem(items[1])">
 					<view>{{items[1].name}} </view>
-					<view>{{items[1].rate}}</view>
+					<view class="rate">{{items[1].rate}} / {{items[1].rate1}}</view>
 				</view>
 				<view class="game-box-2" :class="items[2].check ? 'active':''" @click="chooseItem(items[2])">
 					<view>{{items[2].name}} </view>
-					<view>{{items[2].rate}}</view>
+					<view class="rate">{{items[2].rate}} / {{items[1].rate1}}</view>
 				</view>
 				<view class="game-box-1" :class="items[3].check ? 'active':''" @click="chooseItem(items[3])">
 					<view>{{items[3].name}} </view>
-					<view>{{items[3].rate}}</view>
+					<view class="rate">{{items[3].rate}}</view>
 				</view>
 			</view>
 			<view class="g-b-2">
-				<view class="game-box-3" :class="items[4].check ? 'active':''" @click="chooseItem(items[4])">{{items[4].name}}</view>
+				<view class="game-box-3" :class="items[4].check ? 'active':''" @click="chooseItem(items[4])">
+					<view>{{items[4].name}}</view>
+					<view class="rate">{{items[4].rate}} / {{items[4].rate1}}</view>
+				</view>
 				<view class="game-box-4">
 					<view class="game-box-4-1" :class="items[5].check ? 'active':''" @click="chooseItem(items[5])">
-						<view class="text">{{items[5].name}}</view>
+						<view class="text">
+							<view>{{items[5].name}}</view>
+							<view class="rate">{{items[5].rate}}  /{{items[5].rate1}}</view>
+						</view>
 					</view>
 					<view class="game-box-4-2" :class="items[6].check ? 'active':''" @click="chooseItem(items[6])">
-						<view class="text">{{items[6].name}}</view>
+						<view class="text">
+							<view>{{items[6].name}}</view>
+							<view class="rate">{{items[6].rate}}  / {{items[6].rate1}}</view>
+						</view>
 					</view>
 				</view>
 				<view class="game-box-5">
 					<view class="game-box-5-1" :class="items[7].check ? 'active':''" @click="chooseItem(items[7])">
-						<view class="text">{{items[7].name}}</view>
+						<view class="text">
+							<view>{{items[7].name}}</view>
+							<view class="rate">{{items[7].rate}}</view>
+						</view>
 					</view>
 					<view class="game-box-5-2" :class="items[8].check ? 'active':''" @click="chooseItem(items[8])">
-						<view class="text">{{items[8].name}}</view>
+						<view class="text">
+							<view>{{items[8].name}}</view>
+							<view class="rate">{{items[8].rate}} / {{items[8].rate1}}</view>
+						</view>
 					</view>
 				</view>
-				<view class="game-box-3" :class="items[9].check ? 'active':''" @click="chooseItem(items[9])">{{items[9].name}}</view>
+				<view class="game-box-3" :class="items[9].check ? 'active':''" @click="chooseItem(items[9])">
+					<view>{{items[9].name}}</view>
+					<view class="rate">{{items[9].rate}} / {{items[9].rate1}}</view>
+				</view>
 			</view>
 			<view class="g-b-2">
-				<view class="game-box-3" :class="items[10].check ? 'active':''" @click="chooseItem(items[10])">{{items[10].name}}</view>
+				<view class="game-box-3" :class="items[10].check ? 'active':''" @click="chooseItem(items[10])">
+					<view>{{items[10].name}}</view>
+					<view class="rate">{{items[10].rate}} / {{items[10].rate1}}</view>
+				</view>
 				<view class="game-box-5">
 					<view class="game-box-5-1" :class="items[11].check ? 'active':''" @click="chooseItem(items[11])">
-						<view class="text">{{items[11].name}}</view>
+						<view class="text">
+							<view>{{items[11].name}}</view>
+							<view class="rate">{{items[11].rate}}</view>
+						</view>
 					</view>
 					<view class="game-box-5-2" :class="items[12].check ? 'active':''" @click="chooseItem(items[12])">
-						<view class="text">{{items[12].name}}</view>
+						<view class="text">
+							<view>{{items[12].name}}</view>
+							<view class="rate">{{items[12].rate}} / {{items[12].rate1}}</view>
+						</view>
 					</view>
 				</view>
 				<view class="game-box-4">
 					<view class="game-box-4-1" :class="items[13].check ? 'active':''" @click="chooseItem(items[13])">
-						<view class="text">{{items[13].name}}</view>
+						<view class="text">
+							<view>{{items[13].name}}</view>
+							<view class="rate">{{items[13].rate}}</view>
+						</view>
 					</view>
 					<view class="game-box-4-2" :class="items[14].check ? 'active':''" @click="chooseItem(items[14])">
-						<view class="text">{{items[14].name}}</view>
+						<view class="text">
+							<view>{{items[14].name}}</view>
+							<view class="rate">{{items[14].rate}}</view>
+						</view>
 					</view>
 				</view>
-				<view class="game-box-3" :class="items[15].check ? 'active':''" @click="chooseItem(items[15])">{{items[15].name}}</view>
+				<view class="game-box-3" :class="items[15].check ? 'active':''" @click="chooseItem(items[15])">
+					<view>{{items[15].name}}</view>
+					<view class="rate">{{items[15].rate}} / {{items[15].rate1}}</view>
+				</view>
 			</view>
 			<view class="g-b-1">
-				<view class="game-box-1" :class="items[16].check ? 'active':''" @click="chooseItem(items[16])">{{items[16].name}}</view>
-				<view class="game-box-2" :class="items[17].check ? 'active':''" @click="chooseItem(items[17])">{{items[17].name}}</view>
-				<view class="game-box-2" :class="items[18].check ? 'active':''" @click="chooseItem(items[18])">{{items[18].name}}</view>
-				<view class="game-box-1" :class="items[19].check ? 'active':''" @click="chooseItem(items[19])">{{items[19].name}}</view>
+				<view class="game-box-1" :class="items[16].check ? 'active':''" @click="chooseItem(items[16])">
+					<view>{{items[16].name}}</view>
+					<view class="rate">{{items[16].rate}}</view>
+				</view>
+				<view class="game-box-2" :class="items[17].check ? 'active':''" @click="chooseItem(items[17])">
+					<view>{{items[17].name}}</view>
+					<view class="rate">{{items[17].rate}} / {{items[17].rate1}}</view>
+				</view>
+				<view class="game-box-2" :class="items[18].check ? 'active':''" @click="chooseItem(items[18])">
+					<view>{{items[18].name}}</view>
+					<view class="rate">{{items[18].rate}} / {{items[18].rate1}}</view>
+				</view>
+				<view class="game-box-1" :class="items[19].check ? 'active':''" @click="chooseItem(items[19])">
+					<view>{{items[19].name}}</view>
+					<view class="rate">{{items[19].rate}}</view>
+				</view>
 			</view>
 			<view class="g-b-6">
 				<view class="g-b-6-v">
 					<view class="g-b-6-1" :class="items[20].check ? 'active':''" @click="chooseItem(items[20])">
-						<view class="text">{{items[20].name}}</view>
+						<view class="text">
+							<view>{{items[20].name}}</view>
+							<view class="rate">{{items[20].rate}}</view>
+						</view>
 					</view>
 					<view class="g-b-6-2" :class="items[21].check ? 'active':''" @click="chooseItem(items[21])">
-						<view class="text">{{items[21].name}}</view>
+						<view class="text">
+							<view>{{items[21].name}}</view>
+							<view class="rate">{{items[21].rate}}</view>
+						</view>
 					</view>
 					<view class="g-b-6-3" :class="items[22].check ? 'active':''" @click="chooseItem(items[22])">
-						<view class="text">{{items[22].name}}</view>
+						<view class="text">
+							<view>{{items[22].name}}</view>
+							<view class="rate">{{items[22].rate}}</view>
+						</view>
 					</view>
 					<view class="g-b-6-4" :class="items[23].check ? 'active':''" @click="chooseItem(items[23])">
-						<view class="text">{{items[23].name}}</view>
+						<view class="text">
+							<view>{{items[23].name}}</view>
+							<view class="rate">{{items[23].rate}}</view>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -580,6 +640,9 @@
 		position: relative;
 		background-color: #eee;
 		margin:15upx auto;
+		.rate{
+			font-size: 24upx;
+		}
 		.g-b-1{
 			display: flex;
 			justify-content: space-between;
@@ -610,6 +673,7 @@
 				width: 124upx;
 				height: 234upx;
 				display: flex;
+				flex-direction: column;
 				align-items: center;
 				justify-content: center;
 			}
@@ -631,8 +695,8 @@
 					align-items: center;
 					.text{
 						transform: rotate(-45deg);
-						margin-top: -130upx;
-						margin-left: -44upx;
+						margin-top: -122upx;
+						margin-left: -10upx;
 					}
 				}
 				.game-box-4-2{
@@ -688,8 +752,8 @@
 					align-items: center;
 					.text{
 						transform: rotate(-135deg);
-						margin-left: -20upx;
-						margin-top: 130upx;
+						margin-left: 0upx;
+						margin-top: 100upx;
 					}
 					
 				}
@@ -720,7 +784,7 @@
 					align-items: center;
 					.text{
 						transform: rotate(-135deg);
-						margin: -260upx -208upx -114upx 82upx;
+						margin: -280upx -170upx -114upx 82upx;
 					}
 				}
 				.g-b-6-2{
@@ -752,7 +816,7 @@
 					align-items: center;
 					.text{
 						transform: rotate(135deg);
-						margin: 160upx -300upx 0upx 0upx;
+						margin: 150upx -260upx 0upx 0upx;
 					}
 				}
 				.g-b-6-4{
