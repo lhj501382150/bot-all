@@ -1,39 +1,47 @@
 <template>
 	<view class="order">
 		<uni-nav-bar left-icon="left"  title="投注记录" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
-		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%;"
+		<view class="search-date" v-if="fdate">查询日期：{{fdate}}</view>
+		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
 			<view class="record-list">
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
-					  <view class="row">
-						  <view class="left">类型：{{item.artid}}</view>
-					      <view class="right">金额：{{item.bailmoney}}</view>
+					  <view class="left">
+						 <view class="row" v-if="userinfo.orgtype==1">所属账号：{{item.userno}}</view>
+						  <view class="row">下注单号：No.{{item.orderno}}</view>
+						  <view class="row">期数：{{item.issue}}</view>
+						  <view class="row">开奖号码：<text class="row-result">{{item.result}}</text></view>
+						  <view class="row">龙虎出入：{{getStatus(item.bno)}}</view>
+						  <view class="row">游戏：<text class="red">宝斗</text></view>
+						  <view class="row">玩法：<text class="red">{{item.artid}}</text></view>
+						  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
+						  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
+						  <view class="row">中奖金额：<text class="red">{{item.loss + item.bailmoney}}</text></view>
+						  <view class="row">下注时间：{{item.ordtime}}</view>
 					  </view>
-					  <view class="row">
-						  <view class="left">倍数：{{item.cpright}}</view>
-					      <view class="right">本局输赢：<text  :style="{color:item.loss>=0?'red':'green'}">{{item.loss}}</text></view>
-					  </view>
-					  <view class="row2">
-						  <view class="left">编号：{{item.orderno}}</view>
-					      <view class="right">时间：{{item.ordtime}}</view>
+					  <view class="right">
+						  <view class="red" v-if="item.loss < 0 ">未中奖</view>
+						  <view class="blue" v-else-if="item.loss==0">打和</view>
+						  <view class="blue" v-else>中奖</view>
 					  </view>
 				 </view>
 			</view>
 		</scroll-view>
-		<sys-status></sys-status>
 	</view>
 </template>
 
 <script>
-	import SysStatus from '../../components/sys-status/sys-status.vue'
 	export default {
-		components:{
-			SysStatus
-		},
 		data() {
 			return {
 				records:[],
+				statusList:[
+					{val:1,name:'入'},
+					{val:2,name:'龙'},
+					{val:3,name:'出'},
+					{val:4,name:'虎'}
+				],
 				search:{
 					pageIdx:0,
 					pageSize:10
@@ -41,33 +49,60 @@
 				totalPage:1,
 				totalCount:0,
 				refresherTriggered:false,
+				userinfo:{},
+				orgtype:'',
+				userno:'',
+				fdate:''
 			}
 		},
-		onShow() {
+		onLoad(option) {
+			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
+			this.orgtype = option.orgtype || this.userinfo.orgtype
+			this.userno = option.userno || this.userinfo.userno
+			this.fdate = option.fdate
 			this.records = []
-			this.search={
-				pageIdx:0,
-				pageSize:10
-			}
+			// this.loadData()
+		},
+		onShow(){
+			this.records = []
+			this.search.pageIdx = 0
+			this.totalPage = 1
+			this.totalCount = 0
 			this.loadData()
+		},
+		destroyed() {
+			this.records = []
+			this.orgtype = ''
+			this.userno = ''
+			this.fdate = ''
 		},
 		methods: {
 			scrolltolower() {
+				console.log(this.records.length,this.totalCount)
+				if (this.records.length >= this.totalCount) return
 				this.loadData()
 			},
 			//下拉刷新
 			getRefresherrefresh(){
 				this.refresherTriggered = true
-				this.search.pageIdx = 1
+				this.search.pageIdx = 0
 				this.totalPage = 1
 				this.totalCount = 0
 				this.records = []
 				this.loadData()
 			},
 			loadData(){
-				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/Query/GetOrderList",this.search,res => {
-					this.records = [...this.records,...res.rData]
+				let url = ''
+				if(this.orgtype==1){
+					url = '/Query/SubOrdList'
+					this.search.fdate = this.fdate
+				}else{
+					url = '/Query/GetOrderList'
+				}
+				this.search.userno = this.userno
+				this.$http.post(url,this.search,res => {
+					let datas = res.rData || []
+					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
 					if (this.search.pageIdx >= this.totalPage) {
@@ -75,7 +110,6 @@
 					} else {
 						this.search.pageIdx = this.search.pageIdx + 1
 					}
-						
 					this.refresherTriggered = false
 				})
 			},
@@ -83,6 +117,10 @@
 				uni.navigateTo({
 					url:'/pages/home/qmbd'
 				})
+			},
+			getStatus(status){
+				const item = this.statusList.find(item=> item.val==status) || {}
+				return item.name
 			}
 		}
 	}
@@ -92,24 +130,31 @@
 .order{
 	width: 750upx;
 	height: 100vh;
+	.search-date{
+		padding: 20upx;
+	}
 	.record-list{
-		padding: 40upx;
 		.record-item{
 			background-color: #fff;
 			padding: 20upx;
-			margin-bottom: 20upx;
-			.row,.row2{
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}	
-			.row{
-				font-size: 30upx;
-				padding-bottom: 20upx;
-			}
-			.row2{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 670upx;
+			margin: 10upx auto;
+			.row-result{
 				font-size: 26upx;
-				color: #787878;
+			}
+			.blue{
+				color:blue;
+			}
+			.red{
+				color:red;
+			}
+			.right{
+				font-size: 40upx;
+				font-weight: 600;
+				padding-right: 40upx;
 			}
 		}
 	}

@@ -78,7 +78,7 @@
 			//下拉刷新
 			getRefresherrefresh(){
 				this.refresherTriggered = true
-				this.search.pageIdx = 1
+				this.search.pageIdx = 0
 				this.totalPage = 1
 				this.totalCount = 0
 				this.records = []
