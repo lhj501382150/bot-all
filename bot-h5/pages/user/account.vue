@@ -366,6 +366,9 @@
 				}
 				.right{
 					padding-right:20upx;
+					.row-item{
+						margin-bottom:20upx;
+					}
 				}
 			}
 			.report-row{
@@ -374,6 +377,7 @@
 				align-items: center;
 				margin-top:10upx;
 				font-size:26upx;
+				padding: 5upx 20upx 0upx 20upx;
 			}
 		}
 		

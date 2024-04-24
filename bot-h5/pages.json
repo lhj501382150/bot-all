@@ -109,6 +109,14 @@
 			{
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/user/report",
+			"style" : 
+			{
+				"enablePullDownRefresh" : false,
+				"navigationStyle":"custom"
+			}
 		}
 	],
 	"tabBar": {

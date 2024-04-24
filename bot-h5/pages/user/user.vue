@@ -61,12 +61,10 @@
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
 			this.getUserBalance()
 			this.initMenus()
-			console.log(this.menus)
 		},
 		methods: {
 			getClevel(clevel){
 				if(!clevel) clevel  = -1
-				console.log(clevel)
 				let item = this.clevels.find(item => item.clevel==clevel)
 				if(item){
 					return item.name
@@ -82,7 +80,7 @@
 						{name:'代理中心',icon:'../../static/images/user/dlzx.png',path:'./account'},
 						{name:'投注记录',icon:'../../static/images/user/tzjl.png',path:'./order'},
 						{name:'平台公告',icon:'../../static/images/user/ptgg.png',path:'./notice'},
-						{name:'报表查询',icon:'../../static/images/user/bbcx.png',path:''},
+						{name:'报表查询',icon:'../../static/images/user/bbcx.png',path:'./report'},
 						{name:'修改密码',icon:'../../static/images/user/pwd.png',path:'./updatePwd'},
 					]
 				}else{
@@ -91,7 +89,7 @@
 						{name:'开奖公告',icon:'../../static/images/user/kjgg.png',path:'./result'},
 						{name:'投注记录',icon:'../../static/images/user/tzjl.png',path:'./order'},
 						{name:'平台公告',icon:'../../static/images/user/ptgg.png',path:'./notice'},
-						{name:'报表查询',icon:'../../static/images/user/bbcx.png',path:''},
+						{name:'报表查询',icon:'../../static/images/user/bbcx.png',path:'./report'},
 						{name:'修改密码',icon:'../../static/images/user/pwd.png',path:'./updatePwd'},
 					]
 				}
