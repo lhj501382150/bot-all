@@ -15,25 +15,25 @@
 				 <view class="row-col col1">日期</view>
 				 <view class="row-col col2">注数</view>
 				 <view class="row-col col3">下注金额</view>
-				 <view class="row-col col4`">有效金额</view>
+				 <view class="row-col col4">有效金额</view>
 				 <view class="row-col col5">退水</view>
 				 <view class="row-col col6">盈亏</view>
 			 </view>
 			 <view class="table-row" v-for="(item,index) in records" :key="index">
-				<view class="row-col col1">2024-01-01</view>
-				<view class="row-col col2">28</view>
-				<view class="row-col col3">1523</view>
-				<view class="row-col col4`">2500</view>
+				<view class="row-col col1">{{item.fdate}}</view>
+				<view class="row-col col2">{{item.nums}}</view>
+				<view class="row-col col3">{{item.sumBAIL}}</view>
+				<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail}}</view>
 				<view class="row-col col5">0</view>
-				<view class="row-col col6">1585200</view>
+				<view class="row-col col6">{{item.loss}}</view>
 			 </view>
 			 <view class="table-row">
-			 				<view class="row-col col1">合计</view>
-			 				<view class="row-col col2">28</view>
-			 				<view class="row-col col3">1523</view>
-			 				<view class="row-col col4`">2500</view>
-			 				<view class="row-col col5">0</view>
-			 				<view class="row-col col6">1585200</view>
+				<view class="row-col col1">合计</view>
+				<view class="row-col col2">{{sum.nums}}</view>
+				<view class="row-col col3">{{sum.sumBAIL}}</view>
+				<view class="row-col col4">{{sum.realBail}}</view>
+				<view class="row-col col5">0</view>
+				<view class="row-col col6">{{sum.loss}}</view>
 			 </view>
 		 </view>
 	</view>
@@ -58,34 +58,61 @@
 				],
 				userno:'',
 				clevel:'',
-				userinfo:{}
+				orgtype:'',
+				userinfo:{},
+				sum:{
+					nums:0,
+					sumBAIL:0,
+					realBail:0,
+					loss:0,
+					comm:0
+				}
 			}
 		},
 		onLoad(option) {
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
-			this.userno=option.userno || this.userinfo.userno
+			this.userno = option.userno || this.userinfo.userno
 			this.clevel = option.clevel || this.userinfo.clevel
-			
+			this.orgtype = option.orgtype || this.userinfo.orgtype
 			this.loadData()
 			
 		},
 		methods: {
+			showRecord(item){
+				uni.navigateTo({
+					url:'./order?userno='+this.userno + '&orgtype='+this.orgtype+'&fdate='+item.fdate
+				})
+			},
 			query(item){
 				this.tabIndex = item.val
 				this.loadData()
 			},
 			loadData(){
 				this.records = []
-				let para = {
-					
+				this.sum={
+					nums:0,
+					sumBAIL:0,
+					realBail:0,
+					loss:0,
+					comm:0
 				}
-				// this.$http.post("/Query/GetMoneyList",para,res => {
-				// 	let datas = res.rData || []
-				// 	this.records = [...this.records,...datas]
-				// })
+				let para = {
+					iType:this.tabIndex,
+					userno:this.userno
+				}
+				this.$http.post("/Query/SubSumOrdList",para,res => {
+					this.records = res.rData || []
+					this.records.forEach(item=>{
+						this.sum.nums += item.nums
+						this.sum.sumBAIL += item.sumBAIL
+						this.sum.realBail += item.realBail
+						this.sum.loss += item.loss
+						this.sum.comm += item.comm
+					})
+				})
 			},
 			getStatus(clevel){
-				if(clevel == 99){
+				if(this.orgtype == 2){
 					return '普通会员'
 				}else{
 					let item = this.tabs.find(item=>item.clevel==clevel)
@@ -161,6 +188,10 @@
 			}
 			.col4{
 				width: 120upx;
+			}
+			.link{
+				color:rgb(40,148,255);
+				cursor: pointer;
 			}
 			.col5{
 				width: 100upx;

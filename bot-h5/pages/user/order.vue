@@ -42,11 +42,17 @@
 				totalPage:1,
 				totalCount:0,
 				refresherTriggered:false,
-				userinfo:{}
+				userinfo:{},
+				orgtype:'',
+				userno:'',
+				fdate:''
 			}
 		},
-		onLoad() {
+		onLoad(option) {
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
+			this.orgtype = option.orgtype || this.userinfo.orgtype
+			this.userno = option.userno || this.userinfo.userno
+			this.fdate = option.fdate
 			this.records = []
 			this.loadData()
 		},
@@ -65,8 +71,15 @@
 				this.loadData()
 			},
 			loadData(){
-				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/Query/GetOrderList",this.search,res => {
+				let url = ''
+				if(this.orgtype==1){
+					url = '/Query/SubOrdList'
+					this.search.fdate = this.fdate
+				}else{
+					url = '/Query/GetOrderList'
+				}
+				this.search.userno = this.userno
+				this.$http.post(url,this.search,res => {
 					let datas = res.rData || []
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
