@@ -1,6 +1,7 @@
 <template>
 	<view class="order">
 		<uni-nav-bar left-icon="left"  title="投注记录" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
+		<view class="search-date" v-if="fdate">查询日期：{{fdate}}</view>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
@@ -9,9 +10,9 @@
 					  <view class="left">
 						 <view class="row" v-if="userinfo.orgtype==1">所属账号：{{item.userno}}</view>
 						  <view class="row">下注单号：No.{{item.orderno}}</view>
-						  <view class="row">期数：{{item.contnum}}</view>
-						  <view class="row">开奖号码：{{item.artid}}</view>
-						  <view class="row">龙虎出入：{{item.artid}}</view>
+						  <view class="row">期数：{{item.issue}}</view>
+						  <view class="row">开奖号码：<text class="row-result">{{item.result}}</text></view>
+						  <view class="row">龙虎出入：{{getStatus(item.bno)}}</view>
 						  <view class="row">游戏：<text class="red">宝斗</text></view>
 						  <view class="row">玩法：<text class="red">{{item.artid}}</text></view>
 						  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
@@ -35,6 +36,12 @@
 		data() {
 			return {
 				records:[],
+				statusList:[
+					{val:1,name:'入'},
+					{val:2,name:'龙'},
+					{val:3,name:'出'},
+					{val:4,name:'虎'}
+				],
 				search:{
 					pageIdx:0,
 					pageSize:10
@@ -56,10 +63,17 @@
 			this.records = []
 			this.loadData()
 		},
+		destroyed() {
+			this.records = []
+			this.orgtype = ''
+			this.userno = ''
+			this.fdate = ''
+		},
 		methods: {
 			scrolltolower() {
-				if (this.search.pageIdx > this.totalPage) return
+				if (this.records.length >= this.totalCount) return
 				this.loadData()
+				console.log('----------bottom------------')
 			},
 			//下拉刷新
 			getRefresherrefresh(){
@@ -83,20 +97,27 @@
 					let datas = res.rData || []
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
-					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
+					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
 					if (this.search.pageIdx >= this.totalPage) {
 						this.search.pageIdx = this.totalPage + 1;
 					} else {
 						this.search.pageIdx = this.search.pageIdx + 1
 					}
-						
+					console.log(this.totalPage,'--------',this.totalCount / this.search.pageSize)
 					this.refresherTriggered = false
 				})
 			},
 			goBack(){
-				uni.switchTab({
-					url:'/pages/user/user'
+				// uni.switchTab({
+				// 	url:'/pages/user/user'
+				// })
+				uni.navigateBack({
+					delta:1
 				})
+			},
+			getStatus(status){
+				const item = this.statusList.find(item=> item.val==status) || {}
+				return item.name
 			}
 		}
 	}
@@ -106,8 +127,10 @@
 .order{
 	width: 750upx;
 	height: 100vh;
-	.record-list{
+	.search-date{
 		padding: 20upx;
+	}
+	.record-list{
 		.record-item{
 			background-color: #fff;
 			padding: 20upx;
@@ -116,6 +139,9 @@
 			align-items: center;
 			width: 670upx;
 			margin: 10upx auto;
+			.row-result{
+				font-size: 26upx;
+			}
 			.blue{
 				color:blue;
 			}

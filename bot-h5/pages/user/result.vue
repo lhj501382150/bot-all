@@ -63,7 +63,7 @@
 					})
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
-					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
+					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
 					if (this.search.pageIdx >= this.totalPage) {
 						this.search.pageIdx = this.totalPage + 1;
 					} else {

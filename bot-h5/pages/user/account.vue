@@ -22,7 +22,7 @@
 					  	<view class="left">
 					  		<image src="../../static/images/user/tou.png" mode="scaleToFill"></image>
 					  		<view class="user-name">
-					  			<view class="row-item">用户ID：{{item.userno}}</view>
+					  			<view class="row-item">用户ID：<text :class="item.orgtype==1?'link':''" @click="showReport(item)">{{item.userno}}</text></view>
 					  			<view class="row-item">昵称：{{item.nickname}}</view>
 					  			<view class="row-item" v-if="item.orgtype==2">普通会员</view>
 								<view class="row-item" v-else>{{getStatus(tabIndex)}}</view>
@@ -170,6 +170,13 @@
 			this.loadData()
 		},
 		methods: {
+			showReport(item){
+				if(item.orgtype==2) return
+				let path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex
+				uni.navigateTo({
+					url:path
+				})
+			},
 			radioChange(value){
 				this.scoreForm.type= value
 			},
@@ -244,7 +251,7 @@
 					let datas = res.rData || []
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
-					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
+					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
 					if (this.search.pageIdx >= this.totalPage) {
 						this.search.pageIdx = this.totalPage + 1;
 					} else {
@@ -356,9 +363,13 @@
 					display: flex;
 					justify-content: flex-start;
 					align-items: center;
+					.link{
+						color: rgb(40,148,255);
+						cursor: pointer;
+					}
 					image{
-						width: 100upx;
-						height: 100upx;
+						width: 80upx;
+						height: 80upx;
 					}
 					.user-name{
 						margin-left: 30upx ;

@@ -7,16 +7,13 @@
 			<view class="record-list">
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
 					  <view class="row">
-						  <view class="left">{{item.ctime}}</view>
-					      <view class="right">
-							  <view class="top">金额：<text v-if="item.chmoney > 0">+</text>{{item.chmoney}}</view>
-							  <view class="bottom">变更后金额：{{item.chmoney}}</view>
-						  </view>
+						  <view class="left">流水号：{{item.wartno}}</view>
+					      <view class="right">金额：{{item.chmoney}}</view>
 					  </view>
-					  <!-- <view class="row2">
+					  <view class="row2">
 						  <view class="left">类型：{{item.subno}}</view>
 					      <view class="right">时间：{{item.ctime}}</view>
-					  </view> -->
+					  </view>
 				 </view>
 			</view>
 		</scroll-view>
@@ -57,8 +54,7 @@
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
 				this.$http.post("/Query/GetMoneyList",this.search,res => {
-					let datas = res.rData || []
-					this.records = [...this.records,...datas]
+					this.records = [...this.records,...res.rData]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? this.totalCount / this.search.pageSize : this.totalCount / this.search.pageSize + 1
 					if (this.search.pageIdx >= this.totalPage) {
@@ -93,26 +89,15 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				.left{
-					font-size: 30upx;
-				}
-				.right{
-					font-size: 26upx;
-					.top{
-						color:red;
-						text-align: right;
-						margin-bottom: 20upx;
-					}
-				}
 			}	
-			// .row{
-			// 	font-size: 30upx;
-			// 	padding-bottom: 20upx;
-			// }
-			// .row2{
-			// 	font-size: 26upx;
-			// 	color: #787878;
-			// }
+			.row{
+				font-size: 30upx;
+				padding-bottom: 20upx;
+			}
+			.row2{
+				font-size: 26upx;
+				color: #787878;
+			}
 		}
 	}
 }

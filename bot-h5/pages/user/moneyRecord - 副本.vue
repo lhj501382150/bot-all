@@ -1,17 +1,22 @@
 <template>
-	<view class="notcie">
-		<uni-nav-bar left-icon="left"  title="平台公告" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
+	<view class="money-record">
+		<uni-nav-bar left-icon="left"  title="资金明细" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%;"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
 			<view class="record-list">
-				 <view class="record-item" v-for="(item,index) in records" :key="index" @click="showDetail(item)">
-					  <view class="head">
-						  {{item.title}}
+				 <view class="record-item" v-for="(item,index) in records" :key="index">
+					  <view class="row">
+						  <view class="left">{{item.ctime}}</view>
+					      <view class="right">
+							  <view class="top">金额：<text v-if="item.chmoney > 0">+</text>{{item.chmoney}}</view>
+							 <!-- <view class="bottom">变更后金额：{{item.chmoney}}</view> -->
+						  </view>
 					  </view>
-					  <view class="time">
-						  {{item.nottime}}
-					  </view>
+					  <!-- <view class="row2">
+						  <view class="left">类型：{{item.subno}}</view>
+					      <view class="right">时间：{{item.ctime}}</view>
+					  </view> -->
 				 </view>
 			</view>
 		</scroll-view>
@@ -37,12 +42,6 @@
 			this.loadData()
 		},
 		methods: {
-			showDetail(item){
-				let no = item.noticeno
-				uni.navigateTo({
-					url:'./noticeDetail?no='+ no
-				})
-			},
 			scrolltolower() {
 				this.loadData()
 			},
@@ -57,8 +56,9 @@
 			},
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
-				this.$http.post("/Notice/GetList",this.search,res => {
-					this.records = [...this.records,...res.rData]
+				this.$http.post("/Query/GetMoneyList",this.search,res => {
+					let datas = res.rData || []
+					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
 					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
 					if (this.search.pageIdx >= this.totalPage) {
@@ -80,23 +80,39 @@
 </script>
 
 <style scoped lang="scss">
-.notcie{
+.money-record{
 	width: 750upx;
 	height: 100vh;
 	.record-list{
-		padding: 20upx;
+		padding: 40upx;
 		.record-item{
 			background-color: #fff;
 			padding: 20upx;
 			margin-bottom: 20upx;
-			.head{
-				font-size: 32upx;
-			}
-			.time{
-				margin-top: 20upx;
-				font-size: 26upx;
-				color: #787878;
-			}
+			.row,.row2{
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				.left{
+					font-size: 30upx;
+				}
+				.right{
+					font-size: 26upx;
+					.top{
+						color:red;
+						text-align: right;
+						margin-bottom: 20upx;
+					}
+				}
+			}	
+			// .row{
+			// 	font-size: 30upx;
+			// 	padding-bottom: 20upx;
+			// }
+			// .row2{
+			// 	font-size: 26upx;
+			// 	color: #787878;
+			// }
 		}
 	}
 }
