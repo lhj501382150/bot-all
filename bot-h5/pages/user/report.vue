@@ -23,7 +23,7 @@
 				<view class="row-col col1">{{item.fdate}}</view>
 				<view class="row-col col2">{{item.nums}}</view>
 				<view class="row-col col3">{{item.sumBAIL}}</view>
-				<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail}}</view>
+				<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail - item.comm}}</view>
 				<view class="row-col col5">0</view>
 				<view class="row-col col6">{{item.loss}}</view>
 			 </view>
@@ -31,7 +31,7 @@
 				<view class="row-col col1">合计</view>
 				<view class="row-col col2">{{sum.nums}}</view>
 				<view class="row-col col3">{{sum.sumBAIL}}</view>
-				<view class="row-col col4">{{sum.realBail}}</view>
+				<view class="row-col col4">{{sum.realBail - sum.comm}}</view>
 				<view class="row-col col5">0</view>
 				<view class="row-col col6">{{sum.loss}}</view>
 			 </view>
@@ -115,7 +115,7 @@
 				if(this.orgtype == 2){
 					return '普通会员'
 				}else{
-					let item = this.tabs.find(item=>item.clevel==clevel)
+					let item = this.tabs.find(item=>item.clevel==clevel) || {}
 					return item.name
 				}
 			},

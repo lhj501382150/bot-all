@@ -24,6 +24,7 @@
 </template>
 
 <script>
+	import md5 from '@/utils/md5.js'
 	export default {
 		data() {
 			return {
@@ -70,7 +71,12 @@
 						})
 						return
 					}
-					const para = Object.assign({},this.formData)
+					let para ={
+						userno: this.formData.userno,
+						oldPAYPWD:md5(this.formData.userno + this.formData.oldPAYPWD),
+						newPAYPWD:md5(this.formData.userno + this.formData.newPAYPWD),
+						newPAYPWD2:md5(this.formData.userno + this.formData.newPAYPWD2)
+					}
 					this.$http.post('/User/MdiPwd',para,(res=>{
 						if(res.iCode ==0){
 							 uni.showToast({

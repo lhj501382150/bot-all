@@ -132,7 +132,18 @@
 			},
 			//客服链接
 			goWeb(){
-				
+				let para = {
+					sysid:8
+				}
+				this.$http.post('/Query/SysPara',para,res=>{
+					  if(res.iCode==0){
+						  res = res.rData || {}
+						if(res.sval){
+							 window.open(res.sval,"_blank")
+						}
+						 
+					  }
+				})
 			}
 		}
 	}

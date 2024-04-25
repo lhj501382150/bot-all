@@ -21,25 +21,30 @@
 					  <view class="user-info">
 					  	<view class="left">
 					  		<image src="../../static/images/user/tou.png" mode="scaleToFill"></image>
-					  		<view class="user-name">
-					  			<view class="row-item">用户ID：<text :class="item.orgtype==1?'link':''" @click="showReport(item)">{{item.userno}}</text></view>
-					  			<view class="row-item">昵称：{{item.nickname}}</view>
-					  			<view class="row-item" v-if="item.orgtype==2">普通会员</view>
-								<view class="row-item" v-else>{{getStatus(tabIndex)}}</view>
-					  		</view>
 					  	</view>
 					  	<view class="right">
-					  		<view class="row-item">信用额度：{{item.enable}}</view>
-					  		<button type="primary" size="mini" @click="editBalance(item)" v-if="item.parentno == userinfo.userno">修改信用额度</button>
+							<view class="row-item">
+								<view>ID：<text class="link" @click="showReport(item)">{{item.userno}}</text></view>
+								<view>昵称：{{item.nickname}}</view>
+							</view>
+							<view class="row-item">
+								<view>信用额度：{{item.enable}}</view>
+								<view v-if="item.orgtype==2">类型：普通会员</view>
+								<view v-else>类型：{{getStatus(tabIndex)}}</view>
+							</view>
+							<view class="row-item" v-if="item.parentno == userinfo.userno">
+								<button type="primary" size="mini" @click="editBalance(item)" >修改信用额度</button>
+								<button type="warn" size="mini" @click="openPwdPopup(item)">密码重置</button>
+							</view>
 					  	</view>
 					  </view>
-					  <view class="report-row">
-					  	<view>本周下注金额:{{item.curBail}}</view>
-					  	<view>本周盈亏:{{item.curLoss}}</view>
+					  <view class="report-row" v-if="tabIndex==99">
+					  	<view>本周下注金额：{{item.curBail}}</view>
+					  	<view>本周盈亏：<text class="loss">{{item.curLoss}}</text></view>
 					  </view>
-					  <view class="report-row">
-					  	<view>上周下注金额:{{item.curBail}}</view>
-					  	<view>上周盈亏:{{item.curLoss}}</view>
+					  <view class="report-row"  v-if="tabIndex==99">
+					  	<view>上周下注金额：{{item.befBail}}</view>
+					  	<view>上周盈亏：<text class="loss">{{item.befLoss}}</text></view>
 					  </view>
 				 </view>
 			</view>
@@ -73,6 +78,25 @@
 					<button class="sub-btn"  size="mini" @click="submitScore">确认</button>
 				</view>
 			 </view>
+		 </uni-popup>
+		 <uni-popup ref="pwdPopup" type="center" background-color="#fff">
+		 			 <view class="form">
+		 				 <view class="form-title">重置密码</view>
+		 				 <view class="form-sub-title">操作账号：{{pwdForm.userId}}-{{pwdForm.userName}}</view>
+		 				<uni-forms ref="pwdForm" :modelValue="pwdForm" :rules="pwdFormRules" >
+		 					<uni-forms-item label="新密码" name="paypwd">
+		 						<uni-easyinput type="password" prefixIcon="locked" v-model="pwdForm.paypwd" placeholder="请输入新密码"/>
+		 					</uni-forms-item>
+		 					<uni-forms-item label="确认密码" name="paypwd2">
+		 						<uni-easyinput type="password" prefixIcon="locked" v-model="pwdForm.paypwd2" placeholder="请再次输入新密码"/>
+		 					</uni-forms-item>
+		 				</uni-forms>
+		 				 
+		 				<view class="form-btn">
+		 					<button class="cal-btn" size="mini" @click="closePwdPopup">取消</button>
+		 					<button class="sub-btn"  size="mini" @click="submitPwd">确认</button>
+		 				</view>
+		 			 </view>
 		 </uni-popup>
 		 <uni-popup ref="popup" type="bottom" background-color="#fff">
 			 <view class="form">
@@ -135,7 +159,7 @@
 					{clevel:4,name:'代理'},
 					{clevel:99,name:'普通会员'}
 				],
-				tabIndex:4,
+				tabIndex:0,
 				records:[],
 				search:{
 					orgtype:'',
@@ -162,6 +186,31 @@
 					 }
 					 
 				},
+				pwdForm:{
+					userId:'',
+					userName:'',
+					paypwd:'',
+					paypwd2:''
+				},
+				pwdFormRules: {
+					 paypwd: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入密码'}
+					 	]
+					 },
+					 paypwd2: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入确认密码'},
+							{validateFunction:(rule,value,data,callback)=>{
+								if (value != this.pwdForm.paypwd) {
+									callback('两次密码输入不一致')
+								}
+									return true
+								}
+							}
+					 	]
+					 }
+				},
 			}
 		},
 		onLoad() {
@@ -172,8 +221,14 @@
 		},
 		methods: {
 			showReport(item){
-				if(item.orgtype==2) return
-				let path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex
+				let path = ''
+				// if(item.orgtype==2) {
+				// 	path = './order?userno='+item.userno+'&orgtype='+item.orgtype
+				// 	return
+				// }else{
+					
+				// }
+				path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex
 				uni.navigateTo({
 					url:path
 				})
@@ -191,8 +246,46 @@
 			editBalance(item){
 				this.scoreForm.userId = item.userno
 				this.scoreForm.userName = item.nickname
-				console.log(this.scoreForm,'-----')
 				this.$refs.scorePopup.open()
+			},
+			closePwdPopup(){
+				this.$refs.pwdPopup.close()
+				this.pwdForm.userId = ''
+				this.pwdForm.userName = ''
+				this.pwdForm.paypwd = ''
+				this.pwdForm.paypwd2 = ''
+			},
+			openPwdPopup(item){
+				this.pwdForm.userId = item.userno
+				this.pwdForm.userName = item.nickname
+				this.$refs.pwdPopup.open()
+			},
+			submitPwd(){
+				this.$refs.pwdForm.validate().then(res=>{
+					let para = {
+						userno:this.pwdForm.userId,
+						newPAYPWD: md5(this.pwdForm.userId + this.pwdForm.paypwd)
+					}
+					 let url = '/User/ResetPwd'
+					this.$http.post(url,para,(res=>{
+						if(res.iCode ==0){
+							 uni.showToast({
+							 	title:'操作成功',
+							 	icon:'success',
+								duration:3000
+							 })
+							 this.closePwdPopup()
+							 // setTimeout(this.getRefresherrefresh,1000)
+						}else{
+							uni.showToast({
+								title:res.sMsg,
+								icon:'error'
+							})
+						}
+					}))
+				}).catch(err =>{
+					console.log(err);
+				})
 			},
 			submitScore(){
 				this.$refs.scoreForm.validate().then(res=>{
@@ -274,7 +367,7 @@
 				if(clevel == 99){
 					return '普通会员'
 				}else{
-					let item = this.tabs.find(item=>item.clevel==clevel)
+					let item = this.tabs.find(item=>item.clevel==clevel) || {}
 					return item.name
 				}
 			},
@@ -360,35 +453,31 @@
 	}
 	.record-list{
 		.record-item{
-			margin-bottom:20upx;
-			padding:20upx;
+			padding:20upx 20upx 10upx 20upx;
 			border-bottom:5upx solid #eeeeee;
 			.user-info{
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				margin-bottom:10upx;
+				.link{
+					color: rgb(40,148,255);
+					cursor: pointer;
+				}
 				.left{
-					width: 60%;
-					display: flex;
-					justify-content: flex-start;
-					align-items: center;
-					.link{
-						color: rgb(40,148,255);
-						cursor: pointer;
-					}
+					width:110upx;
 					image{
-						width: 80upx;
-						height: 80upx;
-					}
-					.user-name{
-						margin-left: 30upx ;
+						width: 100upx;
+						height: 100upx;
 					}
 				}
 				.right{
-					padding-right:20upx;
+					width: 600upx;
 					.row-item{
-						margin-bottom:20upx;
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						margin-bottom: 10upx;
 					}
 				}
 			}
@@ -399,6 +488,10 @@
 				margin-top:10upx;
 				font-size:26upx;
 				padding: 5upx 20upx 0upx 20upx;
+				.loss{
+					display: inline-block;
+					min-width: 100upx;
+				}
 			}
 		}
 		
