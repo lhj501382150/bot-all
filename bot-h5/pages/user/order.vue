@@ -17,7 +17,7 @@
 						  <view class="row">玩法：<text class="red">{{item.artid}}</text></view>
 						  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
 						  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
-						  <view class="row">中奖金额：<text class="red" v-if="item.bno">{{item.loss + item.bailmoney  - item.comm}}</text></view>
+						  <view class="row">中奖金额：<text class="red" v-if="item.bno">{{item.loss + item.bailmoney}}</text></view>
 						  <view class="row">下注时间：{{item.ordtime}}</view>
 					  </view>
 					  <view class="right">
