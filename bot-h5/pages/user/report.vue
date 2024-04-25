@@ -120,9 +120,14 @@
 				}
 			},
 			goBack(){
-				uni.navigateBack({
-					delta:1
-				})
+				const pages = getCurrentPages()
+				if(pages.length > 1){
+					uni.navigateBack({
+						delta:1
+					})
+				}else{
+					history.back()
+				}
 			}
 		}
 	}

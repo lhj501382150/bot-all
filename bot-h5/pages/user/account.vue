@@ -47,32 +47,32 @@
 		</scroll-view>
 		
 		 <uni-popup ref="scorePopup" type="center" background-color="#fff">
-		 			 <view class="form">
-		 				 <view class="form-title">修改信用额度</view>
-						 <view class="form-sub-title">操作账号：{{scoreForm.userno}}</view>
-		 			 	<uni-forms ref="scoreForm" :modelValue="scoreForm" :rules="scoreFormRules" >
-		 			 		<uni-forms-item  name="type">
-		 			 			<view class="radio-box">
-									<radio-group @change="radioChange">
-										<label>
-											<radio value="1" :checked="scoreForm.type==1"/><text>上分</text>
-										</label>
-										<label>
-												<radio value="2" :checked="scoreForm.type==2"/><text>下分</text>
-										</label>
-									</radio-group>
-								</view>
-		 			 		</uni-forms-item>
-		 			 		<uni-forms-item label="分数" name="money">
-		 			 			<uni-easyinput type="number" v-model="scoreForm.money" placeholder="请输入分数"/>
-		 			 		</uni-forms-item>
-		 			 	</uni-forms>
-		 			 	 
-		 			 	<view class="form-btn">
-		 					<button class="cal-btn" size="mini" @click="closeScorePopup">取消</button>
-		 					<button class="sub-btn"  size="mini" @click="submitScore">确认</button>
-		 				</view>
-		 			 </view>
+			 <view class="form">
+				 <view class="form-title">修改信用额度</view>
+				 <view class="form-sub-title">操作账号：{{scoreForm.userId}}-{{scoreForm.userName}}</view>
+				<uni-forms ref="scoreForm" :modelValue="scoreForm" :rules="scoreFormRules" >
+					<uni-forms-item  name="type">
+						<view class="radio-box">
+							<radio-group @change="radioChange">
+								<label>
+									<radio value="1" :checked="scoreForm.type==1"/><text>上分</text>
+								</label>
+								<label>
+										<radio value="2" :checked="scoreForm.type==2"/><text>下分</text>
+								</label>
+							</radio-group>
+						</view>
+					</uni-forms-item>
+					<uni-forms-item label="分数" name="money">
+						<uni-easyinput type="number" v-model="scoreForm.money" placeholder="请输入分数"/>
+					</uni-forms-item>
+				</uni-forms>
+				 
+				<view class="form-btn">
+					<button class="cal-btn" size="mini" @click="closeScorePopup">取消</button>
+					<button class="sub-btn"  size="mini" @click="submitScore">确认</button>
+				</view>
+			 </view>
 		 </uni-popup>
 		 <uni-popup ref="popup" type="bottom" background-color="#fff">
 			 <view class="form">
@@ -150,7 +150,8 @@
 				clevelName:'',
 				scoreForm:{
 					type:1,
-					userno:'',
+					userId:'',
+					userName:'',
 					money:''
 				},
 				scoreFormRules: {
@@ -182,28 +183,40 @@
 			},
 			closeScorePopup(){
 				this.$refs.scorePopup.close()
-				this.scoreForm.userno = ''
+				this.scoreForm.userId = ''
+				this.scoreForm.userName = ''
 				this.scoreForm.type = 1
+				this.scoreForm.money = ''
 			},
 			editBalance(item){
-				this.scoreForm.userno = item.userno
+				this.scoreForm.userId = item.userno
+				this.scoreForm.userName = item.nickname
+				console.log(this.scoreForm,'-----')
 				this.$refs.scorePopup.open()
 			},
 			submitScore(){
 				this.$refs.scoreForm.validate().then(res=>{
-					const para = Object.assign({},this.scoreForm)
-					 
-					this.$http.post('/User/AddAccount',para,(res=>{
+					let para = {
+						userId:this.scoreForm.userId,
+						userName: this.scoreForm.userName
+					}
+					 let url = ''
+					 if(this.scoreForm.type==1){
+						 url = '/Account/WebInMoney'
+						 para.inMoney = this.scoreForm.money
+					 }else{
+						 url = '/Account/WebOutMoney'
+						  para.outMoney = this.scoreForm.money
+					 }
+					this.$http.post(url,para,(res=>{
 						if(res.iCode ==0){
-							this.scoreForm.userno = ''
-							this.scoreForm.type = 1
-							this.scoreForm.money = ''
 							 uni.showToast({
 							 	title:'操作成功',
 							 	icon:'success',
 								duration:3000
 							 })
 							 this.closeScorePopup()
+							 setTimeout(this.getRefresherrefresh,1000)
 						}else{
 							uni.showToast({
 								title:res.sMsg,
@@ -224,9 +237,7 @@
 				this.loadData()
 			},
 			scrolltolower() {
-				if (this.search.pageIdx > this.totalPage){
-					return
-				}
+				if (this.records.length >= this.totalCount) return
 				this.loadData()
 			},
 			//下拉刷新
@@ -251,11 +262,10 @@
 					let datas = res.rData || []
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
-					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
-					if (this.search.pageIdx >= this.totalPage) {
-						this.search.pageIdx = this.totalPage + 1;
+					if (this.search.pageIdx >= this.totalCount) {
+						this.search.pageIdx = this.totalCount + 1;
 					} else {
-						this.search.pageIdx = this.search.pageIdx + 1
+						this.search.pageIdx = this.search.pageIdx + this.search.pageSize
 					}
 					this.refresherTriggered = false
 				})
@@ -394,6 +404,7 @@
 		
 	}
 	.form{
+		width:620upx;
 		 padding: 40upx;
 		 .form-title{
 			 font-size: 16px;

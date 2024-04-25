@@ -43,6 +43,7 @@
 		},
 		methods: {
 			scrolltolower() {
+				if (this.records.length >= this.totalCount) return
 				this.loadData()
 			},
 			//下拉刷新
@@ -60,11 +61,11 @@
 					let datas = res.rData || []
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
-					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
-					if (this.search.pageIdx >= this.totalPage) {
-						this.search.pageIdx = this.totalPage + 1;
+					this.totalCount = res.iCount;
+					if (this.search.pageIdx >= this.totalCount) {
+						this.search.pageIdx = this.totalCount + 1;
 					} else {
-						this.search.pageIdx = this.search.pageIdx + 1
+						this.search.pageIdx = this.search.pageIdx + this.search.pageSize
 					}
 						
 					this.refresherTriggered = false

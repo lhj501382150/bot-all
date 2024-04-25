@@ -17,13 +17,17 @@
 						  <view class="row">玩法：<text class="red">{{item.artid}}</text></view>
 						  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
 						  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
-						  <view class="row">中奖金额：<text class="red">{{item.loss + item.bailmoney}}</text></view>
+						  <view class="row">中奖金额：<text class="red" v-if="item.comm >0">{{item.loss + item.bailmoney - item.comm}}</text></view>
 						  <view class="row">下注时间：{{item.ordtime}}</view>
 					  </view>
 					  <view class="right">
-						  <view class="red" v-if="item.loss < 0 ">未中奖</view>
-						  <view class="blue" v-else-if="item.loss==0">打和</view>
-						  <view class="blue" v-else>中奖</view>
+						  <view class="red" v-if="item.comm==0">未开奖</view>
+						  <view v-else>
+							  <view class="red" v-if="item.loss < 0 ">未中奖</view>
+							  <view class="blue" v-else-if="item.loss==0">打和</view>
+							  <view class="blue" v-else>中奖</view>
+						  </view>
+						 
 					  </view>
 				 </view>
 			</view>
@@ -78,7 +82,6 @@
 		},
 		methods: {
 			scrolltolower() {
-				console.log(this.records.length,this.totalCount)
 				if (this.records.length >= this.totalCount) return
 				this.loadData()
 			},
@@ -104,11 +107,10 @@
 					let datas = res.rData || []
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
-					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
-					if (this.search.pageIdx >= this.totalPage) {
-						this.search.pageIdx = this.totalPage + 1;
+					if (this.search.pageIdx >= this.totalCount) {
+						this.search.pageIdx = this.totalCount + 1;
 					} else {
-						this.search.pageIdx = this.search.pageIdx + 1
+						this.search.pageIdx = this.search.pageIdx + this.search.pageSize
 					}
 					this.refresherTriggered = false
 				})

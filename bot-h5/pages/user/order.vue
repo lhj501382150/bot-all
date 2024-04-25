@@ -17,7 +17,7 @@
 						  <view class="row">玩法：<text class="red">{{item.artid}}</text></view>
 						  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
 						  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
-						  <view class="row">中奖金额：<text class="red">{{item.loss + item.bailmoney}}</text></view>
+						  <view class="row">中奖金额：<text class="red">{{item.loss + item.bailmoney  - item.comm}}</text></view>
 						  <view class="row">下注时间：{{item.ordtime}}</view>
 					  </view>
 					  <view class="right">
@@ -73,7 +73,6 @@
 			scrolltolower() {
 				if (this.records.length >= this.totalCount) return
 				this.loadData()
-				console.log('----------bottom------------')
 			},
 			//下拉刷新
 			getRefresherrefresh(){
@@ -97,23 +96,23 @@
 					let datas = res.rData || []
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
-					this.totalPage = this.totalCount % this.search.pageSize == 0 ? parseInt(this.totalCount / this.search.pageSize) : parseInt(this.totalCount / this.search.pageSize) + 1
-					if (this.search.pageIdx >= this.totalPage) {
-						this.search.pageIdx = this.totalPage + 1;
+					if (this.search.pageIdx >= this.totalCount) {
+						this.search.pageIdx = this.totalCount + 1;
 					} else {
-						this.search.pageIdx = this.search.pageIdx + 1
+						this.search.pageIdx = this.search.pageIdx + this.search.pageSize
 					}
-					console.log(this.totalPage,'--------',this.totalCount / this.search.pageSize)
 					this.refresherTriggered = false
 				})
 			},
 			goBack(){
-				// uni.switchTab({
-				// 	url:'/pages/user/user'
-				// })
-				uni.navigateBack({
-					delta:1
-				})
+				const pages = getCurrentPages()
+				if(pages.length > 1){
+					uni.navigateBack({
+						delta:1
+					})
+				}else{
+					history.back()
+				}
 			},
 			getStatus(status){
 				const item = this.statusList.find(item=> item.val==status) || {}
@@ -149,7 +148,7 @@
 				color:red;
 			}
 			.right{
-				font-size: 40upx;
+				font-size: 32upx;
 				font-weight: 600;
 				padding-right: 40upx;
 			}
