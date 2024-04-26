@@ -122,8 +122,8 @@
 			"path" : "pages/user/accountSub",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
-				"enablePullDownRefresh" : false
+				"enablePullDownRefresh" : false,
+				"navigationStyle":"custom"
 			}
 		}
 	],

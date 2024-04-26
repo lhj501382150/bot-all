@@ -52,13 +52,13 @@
 						<view class="btn-item" @click="openPwdPopup(item)">密码重置</view>
 					  </view>
 					  <view class="btn-row">
-					  	<view class="btn-item" @click="showSub(item)">查看下级</view>
+					  	<view class="btn-item" @click="showSub(item)" v-if="tabIndex <= 4">查看下级</view>
 						<view class="btn-item" @click="showReport(item)">报表查询</view>
 					  </view>
 					  <view class="btn-row">
-					  	<view class="btn-item" v-if="item.sex!=0">启用</view>
-						<view class="btn-item" v-if="item.sex!=1">冻结</view>
-						<view class="btn-item" v-if="item.sex!=2">停用</view>
+					  	<view class="btn-item" v-if="item.sex!=0" @click="changeStatus(item.userno,0)">启用</view>
+						<view class="btn-item" v-if="item.sex!=1" @click="changeStatus(item.userno,1)">冻结</view>
+						<view class="btn-item" v-if="item.sex!=2" @click="changeStatus(item.userno,2)">停用</view>
 					  </view>
 				 </view>
 			</view>
@@ -233,20 +233,42 @@
 				},
 			}
 		},
-		onLoad() {
-			this.userno = this.userno
-			this.curClevel = this.tabIndex
-			this.parentno = this.parentno
+		onLoad(option) {
+			this.userno = option.userno
+			this.curClevel = option.clevel
+			this.parentno = option.parentno
 			if(this.curClevel < 4){
-				this.tabIndex = this.curClevel + 1
+				this.tabIndex = parseInt(this.curClevel) + 1
 			}else{
 				this.tabIndex = 99
 			}
+			console.log(this.tabIndex)
 			this.loadData()
 		},
 		methods: {
+			changeStatus(userno,status){
+				let para = {
+					userno:userno,
+					status:status + ''
+				}
+				this.$http.post('/User/ChangeStatus',para,(res=>{
+					if(res.iCode ==0){
+						 uni.showToast({
+						 	title:'操作成功',
+						 	icon:'success',
+							duration:3000
+						 })
+						 setTimeout(this.getRefresherrefresh,1000)
+					}else{
+						uni.showToast({
+							title:res.sMsg,
+							icon:'error'
+						})
+					}
+				}))
+			},
 			showSub(item){
-				let path = './accoundSub?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex
+				let path = './accountSub?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex+'&parentno='+item.parentno
 				uni.navigateTo({
 					url:path
 				})
@@ -445,9 +467,14 @@
 				})
 			},
 			goBack(){
-				uni.switchTab({
-					url:'/pages/user/user'
-				})
+				const pages = getCurrentPages()
+				if(pages.length > 1){
+					uni.navigateBack({
+						delta:1
+					})
+				}else{
+					history.back()
+				}
 			}
 		}
 	}
@@ -459,11 +486,12 @@
 	height: 100vh;
 	background-color: #fff;
 	.row{
-		padding: 40upx;
+		padding-left: 40upx;
 		.add-btn{
 			width: 400upx;
 			background-color: rgb(40,148,255);
 			color: #fff;
+			margin-top: 20upx;
 		}
 		.text{
 			margin-top: 40upx;
