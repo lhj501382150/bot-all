@@ -27,7 +27,7 @@
 		methods: {
 			getDate(){
 				const time = Date.parse(new Date());
-				let expireTime = time + 1000 * 60 * 60 * 24 * 30
+				let expireTime = time + 1000 * 60 * 60 * 24 * 12
 				const str = encrypto(expireTime.toString(),88,16);
 				console.log(str,'--------------------')
 			},

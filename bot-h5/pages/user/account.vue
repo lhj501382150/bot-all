@@ -24,20 +24,21 @@
 					  	</view>
 					  	<view class="right">
 							<view class="row-item">
-								<view>ID：<text class="link" @click="showReport(item)">{{item.userno}}</text></view>
+								<view>ID：{{item.userno}}</view>
 								<view>昵称：{{item.nickname}}</view>
 							</view>
 							<view class="row-item">
-								<view>信用额度：{{item.enable}}</view>
-								<view v-if="item.orgtype==2">类型：普通会员</view>
+								<view>所属上级：{{item.parentno}}</view>
+								<view v-if="item.orgtype==2">类型：<text v-if="item.parentno == userinfo.userno">直属</text><text v-else>普通</text>会员</view>
 								<view v-else>类型：{{getStatus(tabIndex)}}</view>
 							</view>
-							<view class="row-item" v-if="item.parentno == userinfo.userno">
-								<button type="primary" size="mini" @click="editBalance(item)" >修改信用额度</button>
-								<button type="warn" size="mini" @click="openPwdPopup(item)">密码重置</button>
+							<view class="row-item">
+								<view>信用额度：{{item.enable}}</view>
+								<view>状态：<text :class="'sex'+item.sex">{{getSexLabel(item.sex)}}</text></view>
 							</view>
 					  	</view>
 					  </view>
+					  
 					  <view class="report-row" v-if="tabIndex==99">
 					  	<view>本周下注金额：{{item.curBail}}</view>
 					  	<view>本周盈亏：<text class="loss">{{item.curLoss}}</text></view>
@@ -45,6 +46,19 @@
 					  <view class="report-row"  v-if="tabIndex==99">
 					  	<view>上周下注金额：{{item.befBail}}</view>
 					  	<view>上周盈亏：<text class="loss">{{item.befLoss}}</text></view>
+					  </view>
+					  <view class="btn-row">
+						<view class="btn-item" @click="editBalance(item)">修改信用额度</view>
+						<view class="btn-item" @click="openPwdPopup(item)">密码重置</view>
+					  </view>
+					  <view class="btn-row">
+					  	<view class="btn-item">查看下级</view>
+						<view class="btn-item" @click="showReport(item)">报表查询</view>
+					  </view>
+					  <view class="btn-row">
+					  	<view class="btn-item" v-if="item.sex!=0">启用</view>
+						<view class="btn-item" v-if="item.sex!=1">冻结</view>
+						<view class="btn-item" v-if="item.sex!=2">停用</view>
 					  </view>
 				 </view>
 			</view>
@@ -63,7 +77,7 @@
 									<radio value="1" :checked="scoreForm.type==1"/><text>上分</text>
 								</label>
 								<label>
-										<radio value="2" :checked="scoreForm.type==2"/><text>下分</text>
+									<radio value="2" :checked="scoreForm.type==2"/><text>下分</text>
 								</label>
 							</radio-group>
 						</view>
@@ -157,7 +171,12 @@
 					{clevel:2,name:'股东'},
 					{clevel:3,name:'总代理'},
 					{clevel:4,name:'代理'},
-					{clevel:99,name:'普通会员'}
+					{clevel:99,name:'会员'}
+				],
+				sexs:[
+					{val:0,label:'正常'},
+					{val:1,label:'冻结'},
+					{val:2,label:'停用'}
 				],
 				tabIndex:0,
 				records:[],
@@ -216,19 +235,16 @@
 		onLoad() {
 			this.userno = uni.getStorageSync("userno")
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
-			this.tabIndex = this.userinfo.clevel + 1
+			if(this.userinfo.clevel<4){
+				this.tabIndex = this.userinfo.clevel + 1
+			}else{
+				this.tabIndex = 99
+			}
 			this.loadData()
 		},
 		methods: {
 			showReport(item){
-				let path = ''
-				// if(item.orgtype==2) {
-				// 	path = './order?userno='+item.userno+'&orgtype='+item.orgtype
-				// 	return
-				// }else{
-					
-				// }
-				path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex
+				let path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex
 				uni.navigateTo({
 					url:path
 				})
@@ -365,10 +381,20 @@
 			},
 			getStatus(clevel){
 				if(clevel == 99){
-					return '普通会员'
+					if(this.userinfo.clevel < 4){
+						return '直属会员'
+					}else{
+						return '普通会员'
+					}
 				}else{
 					let item = this.tabs.find(item=>item.clevel==clevel) || {}
 					return item.name
+				}
+			},
+			getSexLabel(val){
+				if(val){
+					let sex = this.sexs.find(temp=>val==temp.val) || {}
+					return sex.label
 				}
 			},
 			open() {
@@ -452,9 +478,10 @@
 		}
 	}
 	.record-list{
+		background-color: #fff;
 		.record-item{
 			padding:20upx 20upx 10upx 20upx;
-			border-bottom:5upx solid #eeeeee;
+			// border-bottom:5upx solid #eeeeee;
 			.user-info{
 				display: flex;
 				justify-content: space-between;
@@ -478,6 +505,15 @@
 						justify-content: space-between;
 						align-items: center;
 						margin-bottom: 10upx;
+						.sex0{
+							color: green;
+						}
+						.sex1{
+							color: orange;
+						}
+						.sex2{
+							color: red;
+						}
 					}
 				}
 			}
@@ -486,11 +522,26 @@
 				justify-content: space-between;
 				align-items: center;
 				margin-top:10upx;
+				margin-bottom:10upx;
 				font-size:26upx;
 				padding: 5upx 20upx 0upx 20upx;
 				.loss{
 					display: inline-block;
 					min-width: 100upx;
+				}
+			}
+			.btn-row{
+				width:100%;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				.btn-item{
+					width: 50%;
+					text-align: center;
+					border: 1px solid #eeeeee;
+					padding:20upx;
+					color:rgb(40,148,255);
+					cursor: pointer;
 				}
 			}
 		}
