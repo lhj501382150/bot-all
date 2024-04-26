@@ -52,7 +52,7 @@
 						<view class="btn-item" @click="openPwdPopup(item)">密码重置</view>
 					  </view>
 					  <view class="btn-row">
-					  	<view class="btn-item">查看下级</view>
+					  	<view class="btn-item" @click="showSub(item)">查看下级</view>
 						<view class="btn-item" @click="showReport(item)">报表查询</view>
 					  </view>
 					  <view class="btn-row">
@@ -243,6 +243,12 @@
 			this.loadData()
 		},
 		methods: {
+			showSub(item){
+				let path = './accountSub?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex+'&parentno='+item.parentno
+				uni.navigateTo({
+					url:path
+				})
+			},
 			showReport(item){
 				let path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+ this.tabIndex
 				uni.navigateTo({
