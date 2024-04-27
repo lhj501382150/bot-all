@@ -185,6 +185,7 @@
 			showRecord(item){
 				let startDate = ''
 				let endDate = ''
+				let userno = ''
 				if(this.reportType == 1){
 					startDate = item.fdate
 					endDate = item.fdate
@@ -192,8 +193,13 @@
 					startDate = this.searchForm.startDate
 					endDate = this.searchForm.endDate
 				}
+				if(item.userno){
+					userno = item.userno
+				}else{
+					userno = this.userno
+				}
 				uni.navigateTo({
-					url:'./order?userno='+this.userno + '&orgtype='+this.orgtype+'&startDate='+startDate+'&endDate='+endDate
+					url:'./order?userno='+userno + '&orgtype='+this.orgtype+'&startDate='+startDate+'&endDate='+endDate
 				})
 			},
 			query(item){
