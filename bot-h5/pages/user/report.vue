@@ -179,7 +179,7 @@
 				if(this.reportType==0){
 					this.searchUserData()
 				}else{
-					this.query(item)
+					this.query({val:0})
 				}
 			},
 			showRecord(item){
