@@ -1,7 +1,7 @@
 <template>
 	<view class="order">
 		<uni-nav-bar left-icon="left"  title="投注记录" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
-		<view class="search-date" v-if="fdate">查询日期：{{fdate}}</view>
+		<view class="search-date" v-if="startDate">查询日期：{{startDate}}-{{endDate}}</view>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
@@ -55,14 +55,16 @@
 				userinfo:{},
 				orgtype:'',
 				userno:'',
-				fdate:''
+				startDate:'',
+				endDate:''
 			}
 		},
 		onLoad(option) {
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
 			this.orgtype =  this.userinfo.orgtype
 			this.userno = option.userno || this.userinfo.userno
-			this.fdate = option.fdate
+			this.startDate = option.startDate
+			this.endDate = option.endDate
 			this.records = []
 			this.loadData()
 		},
@@ -70,7 +72,8 @@
 			this.records = []
 			this.orgtype = ''
 			this.userno = ''
-			this.fdate = ''
+			this.startDate = ''
+			this.endDate = ''
 		},
 		methods: {
 			scrolltolower() {
@@ -90,7 +93,8 @@
 				let url = ''
 				if(this.orgtype==1){
 					url = '/Query/SubOrdList'
-					this.search.fdate = this.fdate
+					this.search.startDate = this.startDate + ' 00:00:00'
+					this.search.endDate = this.endDate + ' 23:59:59'
 				}else{
 					url = '/Query/GetOrderList'
 				}

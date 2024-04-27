@@ -6,40 +6,84 @@
 			<view class="sub-type">账号：{{userno}}</view>
 		</view>
 		<view class="tabs">
-			<view class="tab-item" :class="tabIndex==item.val?'active':''" v-for="(item,index) in types" :key="index" @click="query(item)">
+			<view class="tab-item" :class="reportType==item.val?'active':''" v-for="(item,index) in reportTypes" :key="index" @click="changeType(item)">
 				{{item.name}}
 			</view>
 		</view>
-		 <view class="table-data">
-			 <view class="table-row">
-				 <view class="row-col col1">日期</view>
-				 <view class="row-col col2">注数</view>
-				 <view class="row-col col3">下注金额</view>
-				 <view class="row-col col4">有效金额</view>
-				 <view class="row-col col5">退水</view>
-				 <view class="row-col col6">盈亏</view>
+		<view class="report-user" v-if="reportType==0">
+			<uni-datetime-picker type="date" placeholder="开始日期" v-model="searchForm.startDate"/>
+			<uni-datetime-picker type="date" placeholder="结束日期" v-model="searchForm.endDate"/>
+			<button type="primary" size="mini" @click="searchUserData">查询</button>
+			<view class="table-data">
+				 <view class="table-row">
+					 <view class="row-col col1">用户</view>
+					 <view class="row-col col2">注数</view>
+					 <view class="row-col col3">下注金额</view>
+					 <view class="row-col col4">有效金额</view>
+					 <view class="row-col col5">退水</view>
+					 <view class="row-col col6">盈亏</view>
+				 </view>
+				 <view class="table-row" v-for="(item,index) in userRecord" :key="index">
+					<view class="row-col col1">
+						<text class="link"  @click="showDetail(item)" v-if="item.orgtype==1">{{item.username}}</text>
+						<text v-else>{{item.username}}</text>
+					</view>
+					<view class="row-col col2">{{item.num}}</view>
+					<view class="row-col col3">{{item.bailmoney}}</view>
+					<view class="row-col col4" v-if="item.orgtype==1">{{item.bailmoney  - item.comm}}</view>
+					<view class="row-col col4" v-else :class="item.num > 0?'link':''" @click="showRecord(item)">{{item.bailmoney - item.comm}}</view>
+					<view class="row-col col5">0</view>
+					<view class="row-col col6">{{item.loss}}</view>
+				 </view>
+				 <view class="table-row" v-if="userRecord.length > 0">
+					<view class="row-col col1">合计</view>
+					<view class="row-col col2">{{userRecordSum.num}}</view>
+					<view class="row-col col3">{{userRecordSum.bailmoney}}</view>
+					<view class="row-col col4">{{userRecordSum.bailmoney - userRecordSum.comm}}</view>
+					<view class="row-col col5">0</view>
+					<view class="row-col col6">{{userRecordSum.loss}}</view>
+				 </view>
 			 </view>
-			 <view class="table-row" v-for="(item,index) in records" :key="index">
-				<view class="row-col col1">{{item.fdate}}</view>
-				<view class="row-col col2">{{item.nums}}</view>
-				<view class="row-col col3">{{item.sumBAIL}}</view>
-				<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail - item.comm}}</view>
-				<view class="row-col col5">0</view>
-				<view class="row-col col6">{{item.loss}}</view>
+		</view>
+		<view class="report-time" v-if="reportType==1">
+			<view class="tabs">
+				<view class="tab-item" :class="tabIndex==item.val?'active':''" v-for="(item,index) in types" :key="index" @click="query(item)">
+					{{item.name}}
+				</view>
+			</view>
+			 <view class="table-data">
+				 <view class="table-row">
+					 <view class="row-col col1">日期</view>
+					 <view class="row-col col2">注数</view>
+					 <view class="row-col col3">下注金额</view>
+					 <view class="row-col col4">有效金额</view>
+					 <view class="row-col col5">退水</view>
+					 <view class="row-col col6">盈亏</view>
+				 </view>
+				 <view class="table-row" v-for="(item,index) in records" :key="index">
+					<view class="row-col col1">{{item.fdate}}</view>
+					<view class="row-col col2">{{item.nums}}</view>
+					<view class="row-col col3">{{item.sumBAIL}}</view>
+					<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail - item.comm}}</view>
+					<view class="row-col col5">0</view>
+					<view class="row-col col6">{{item.loss}}</view>
+				 </view>
+				 <view class="table-row">
+					<view class="row-col col1">合计</view>
+					<view class="row-col col2">{{sum.nums}}</view>
+					<view class="row-col col3">{{sum.sumBAIL}}</view>
+					<view class="row-col col4">{{sum.realBail - sum.comm}}</view>
+					<view class="row-col col5">0</view>
+					<view class="row-col col6">{{sum.loss}}</view>
+				 </view>
 			 </view>
-			 <view class="table-row">
-				<view class="row-col col1">合计</view>
-				<view class="row-col col2">{{sum.nums}}</view>
-				<view class="row-col col3">{{sum.sumBAIL}}</view>
-				<view class="row-col col4">{{sum.realBail - sum.comm}}</view>
-				<view class="row-col col5">0</view>
-				<view class="row-col col6">{{sum.loss}}</view>
-			 </view>
-		 </view>
+		</view>
+		
 	</view>
 </template>
 
 <script>
+	import {formatDate} from '@/utils/util.js'
 	export default {
 		data() {
 			return {
@@ -66,7 +110,25 @@
 					realBail:0,
 					loss:0,
 					comm:0
-				}
+				},
+				reportTypes:[
+					{val:0,name:'统计明细'},
+					{val:1,name:'统计汇总'}
+				],
+				reportType:0,
+				searchForm:{
+					userno:'',
+					clevel:'',
+					startDate:'',
+					endDate:'',
+				},
+				userRecord:[],
+				userRecordSum:{
+					num:0,
+					bailmoney:0,
+					loss:0,
+					comm:0
+				},
 			}
 		},
 		onLoad(option) {
@@ -74,13 +136,64 @@
 			this.userno = option.userno || this.userinfo.userno
 			this.clevel = option.clevel || this.userinfo.clevel
 			this.orgtype = option.orgtype || this.userinfo.orgtype
-			this.loadData()
-			
+			// this.loadData()
+			var time = new Date().getTime();
+			this.searchForm.endDate = formatDate(time,2)
+			this.searchForm.startDate = formatDate(time - 1000 * 60 * 60 * 24 * 7,2)
+			this.searchUserData()
 		},
 		methods: {
-			showRecord(item){
+			searchUserData(){
+				this.userRecord = []
+				this.userRecordSum = {
+					num:0,
+					bailmoney:0,
+					loss:0,
+					comm:0
+				}
+				let para = {
+					userno:this.userno,
+					clevel:parseInt(this.clevel) + 1,
+					startDate:this.searchForm.startDate + ' 00:00:00',
+					endDate:this.searchForm.endDate + ' 23:59:59'
+				}
+				this.$http.post('/Query/SubLevelSumList',para,res=>{
+					this.userRecord = res.rData || []
+					this.userRecord.forEach(item=>{
+						this.userRecordSum.num += item.num
+						this.userRecordSum.bailmoney += item.bailmoney
+						this.userRecordSum.loss += item.loss
+						this.userRecordSum.comm += item.comm
+					})
+				})
+			},
+			showDetail(item){
+				let clevel = parseInt(this.clevel) + 1
+				let path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+clevel
 				uni.navigateTo({
-					url:'./order?userno='+this.userno + '&orgtype='+this.orgtype+'&fdate='+item.fdate
+					url:path
+				})
+			},
+			changeType(item){
+				this.reportType = item.val
+				if(this.reportType==0){
+					this.searchUserData()
+				}else{
+					this.query(item)
+				}
+			},
+			showRecord(item){
+				let startDate = ''
+				let endDate = ''
+				if(this.reportType == 1){
+					startDate = item.fdate
+					endDate = item.fdate
+				}else{
+					startDate = this.searchForm.startDate
+					endDate = this.searchForm.endDate
+				}
+				uni.navigateTo({
+					url:'./order?userno='+this.userno + '&orgtype='+this.orgtype+'&startDate='+startDate+'&endDate='+endDate
 				})
 			},
 			query(item){

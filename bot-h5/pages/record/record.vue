@@ -62,12 +62,14 @@
 		onLoad(option) {
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
 			this.orgtype = this.userinfo.orgtype
-			this.userno = option.userno || this.userinfo.userno
-			this.fdate = option.fdate
+			this.userno = this.userinfo.userno
 			this.records = []
 			// this.loadData()
 		},
 		onShow(){
+			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
+			this.orgtype = this.userinfo.orgtype
+			this.userno = this.userinfo.userno
 			this.records = []
 			this.search.pageIdx = 0
 			this.totalPage = 1
