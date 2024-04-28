@@ -109,7 +109,7 @@
     </template>
     <template #clevel="scope">
         <el-tag type="danger" v-if="scope.row.orgtype==1">{{ scope.row.clevel }}</el-tag>
-        <span v-if="scope.row.orgtype==2"></span>
+        <span v-if="scope.row.orgtype==2">普通会员</span>
     </template>
 	</kt-table>
 	<!--新增编辑界面-->
@@ -130,10 +130,13 @@
           <el-option v-for="(item,index) in orgtypes" :key="index" :label="item.val" :value="item.key"></el-option>
         </el-select>
 			</el-form-item>
-      <el-form-item :label="dataForm.orgtype==2?'所属代理级别':'当前代理级别'" prop="clevel">
-        <el-input type="number" v-model="dataForm.clevel" auto-complete="off" @blur="findParent"></el-input>
+      <el-form-item :label="dataForm.orgtype==2?'所属上级类型':'当前级别'" prop="clevel">
+        <el-input type="number"  auto-complete="off" @blur="findParent"></el-input>
+        <el-select v-model="dataForm.clevel" placeholder="请选择" style="width: 98%;">
+          <el-option v-for="(item,index) in clevels" :key="index" :label="item.val" :value="item.key"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item v-if="dataForm.clevel > 1 || dataForm.orgtype==2" label="所属代理" prop="parentno">
+      <el-form-item v-if="dataForm.clevel > 1 || dataForm.orgtype==2" label="所属上级" prop="parentno">
         <el-select  v-model="dataForm.parentno" placeholder="请选择" style="width: 98%;">
           <el-option v-for="(item,index) in parentnos" :key="index" :label="item.username" :value="item.userno"></el-option>
         </el-select>
@@ -229,8 +232,14 @@ export default {
 			roles: [],
       parentnos:[],
       orgtypes:[
-        {key:1,val:'代理'},
+        {key:1,val:'非会员'},
         {key:2,val:'普通会员'}
+      ],
+      clevels:[
+        {key:1,val:'分公司'},
+        {key:2,val:'股东'},
+        {key:3,val:'总代理'},
+        {key:4,val:'代理'}
       ],
       updatePwdDialogVisible: false,
       updatePwdLoading: false,
@@ -546,8 +555,8 @@ export default {
 	initColumns: function () {
 			this.columns = [
 				{prop:"userno", label:"用户信息", width:120},
-        {prop:"orgtype", label:"类型", width:120,formatter:this.orgtypeFormat},
-        {prop:"clevel", label:"层级", width:120},
+        // {prop:"orgtype", label:"类型", width:120,formatter:this.orgtypeFormat},
+        {prop:"clevel", label:"类型", width:120},
         // {prop:"openid", label:"邀请人信息", width:120},
         {prop:"balance", label:"当前余额", width:100},
         {prop:"enable", label:"可用余额", width:100},
