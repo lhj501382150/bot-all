@@ -12,8 +12,11 @@
 				<view class="level" v-else>类型: 普通会员</view>
 			</view>
 		</view>
-		<view class="user-money">
-			账户余额：{{user.blance}}
+		<view class="user-money" v-if="userinfo.orgtype==1">
+			账户余额：{{user.allQuity}}/<text style="color: red;">{{user.useQuity}}</text>
+		</view>
+		<view v-else class="user-money">
+			账户余额：{{user.allQuity}}
 		</view>
 		
 		<view class="user-menu">
@@ -45,7 +48,9 @@
 				user:{
 					freeze:'',
 					enable:'',
-					blance:0
+					blance:0,
+					allQuity:0,
+					useQuity:0
 				},
 				menus:[],
 				clevels:[
@@ -104,6 +109,13 @@
 				})
 			},
 			getUserBalance(){
+				this.user={
+					freeze:'',
+					enable:'',
+					blance:0,
+					allQuity:0,
+					useQuity:0
+				}
 				let userno = uni.getStorageSync('userno')
 				if(!userno){
 					uni.navigateTo({
