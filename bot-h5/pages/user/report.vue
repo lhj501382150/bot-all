@@ -33,7 +33,7 @@
 					<view class="row-col col4" v-if="item.orgtype==1">{{item.bailmoney  - item.comm}}</view>
 					<view class="row-col col4" v-else :class="item.num > 0?'link':''" @click="showRecord(item)">{{item.bailmoney - item.comm}}</view>
 					<view class="row-col col5">0</view>
-					<view class="row-col col6">{{item.loss}}</view>
+					<view class="row-col col6">{{item.loss - item.comm}}</view>
 				 </view>
 				 <view class="table-row" v-if="userRecord.length > 0">
 					<view class="row-col col1">合计</view>
@@ -41,7 +41,7 @@
 					<view class="row-col col3">{{userRecordSum.bailmoney}}</view>
 					<view class="row-col col4">{{userRecordSum.bailmoney - userRecordSum.comm}}</view>
 					<view class="row-col col5">0</view>
-					<view class="row-col col6">{{userRecordSum.loss}}</view>
+					<view class="row-col col6">{{userRecordSum.loss - userRecordSum.comm}}</view>
 				 </view>
 			 </view>
 		</view>
@@ -66,7 +66,7 @@
 					<view class="row-col col3">{{item.sumBAIL}}</view>
 					<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail - item.comm}}</view>
 					<view class="row-col col5">0</view>
-					<view class="row-col col6">{{item.loss}}</view>
+					<view class="row-col col6">{{item.loss - item.comm}}</view>
 				 </view>
 				 <view class="table-row">
 					<view class="row-col col1">合计</view>
@@ -74,7 +74,7 @@
 					<view class="row-col col3">{{sum.sumBAIL}}</view>
 					<view class="row-col col4">{{sum.realBail - sum.comm}}</view>
 					<view class="row-col col5">0</view>
-					<view class="row-col col6">{{sum.loss}}</view>
+					<view class="row-col col6">{{sum.loss - sum.comm}}</view>
 				 </view>
 			 </view>
 		</view>
@@ -156,6 +156,9 @@
 					clevel:parseInt(this.clevel) + 1,
 					startDate:this.searchForm.startDate + ' 00:00:00',
 					endDate:this.searchForm.endDate + ' 23:59:59'
+				}
+				if(this.orgtype==2){
+					para.clevel = 100
 				}
 				this.$http.post('/Query/SubLevelSumList',para,res=>{
 					this.userRecord = res.rData || []

@@ -1,6 +1,6 @@
 <template>
 	<view class="qmbd-game">
-		<uni-nav-bar  title="全民宝斗" background-color="rgb(250,81,81)" color="#fff" left-icon="back" :border="false" right-text="规则" @clickLeft="goBack" @clickRight="openRule"></uni-nav-bar>
+		<uni-nav-bar  title="四方通宝" background-color="rgb(250,81,81)" color="#fff" left-icon="back" :border="false" right-text="规则" @clickLeft="goBack" @clickRight="openRule"></uni-nav-bar>
 		<view class="tab-bar">
 			<view class="tab-item" :class="tabIndex==0 ? 'active':''">宝斗</view>
 			<view class="tab-item" :class="tabIndex==1 ? 'active':''" @click="goRecord">下注记录</view>
@@ -230,30 +230,30 @@
 				fptime:0,
 				kjtime:0,
 				items:[
-					{index:'1',name:'虎入角',rate:1.97,rate1:0,check:false},
-					{index:'2',name:'入正念虎',rate:2.94,rate1:1,check:false},
-					{index:'3',name:'入正念龙',rate:2.94,rate1:1,check:false},
-					{index:'4',name:'龙入角',rate:1.97,rate1:0,check:false},
-					{index:'5',name:'虎正念入',rate:2.94,rate1:1,check:false},
-					{index:'6',name:'虎同',rate:2.94,rate1:1,check:false},
-					{index:'7',name:'入同',rate:2.94,rate1:1,check:false},
-					{index:'8',name:'入串',rate:1.97,rate1:0,check:false},
-					{index:'9',name:'龙同',rate:2.94,rate1:1,check:false},
-					{index:'10',name:'龙正念入',rate:2.94,rate1:1,check:false},
-					{index:'11',name:'虎正念出',rate:2.94,rate1:1,check:false},
-					{index:'12',name:'虎串',rate:1.97,rate1:0,check:false},
-					{index:'13',name:'出同',rate:2.94,rate1:1,check:false},
-					{index:'14',name:'出串',rate:1.97,rate1:0,check:false},
-					{index:'15',name:'龙串',rate:1.97,rate1:0,check:false},
-					{index:'16',name:'龙正念出',rate:2.94,rate1:1,check:false},
-					{index:'17',name:'虎出角',rate:1.97,rate1:0,check:false},
-					{index:'18',name:'出正念虎',rate:2.94,rate1:1,check:false},
-					{index:'19',name:'出正念龙',rate:2.94,rate1:1,check:false},
-					{index:'20',name:'龙出角',rate:1.97,rate1:0,check:false},
-					{index:'21',name:'入古',rate:3.91,rate1:0,check:false},
-					{index:'22',name:'龙古',rate:3.91,rate1:0,check:false},
-					{index:'23',name:'出古',rate:3.91,rate1:0,check:false},
-					{index:'24',name:'虎古',rate:3.91,rate1:0,check:false}
+					{index:'1',name:'虎入角',rate:1.96,rate1:0,check:false},
+					{index:'2',name:'入正念虎',rate:2.92,rate1:1,check:false},
+					{index:'3',name:'入正念龙',rate:2.92,rate1:1,check:false},
+					{index:'4',name:'龙入角',rate:1.96,rate1:0,check:false},
+					{index:'5',name:'虎正念入',rate:2.92,rate1:1,check:false},
+					{index:'6',name:'虎同',rate:2.92,rate1:1,check:false},
+					{index:'7',name:'入同',rate:2.92,rate1:1,check:false},
+					{index:'8',name:'入串',rate:1.96,rate1:0,check:false},
+					{index:'9',name:'龙同',rate:2.92,rate1:1,check:false},
+					{index:'10',name:'龙正念入',rate:2.92,rate1:1,check:false},
+					{index:'11',name:'虎正念出',rate:2.92,rate1:1,check:false},
+					{index:'12',name:'虎串',rate:1.96,rate1:0,check:false},
+					{index:'13',name:'出同',rate:2.92,rate1:1,check:false},
+					{index:'14',name:'出串',rate:1.96,rate1:0,check:false},
+					{index:'15',name:'龙串',rate:1.96,rate1:0,check:false},
+					{index:'16',name:'龙正念出',rate:2.92,rate1:1,check:false},
+					{index:'17',name:'虎出角',rate:1.96,rate1:0,check:false},
+					{index:'18',name:'出正念虎',rate:2.92,rate1:1,check:false},
+					{index:'19',name:'出正念龙',rate:2.92,rate1:1,check:false},
+					{index:'20',name:'龙出角',rate:1.96,rate1:0,check:false},
+					{index:'21',name:'入古',rate:3.88,rate1:0,check:false},
+					{index:'22',name:'龙古',rate:3.88,rate1:0,check:false},
+					{index:'23',name:'出古',rate:3.88,rate1:0,check:false},
+					{index:'24',name:'虎古',rate:3.88,rate1:0,check:false}
 				],
 				formData:{
 					money:'',

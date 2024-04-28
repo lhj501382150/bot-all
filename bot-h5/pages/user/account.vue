@@ -33,7 +33,8 @@
 								<view v-else>类型：{{getStatus(tabIndex)}}</view>
 							</view>
 							<view class="row-item">
-								<view>信用额度：{{item.enable}}</view>
+								<view v-if="item.orgtype==1">信用额度：{{item.enable}}/<text style="color:red">{{item.usequity}}</text></view>
+								<view v-else>信用额度：{{item.enable}}</view>
 								<view>状态：<text :class="'sex'+item.sex">{{getSexLabel(item.sex)}}</text></view>
 							</view>
 					  	</view>
