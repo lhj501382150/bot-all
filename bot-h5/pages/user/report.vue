@@ -31,7 +31,7 @@
 					<view class="row-col col2">{{item.num}}</view>
 					<view class="row-col col3">{{item.bailmoney}}</view>
 					<view class="row-col col4" v-if="item.orgtype==1">{{item.bailmoney  - item.comm}}</view>
-					<view class="row-col col4" v-else :class="item.num > 0?'link':''" @click="showRecord(item)">{{item.bailmoney + item.comm}}</view>
+					<view class="row-col col4" v-else :class="item.num > 0?'link':''" @click="showRecord(item)">{{item.bailmoney}}</view>
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{item.loss - item.comm}}</view>
 				 </view>
@@ -39,7 +39,7 @@
 					<view class="row-col col1">合计</view>
 					<view class="row-col col2">{{userRecordSum.num}}</view>
 					<view class="row-col col3">{{userRecordSum.bailmoney}}</view>
-					<view class="row-col col4">{{userRecordSum.bailmoney + userRecordSum.comm}}</view>
+					<view class="row-col col4">{{userRecordSum.bailmoney}}</view>
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{userRecordSum.loss - userRecordSum.comm}}</view>
 				 </view>
@@ -64,7 +64,7 @@
 					<view class="row-col col1">{{item.fdate}}</view>
 					<view class="row-col col2">{{item.nums}}</view>
 					<view class="row-col col3">{{item.sumBAIL}}</view>
-					<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail + item.comm}}</view>
+					<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail}}</view>
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{item.loss - item.comm}}</view>
 				 </view>
