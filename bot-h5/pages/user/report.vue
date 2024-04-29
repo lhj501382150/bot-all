@@ -137,10 +137,14 @@
 			this.userno = option.userno || this.userinfo.userno
 			this.clevel = option.clevel || this.userinfo.clevel
 			this.orgtype = option.orgtype || this.userinfo.orgtype
-			// this.loadData()
-			var time = new Date().getTime();
-			this.searchForm.endDate = formatDate(time,2) + ' 06:00:00'
-			this.searchForm.startDate = formatDate(time - 1000 * 60 * 60 * 24 * 7,2) + ' 07:00:00'
+			if(option.startDate){
+				this.searchForm.startDate = option.startDate
+				this.searchForm.endDate = option.endDate
+			}else{
+				var time = new Date().getTime();
+				this.searchForm.startDate = formatDate(time,2) + ' 07:00:00'
+				this.searchForm.endDate = formatDate(time + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
+			}
 			this.searchUserData()
 		},
 		methods: {
@@ -150,7 +154,8 @@
 					num:0,
 					bailmoney:0,
 					loss:0,
-					comm:0
+					comm:0,
+					realBail:0
 				}
 				let para = {
 					userno:this.userno,
@@ -174,7 +179,7 @@
 			},
 			showDetail(item){
 				let clevel = parseInt(this.clevel) + 1
-				let path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+clevel
+				let path = './report?userno='+item.userno+'&orgtype='+item.orgtype+'&clevel='+clevel+'&startDate='+this.searchForm.startDate+'&endDate='+this.searchForm.endDate
 				uni.navigateTo({
 					url:path
 				})
@@ -192,8 +197,8 @@
 				let endDate = ''
 				let userno = ''
 				if(this.reportType == 1){
-					startDate = item.fdate
-					endDate = item.fdate
+					startDate = item.fdate + ' 07:00:00'
+					endDate = formatDate(Date.parse(new Date(startDate)) + + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
 				}else{
 					startDate = this.searchForm.startDate
 					endDate = this.searchForm.endDate
