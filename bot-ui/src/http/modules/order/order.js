@@ -38,3 +38,11 @@ export const findFYCount = (data) => {
   })
 }
 
+export const findLevelCount = (data) => {
+  return axios({
+    url: '/order/findLevelCount',
+    method: 'post',
+    data
+  })
+}
+

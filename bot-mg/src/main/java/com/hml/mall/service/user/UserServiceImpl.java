@@ -64,6 +64,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	
 	@Autowired
 	private RedisUtils redisUtils;
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public PageResult findUserLevelCount(PageRequest pageRequest) throws Exception {
+		Integer page = pageRequest.getPageNum();
+		Integer size = pageRequest.getPageSize();
+		page = (page-1) * size;
+		Map<String, Object> params = pageRequest.getParams();
+		if(params == null) {
+			params = new HashMap<String, Object>();
+		}
+		params.put("page", page);
+		params.put("size", size);
+		List<Map<String, Object>> datas = userMapper.findUserLevelCount(params);
+		PageResult pageResult = new PageResult();
+		Integer count = datas.size();
+		if(datas!=null  && datas.size()>0) {
+			Map<String, Object> sum = userMapper.findUserLevelCountSum(params);
+			pageResult.setSum(sum);
+			count = Integer.parseInt(sum.get("NUM").toString());
+		}
+		pageResult.setContent(datas);
+		pageResult.setPageNum(page);
+		pageResult.setPageSize(size);
+		pageResult.setTotalSize(count);
+		return pageResult;
+	}	
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)

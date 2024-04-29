@@ -56,4 +56,6 @@ public interface IUserService extends IService<User> {
   	List<Map<String,Object>> findOrgCount()throws Exception;
   	
   	BigDecimal checkMoney() throws Exception;
+  	
+  	PageResult findUserLevelCount(PageRequest pageRequest)throws Exception;
 }

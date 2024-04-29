@@ -74,5 +74,9 @@ public interface UserMapper extends BaseMapper<User> {
 	
 	
 	Map<String,Object> findUseMoney(Map<String,Object> paraMap);
+	
+	List<Map<String,Object>> findUserLevelCount(Map<String,Object> paraMap);
+	
+	Map<String,Object> findUserLevelCountSum(Map<String,Object> paraMap);
 }
 

@@ -69,6 +69,9 @@ public class UserController {
         		return HttpResult.error("变动金额不能为空！");
         	}
         	LoginUser user = SecurityUtils.getLoginInfo();
+        	if(user == null) {
+        		throw new Exception("登录已失效，请重新登录");
+        	}
         	if(user.getType() > 0) {
         		QueryWrapper<UserRelation> qw = new QueryWrapper<UserRelation>();
 	   	   		 qw.eq("parentno", user.getUserno());

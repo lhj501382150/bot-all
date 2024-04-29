@@ -35,6 +35,9 @@
         <el-select v-model="filters.orgtype" placeholder="类型" clearable>
           <el-option v-for="(item,index) in orgtypes" :key="index" :label="item.val" :value="item.key"></el-option>
         </el-select>
+        <el-select v-model="filters.clevel" placeholder="级别" clearable>
+          <el-option v-for="(item,index) in clevels" :key="index" :label="item.val" :value="item.key"></el-option>
+        </el-select>
 			</el-form-item>
         <el-form-item>
           <kt-button icon="fa fa-search" :label="$t('action.search')" perms="firm:member:view" type="primary" @click="findPage(null)"/>
@@ -108,8 +111,10 @@
         <el-tag type="danger" v-else>关闭</el-tag>
     </template>
     <template #clevel="scope">
-        <el-tag type="danger" v-if="scope.row.orgtype==1">{{ scope.row.clevel }}</el-tag>
-        <span v-if="scope.row.orgtype==2">普通会员</span>
+        <el-tag type="danger" v-if="scope.row.orgtype==1">
+          {{ getClevel(scope.row.clevel) }}
+        </el-tag>
+        <el-tag v-if="scope.row.orgtype==2">普通会员</el-tag>
     </template>
 	</kt-table>
 	<!--新增编辑界面-->
@@ -131,8 +136,7 @@
         </el-select>
 			</el-form-item>
       <el-form-item :label="dataForm.orgtype==2?'所属上级类型':'当前级别'" prop="clevel">
-        <el-input type="number"  auto-complete="off" @blur="findParent"></el-input>
-        <el-select v-model="dataForm.clevel" placeholder="请选择" style="width: 98%;">
+        <el-select v-model="dataForm.clevel" placeholder="请选择" style="width: 98%;" @change="findParent">
           <el-option v-for="(item,index) in clevels" :key="index" :label="item.val" :value="item.key"></el-option>
         </el-select>
       </el-form-item>
@@ -278,6 +282,9 @@ export default {
 		}
 	},
 	methods: {
+    getClevel(level){
+      return this.clevels.find(item=>item.key==level).val
+    },
 		// 获取分页数据
 		findPage: function (data) {
 			if(data !== null) {
@@ -286,6 +293,9 @@ export default {
         this.pageRequest = {pageNum: 1, pageSize: 50}
       }
 			let params = Object.assign({}, this.filters)
+      if(params.clevel){
+        params.orgtype =  1
+      }
       delete params.fdate
       this.pageRequest.params = params
 			this.$api.firm.findPage(this.pageRequest).then((res) => {
@@ -406,7 +416,6 @@ export default {
         this.$message.error("请选择类型")
         return
       }
-      debugger
       let para = {}
         if(this.dataForm.orgtype==2){
           para = {clevel:level}

@@ -159,4 +159,53 @@
 				</if>
 			</where>
 	</select>
+	
+	<select id="findUserLevelCount" parameterType="java.util.Map" resultType="java.util.Map">
+		  select uno1 as USERNO,USERNAME,count(1) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+		  ,sum(REALMONEY) as REALMONEY from (
+			  select t1.*,t2.uno1,t4.username  from (
+				SELECT userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+				,sum(case when loss &lt; 0 then loss * -1 else 0 end) as REALMONEY 
+				FROM  tb_jy_order where buyorsal = 'B'
+					<if test="btime != null and btime != ''">
+						and ORDTIME &gt;= #{btime}
+					</if>
+					<if test="etime != null and etime != ''">
+						and ORDTIME &lt;= #{etime}
+					</if>
+					group by USERNO
+				) t1
+				left join tb_hy_user_relation t2 on t1.userno = t2.USERNO
+				left join tb_hy_user t3 on t1.userno = t3.userno
+				left join tb_hy_user t4 on t2.uno1 = t4.userno
+				where t4.ORGTYPE = 1
+			） t group by uno1,username
+			<if test="page != null and page != ''">
+				limit #{page},#{size}
+			</if>
+	</select>
+	<select id="findUserLevelCountSum" parameterType="java.util.Map" resultType="java.util.Map">
+		  select count(1) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+		  ,sum(REALMONEY) as REALMONEY from (
+			  select uno1 as userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+			  ,sum(REALMONEY) as REALMONEY from (
+				  select t1.*,t2.uno1  from (
+					SELECT userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+					,sum(case when loss &lt; 0 then loss * -1 else 0 end) as REALMONEY 
+					FROM  tb_jy_order where buyorsal = 'B'
+						<if test="btime != null and btime != ''">
+							and ORDTIME &gt;= #{btime}
+						</if>
+						<if test="etime != null and etime != ''">
+							and ORDTIME &lt;= #{etime}
+						</if>
+						group by USERNO
+					) t1
+					left join tb_hy_user_relation t2 on t1.userno = t2.USERNO
+					left join tb_hy_user t3 on t1.userno = t3.userno
+					left join tb_hy_user t4 on t2.uno1 = t4.userno
+					where t4.ORGTYPE = 1
+				） t group by uno1
+			 ) t
+	</select>
 </mapper>

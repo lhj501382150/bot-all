@@ -14,6 +14,7 @@ import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
 import com.hml.mall.entity.order.Order;
 import com.hml.mall.iface.order.IOrderService;
+import com.hml.mall.iface.user.IUserService;
 
 
 /**
@@ -29,6 +30,9 @@ public class OrderController {
 
     @Autowired
     private IOrderService  orderService;
+    
+    @Autowired
+    private IUserService userService;
 
     /**
     * 保存
@@ -116,7 +120,14 @@ public class OrderController {
     public HttpResult findCount(@RequestBody PageRequest pageRequest) {
     	
     	PageResult page = orderService.findCount(pageRequest);
-    	// todo 再包装一层
+    	return HttpResult.ok(page);
+    }
+    
+    @PreAuthorize("hasAuthority('operations:levelResult:view')")
+    @RequestMapping("/findLevelCount")
+    public HttpResult findLevelCount(@RequestBody PageRequest pageRequest) throws Exception {
+    	
+    	PageResult page = userService.findUserLevelCount(pageRequest);
     	return HttpResult.ok(page);
     }
     
