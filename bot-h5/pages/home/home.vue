@@ -28,15 +28,38 @@
 				games:[
 					{name:'四方通宝',img:'../../static/images/home/logo.png',path:'./qmbd'}
 					
-				]
+				],
+				search:{
+					pageIdx:0,
+					pageSize:10
+				}
 			}
+		},
+		onShow() {
+			this.loadNotice()
 		},
 		methods: {
 			showGame(item){
 				uni.navigateTo({
 					url:item.path
 				})
-			}
+			},
+			loadNotice(){
+				this.search.userno = uni.getStorageSync('userno')
+				this.$http.post("/Notice/GetList",this.search,res => {
+					let datas = res.rData || []
+					if(datas.length > 0){
+						// let para = {
+						// 	noticeno:datas[0].noticeno
+						// }
+						// this.$http.post("/Notice/GetNotice",para,res => {
+						// 	 this.notice = res.rData.content
+						// })
+						this.notice = datas[0].title
+					}
+				})
+			},
+			
 		}
 	}
 </script>
