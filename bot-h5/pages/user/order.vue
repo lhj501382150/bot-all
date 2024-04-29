@@ -93,8 +93,8 @@
 				let url = ''
 				if(this.orgtype==1){
 					url = '/Query/SubOrdList'
-					this.search.startDate = this.startDate + ' 00:00:00'
-					this.search.endDate = this.endDate + ' 23:59:59'
+					this.search.startDate = this.startDate 
+					this.search.endDate = this.endDate
 				}else{
 					url = '/Query/GetOrderList'
 				}
@@ -135,6 +135,7 @@
 	height: 100vh;
 	.search-date{
 		padding: 20upx;
+		font-size: 28upx;
 	}
 	.record-list{
 		.record-item{

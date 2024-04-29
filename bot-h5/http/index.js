@@ -14,7 +14,11 @@ http.beforeRequestFilter = function(res){
 http.beforeResponseFilter = function (res) {
 	if(res.statusCode==200){
 		res = res.data
-		if(res.iCode != 0 && res.iCode != -100){
+		if(res.iCode==401){
+			uni.navigateTo({
+				url:'/pages/login/login'
+			})
+		}else if(res.iCode != 0 && res.iCode != -100){
 			uni.showToast({
 				 icon: 'none',
 				 title: res.sMsg,

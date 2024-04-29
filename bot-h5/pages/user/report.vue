@@ -11,8 +11,8 @@
 			</view>
 		</view>
 		<view class="report-user" v-if="reportType==0">
-			<uni-datetime-picker type="date" placeholder="开始日期" v-model="searchForm.startDate"/>
-			<uni-datetime-picker type="date" placeholder="结束日期" v-model="searchForm.endDate"/>
+			<uni-datetime-picker type="datetime" placeholder="开始日期" v-model="searchForm.startDate"/>
+			<uni-datetime-picker type="datetime" placeholder="结束日期" v-model="searchForm.endDate"/>
 			<button type="primary" size="mini" @click="searchUserData">查询</button>
 			<view class="table-data">
 				 <view class="table-row">
@@ -30,8 +30,8 @@
 					</view>
 					<view class="row-col col2">{{item.num}}</view>
 					<view class="row-col col3">{{item.bailmoney}}</view>
-					<view class="row-col col4" v-if="item.orgtype==1">{{item.bailmoney  - item.comm}}</view>
-					<view class="row-col col4" v-else :class="item.num > 0?'link':''" @click="showRecord(item)">{{item.bailmoney}}</view>
+					<view class="row-col col4" v-if="item.orgtype==1">{{item.realBail }}</view>
+					<view class="row-col col4" v-else :class="item.num > 0?'link':''" @click="showRecord(item)">{{item.realBail}}</view>
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{item.loss - item.comm}}</view>
 				 </view>
@@ -39,7 +39,7 @@
 					<view class="row-col col1">合计</view>
 					<view class="row-col col2">{{userRecordSum.num}}</view>
 					<view class="row-col col3">{{userRecordSum.bailmoney}}</view>
-					<view class="row-col col4">{{userRecordSum.bailmoney}}</view>
+					<view class="row-col col4">{{userRecordSum.realBail}}</view>
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{userRecordSum.loss - userRecordSum.comm}}</view>
 				 </view>
@@ -72,7 +72,7 @@
 					<view class="row-col col1">合计</view>
 					<view class="row-col col2">{{sum.nums}}</view>
 					<view class="row-col col3">{{sum.sumBAIL}}</view>
-					<view class="row-col col4">{{sum.realBail + sum.comm}}</view>
+					<view class="row-col col4">{{sum.realBail}}</view>
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{sum.loss - sum.comm}}</view>
 				 </view>
@@ -127,7 +127,8 @@
 					num:0,
 					bailmoney:0,
 					loss:0,
-					comm:0
+					comm:0,
+					realBail:0
 				},
 			}
 		},
@@ -138,8 +139,8 @@
 			this.orgtype = option.orgtype || this.userinfo.orgtype
 			// this.loadData()
 			var time = new Date().getTime();
-			this.searchForm.endDate = formatDate(time,2)
-			this.searchForm.startDate = formatDate(time - 1000 * 60 * 60 * 24 * 7,2)
+			this.searchForm.endDate = formatDate(time,2) + ' 06:00:00'
+			this.searchForm.startDate = formatDate(time - 1000 * 60 * 60 * 24 * 7,2) + ' 07:00:00'
 			this.searchUserData()
 		},
 		methods: {
@@ -154,8 +155,8 @@
 				let para = {
 					userno:this.userno,
 					clevel:parseInt(this.clevel) + 1,
-					startDate:this.searchForm.startDate + ' 00:00:00',
-					endDate:this.searchForm.endDate + ' 23:59:59'
+					startDate:this.searchForm.startDate,
+					endDate:this.searchForm.endDate
 				}
 				if(this.orgtype==2){
 					para.clevel = 100
@@ -167,6 +168,7 @@
 						this.userRecordSum.bailmoney += item.bailmoney
 						this.userRecordSum.loss += item.loss
 						this.userRecordSum.comm += item.comm
+						this.userRecordSum.realBail += item.realBail
 					})
 				})
 			},
