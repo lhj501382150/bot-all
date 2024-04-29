@@ -66,6 +66,7 @@ export default {
         {prop:"diff", label:"净盈亏", minWidth:100},
         {prop:"xznum", label:"局数", minWidth:100},
         {prop:"balance", label:"余额", minWidth:100},
+        {prop:"realmoney", label:"有效金额", minWidth:100},
         {prop:"openid", label:"邀请人", minWidth:100}
 			],
 			pageRequest: { pageNum: 1, pageSize: 50 },
