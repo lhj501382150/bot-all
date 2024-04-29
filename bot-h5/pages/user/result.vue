@@ -7,7 +7,7 @@
 			<view class="record-list">
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
 					  <view class="head">
-						  <view class="type">全民宝斗</view>
+						  <view class="type">四方通宝</view>
 						  <view class="draw">{{item.issue}}期</view>
 						   <view class="time">{{item.sTime}}</view>
 					  </view>
