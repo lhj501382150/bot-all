@@ -8,6 +8,7 @@
 		from (
 			SELECT userno,sum(price) as price,sum(loss) as loss,sum(comm) as comm,(sum(loss) -sum(comm)) as diff,wareno,count(1) as xznum
 			,case when BUYORSAL='S' then '庄' else '闲' end as bs,buyorsal
+			,sum(case when loss &lt; 0 then loss * -1 else 0 end) as realmoney 
 			FROM tb_jy_order
 			<where>
 				<if test="btime != null and btime != ''">

@@ -83,7 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		if(datas!=null  && datas.size()>0) {
 			Map<String, Object> sum = userMapper.findUserLevelCountSum(params);
 			pageResult.setSum(sum);
-			count = Integer.parseInt(sum.get("NUM").toString());
+			count = Integer.parseInt(sum.get("TOTAL").toString());
 		}
 		pageResult.setContent(datas);
 		pageResult.setPageNum(page);

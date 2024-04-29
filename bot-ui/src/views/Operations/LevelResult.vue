@@ -56,7 +56,7 @@ export default {
 			},
 			columns: [
 				{prop:"USERNO", label:"分公司编号", minWidth:120},
-				{prop:"USERNMAE", label:"分公司名称", minWidth:120},
+				{prop:"username", label:"分公司名称", minWidth:120},
         {prop:"NUM", label:"注数", minWidth:120},
         {prop:"BAILMONEY", label:"下注金额", minWidth:100},
         {prop:"REALMONEY", label:"有效金额", minWidth:120},
@@ -95,10 +95,9 @@ export default {
       para.params = {
         'btime':this.filters.fdate == null ? '' : this.filters.fdate[0],
         'etime':this.filters.fdate == null ? '' : this.filters.fdate[1],
-        'username':this.filters.username,
-        'nickname':this.filters.nickname
+        'username':this.filters.username
 			}
-      this.$api.order.findCount(para).then((res) => {
+      this.$api.order.findLevelCount(para).then((res) => {
         this.exportData = res.data.content
         setTimeout(()=>{
           this.$refs.export.exportExcel();

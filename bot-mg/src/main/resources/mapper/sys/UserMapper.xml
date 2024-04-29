@@ -161,7 +161,7 @@
 	</select>
 	
 	<select id="findUserLevelCount" parameterType="java.util.Map" resultType="java.util.Map">
-		  select uno1 as USERNO,USERNAME,count(1) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+		  select uno1 as USERNO,USERNAME,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 		  ,sum(REALMONEY) as REALMONEY from (
 			  select t1.*,t2.uno1,t4.username  from (
 				SELECT userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
@@ -179,13 +179,13 @@
 				left join tb_hy_user t3 on t1.userno = t3.userno
 				left join tb_hy_user t4 on t2.uno1 = t4.userno
 				where t4.ORGTYPE = 1
-			） t group by uno1,username
+			) t group by uno1,username
 			<if test="page != null and page != ''">
 				limit #{page},#{size}
 			</if>
 	</select>
 	<select id="findUserLevelCountSum" parameterType="java.util.Map" resultType="java.util.Map">
-		  select count(1) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+		  select count(1) as TOTAL,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 		  ,sum(REALMONEY) as REALMONEY from (
 			  select uno1 as userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 			  ,sum(REALMONEY) as REALMONEY from (
@@ -205,7 +205,7 @@
 					left join tb_hy_user t3 on t1.userno = t3.userno
 					left join tb_hy_user t4 on t2.uno1 = t4.userno
 					where t4.ORGTYPE = 1
-				） t group by uno1
+				) t group by uno1
 			 ) t
 	</select>
 </mapper>
