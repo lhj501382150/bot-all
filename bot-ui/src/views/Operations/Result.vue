@@ -12,6 +12,7 @@
           range-separator="至"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
+          format="yyyy-MM-dd HH:mm:ss"
           value-format="yyyy-MM-dd HH:mm:ss">
         </el-date-picker>
 			</el-form-item>
@@ -38,7 +39,7 @@
 <script>
 import KtTable from "@/views/Core/KtTable"
 import KtButton from "@/views/Core/KtButton"
-import { format } from "@/utils/datetime"
+import { format,getCurrentDate,formatWithSeperator } from "@/utils/datetime"
 import ExportExcel from "@/views/Core/ExportExcel"
 export default {
 	components: {
@@ -51,7 +52,10 @@ export default {
 			size: 'small',
       acctlist: [],//账本列表
 			filters: {
-        fdate: '',
+        fdate: [
+          this.getStartDate()
+        ,this.getEndDate()
+        ],
         username:'',
         nickname:''
 			},
@@ -112,10 +116,21 @@ export default {
         },500)
       })
     },
-
+    getStartDate(){
+      let startTime = getCurrentDate() + ' 07:00:00'
+      let sdate = new Date(startTime)
+      return sdate
+    },
+    getEndDate(){
+      let startTime = getCurrentDate() + ' 07:00:00'
+      let sdate = new Date(startTime)
+     let edate = Date.parse(new Date(startTime)) + 1000 * 60 * 60 * 23
+     return new Date(edate)
+    }
 
 	},
 	mounted() {
+    
 	}
 }
 </script>

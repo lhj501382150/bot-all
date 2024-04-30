@@ -35,11 +35,11 @@ export function formatWithSeperator (datetime, dateSeprator, timeSeprator) {
       hh = "0" + hh;
     }
     var mm = dateMat.getMinutes();
-    if (mm >= 1 && mm <= 9) {
+    if (mm <= 9) {
       mm = "0" + mm;
     }
     var ss = dateMat.getSeconds();
-    if (ss >= 1 && ss <= 9) {
+    if (ss <= 10) {
       ss = "0" + ss;
     }
     const timeFormat = year + dateSeprator + month + dateSeprator + day + " " + hh + timeSeprator + mm + timeSeprator + ss;

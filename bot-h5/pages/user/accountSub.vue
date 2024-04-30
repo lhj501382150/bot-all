@@ -33,7 +33,7 @@
 								<view v-else>类型：{{getStatus(tabIndex)}}</view>
 							</view>
 							<view class="row-item">
-								<view>信用额度：{{item.enable}}</view>
+								<view>现金额度：{{item.enable}}</view>
 								<view>状态：<text :class="'sex'+item.sex">{{getSexLabel(item.sex)}}</text></view>
 							</view>
 					  	</view>
@@ -48,7 +48,7 @@
 					  	<view>上周盈亏：<text class="loss">{{item.befLoss}}</text></view>
 					  </view>
 					  <view class="btn-row">
-						<view class="btn-item" @click="editBalance(item)">修改信用额度</view>
+						<view class="btn-item" @click="editBalance(item)">修改现金额度</view>
 						<view class="btn-item" @click="openPwdPopup(item)">密码重置</view>
 					  </view>
 					  <view class="btn-row">
@@ -67,7 +67,7 @@
 		
 		 <uni-popup ref="scorePopup" type="center" background-color="#fff">
 			 <view class="form">
-				 <view class="form-title">修改信用额度</view>
+				 <view class="form-title">修改现金额度</view>
 				 <view class="form-sub-title">操作账号：{{scoreForm.userId}}-{{scoreForm.userName}}</view>
 				<uni-forms ref="scoreForm" :modelValue="scoreForm" :rules="scoreFormRules" >
 					<uni-forms-item  name="type">

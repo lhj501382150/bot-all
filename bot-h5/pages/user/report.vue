@@ -198,7 +198,7 @@
 				let userno = ''
 				if(this.reportType == 1){
 					startDate = item.fdate + ' 07:00:00'
-					endDate = formatDate(Date.parse(new Date(startDate)) + + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
+					endDate = formatDate(Date.parse(new Date(startDate)) + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
 				}else{
 					startDate = this.searchForm.startDate
 					endDate = this.searchForm.endDate

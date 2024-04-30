@@ -3,7 +3,15 @@
     <el-row>
       <el-col :span="8">
         <el-table :data="records"  :border="true" :stripe="true" :highlight-current-row="true" @row-dblclick="rowChange">
-          <el-table-column prop="name" label="类型"></el-table-column>
+          <el-table-column prop="name" label="类型">
+            <template #default="scope">
+               <span v-if="scope.row.clevel==1">分公司</span>
+               <span v-else-if="scope.row.clevel==2">股东</span>
+               <span v-else-if="scope.row.clevel==3">总代理</span>
+               <span v-else-if="scope.row.clevel==4">代理</span>
+               <span v-else-if="scope.row.clevel==-1">全部会员</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="num" label="数量"></el-table-column>
         </el-table>
       </el-col>
@@ -15,17 +23,11 @@
                 <el-input v-model="filters.userno" placeholder="客户编号"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-input v-model="filters.recvname" placeholder="收货人"></el-input>
+                <el-input v-model="filters.parentno" placeholder="所属上级"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-input v-model="filters.telno" placeholder="手机号"></el-input>
+                <kt-button icon="fa fa-search" :label="$t('action.search')" perms="firm:member:view" type="primary" @click="findPage(null)"/>
               </el-form-item>
-              <el-form-item>
-                <kt-button icon="fa fa-search" :label="$t('action.search')" perms="firm:address:view" type="primary" @click="findPage(null)"/>
-              </el-form-item>
-                <el-form-item>
-                  <kt-button icon="fa fa-plus" :label="$t('action.add')" perms="firm:address:add" type="primary" @click="handleAdd" />
-                </el-form-item>
             </el-form>
           </div>
 
@@ -62,7 +64,9 @@ export default {
         openid: '',
         balance:'',
         orgtype:'',
-        clevel:''
+        clevel:'',
+        parentno:''
+
       },
       columns: [],
       filterColumns: [],
