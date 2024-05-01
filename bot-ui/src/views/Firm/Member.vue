@@ -80,14 +80,20 @@
 		:data="pageResult" :columns="filterColumns" :buttons="buttons" @addMoney="addMoney" @subMoney="subMoney" @editPwd="editPwd"
 		@findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete"  >
     <template #sex="scope">
-          <el-switch
-            :value="scope.row.sex"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            active-value="0"
-						inactive-value="1"
-            @change="changeEnable(scope.row)">
-          </el-switch>
+          <div>
+            <div class="title">
+                <el-tag type="success" v-if="scope.row.sex==0">正常</el-tag>
+                <el-tag type="warning" v-if="scope.row.sex==1">冻结</el-tag>
+                <el-tag type="danger" v-if="scope.row.sex==2">停用</el-tag>
+            </div>
+            <div class="btn">
+              <el-button type="text" size="mini" @click="changeEnable(scope.row,0)" v-if="scope.row.sex!=0">启用</el-button>
+              <el-button type="text" size="mini" @click="changeEnable(scope.row,1)" v-if="scope.row.sex!=1">冻结</el-button>
+              <el-button type="text" size="mini" @click="changeEnable(scope.row,2)" v-if="scope.row.sex!=2">停用</el-button>
+            </div>
+          </div>
+
+
     </template>
     <template #chmoney="scope">
           <el-input v-model="scope.row.chmoney" type="number" style="width: 98%;height:23px;"></el-input>
@@ -173,7 +179,7 @@
       <el-form-item label="确认密码" prop="comfirmPwd">
 				<el-input type="password" v-model="updatePwdDataForm.comfirmPwd" auto-complete="off"></el-input>
 			</el-form-item>
-      
+
 		</el-form>
 		<div slot="footer" class="dialog-footer">
 			<el-button :size="size" @click.native="updatePwdDialogVisible = false">{{$t('action.cancel')}}</el-button>
@@ -375,20 +381,21 @@ export default {
       }).catch(() => {
       })
     },
-    changeEnable(row){
-				let status = row.sex == '1' ? '解冻':'冻结'
+    changeEnable(row,sex){
+				let status = sex == 0 ? '启用':sex == 1 ? '冻结':'停用'
 				 this.$confirm(`是否${status}?`, "提示", {
 					confirmButtonText: "确定",
 					cancelButtonText: "取消",
 					type: "warning"
 				}).then(()=> {
 					let para = {
-						userno:row.userno
+						userno:row.userno,
+            sex:sex
 					}
           this.loading = true
 					this.$api.firm.changeState(para).then(res => {
 						if(res.code == 200) {
-              this.$message({message: '注销成功', type: 'success'})
+              this.$message({message: '操作成功', type: 'success'})
             } else {
               this.$message({message: '操作失败, ' + res.msg, type: 'error'})
             }
