@@ -346,12 +346,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     		 }
     	}
     	User item = userMapper.selectById(entity.getUserno());
-    	if("0".equals(item.getSex())) {
-    		item.setSex("1");
-//    		通知禁言
-    	}else {
-    		item.setSex("0");
-    	}
+    	item.setSex(entity.getSex());
     	userMapper.updateById(item);
     	syncUser(item);
     }

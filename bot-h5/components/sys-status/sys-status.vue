@@ -22,7 +22,7 @@
 		},
 		mounted() { 
 			this.getSysPara()
-			this.getDate()
+			// this.getDate()
 		},
 		methods: {
 			getDate(){
