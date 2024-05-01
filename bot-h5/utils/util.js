@@ -18,8 +18,10 @@ export const formatDate = (timestamp,type)=>{
       const seconds = ("0" + date.getSeconds()).slice(-2);
 		if(type==1){//mm-dd HH:mm
 			return `${month}-${day} ${hours}:${minutes}`;
-		}if(type==2){//mm-dd HH:mm
+		}else if(type==2){//mm-dd HH:mm
 			return `${year}-${month}-${day}`;
+		}else if(type==3){//mm-dd HH:mm
+			return `${hours}${minutes}${seconds}`;
 		}else{
 			return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 		}
@@ -56,4 +58,12 @@ export const getSecond = (time) =>{
 		timeDifferenceInSeconds = 0
 	}
 	return timeDifferenceInSeconds;
+}
+
+export const getCurTime = ()=>{
+	 const date = new Date();
+      const hours = ("0" + date.getHours()).slice(-2);
+      const minutes = ("0" + date.getMinutes()).slice(-2);
+      const seconds = ("0" + date.getSeconds()).slice(-2);
+	  return `${hours}${minutes}${seconds}`;
 }

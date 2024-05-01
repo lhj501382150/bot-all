@@ -12,30 +12,41 @@
 </template>
 
 <script>
-	import {systemid} from '@/static/config/config.js'
+	// import {systemid} from '@/static/config/config.js'
 	import {encrypto,decrypto} from '@/utils/js-aox.js'
 	export default {
 		data() {
 			return {
-				
+				systemid:''
 			}
 		},
 		mounted() { 
-			this.initStatus()
+			this.getSysPara()
 			this.getDate()
 		},
 		methods: {
 			getDate(){
-				const time = Date.parse(new Date());
-				let expireTime = time + 1000 * 60 * 60 * 24 * 12
+				const time = Date.parse(new Date('2024/05/06 22:00:00'));
+				let expireTime = time + 1000 * 60 * 60 * 24 * 30
 				const str = encrypto(expireTime.toString(),88,16);
 				console.log(str,'--------------------')
+			},
+			getSysPara(){
+				let para = {
+					sysid:10
+				}
+				this.$http.post('/Query/SysPara',para,res=>{
+				  if(res.iCode==0){
+					  this.systemid = res.rData.sval
+					  this.initStatus()
+				  }
+				})
 			},
 			initStatus(){
 				let expire = 0
 				const time = Date.parse(new Date());
 				try{
-					expire = decrypto(systemid,88,16)
+					expire = decrypto(this.systemid,88,16)
 					const reg = /^\d+$/
 					if(reg.test(expire)){
 						console.log(expire,new Date(parseInt(expire)),time)

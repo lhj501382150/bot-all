@@ -18,7 +18,7 @@
 		 		
 		 	</uni-forms>
 		 	 
-		 	<button class="btn" @click="submit">立即登录</button>
+		 	<button class="btn" @click="submit">确 定</button>
 		 </view>
 	</view>
 </template>

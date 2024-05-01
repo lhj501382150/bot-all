@@ -6,7 +6,7 @@
 				<image src="../../static/images/user/tou.png" mode="scaleToFill"></image>
 			</view>
 			<view class="right">
-				<view class="name">{{userinfo.nickname}}</view>
+				<!-- <view class="name">{{userinfo.nickname}}</view> -->
 				<view class="id">ID: {{userinfo.userno}}</view>
 				<view class="level" v-if="userinfo.orgtype==1">类型: {{getClevel(userinfo.clevel)}}</view>
 				<view class="level" v-else>类型: 普通会员</view>
@@ -57,7 +57,7 @@
 					{clevel:1,name:'分公司'},
 					{clevel:2,name:'股东'},
 					{clevel:3,name:'总代理'},
-					{clevel:3,name:'代理'},
+					{clevel:4,name:'代理'},
 					{clevel:-1,name:'普通会员'}
 				],
 			}

@@ -24,7 +24,7 @@
 			<view class="draw-time">开奖：<text style="color: blue;">{{formatTime(kjtime)}}</text></view>
 		</view>
 		<view class="row qing">
-			<view class="draw-money">信用额度：{{user.enable}}</view>
+			<view class="draw-money">现金额度：{{user.enable}}</view>
 			<view class="draw-money">未结金额：<text style="color: blue;">{{user.freeze}}</text></view>
 			<view class="draw-money">今日输赢：<text style="color: red;">{{user.curLoss}}</text></view>
 		</view>
@@ -215,7 +215,7 @@
 </template>
 
 <script>
-	import { getSecond } from '../../utils/util'
+	import { getSecond,getCurTime } from '../../utils/util'
 	import {botId, webSocketUrl} from '@/static/config/config.js'
 	export default {
 		data() {
@@ -280,7 +280,8 @@
 					{val:4,name:'虎'}
 				],
 				orgtype:'',
-				errMsg:''
+				errMsg:'',
+				curStatus:false
 			}
 		},
 		onLoad() {
@@ -355,7 +356,13 @@
 							const data = JSON.parse(res.data);
 							if(data.status==1){
 								clearTimeout(this.timer)
-								this.isStop = false
+								this.getCurStatus()
+								console.log(this.curStatus)
+								if(this.curStatus){
+									this.isStop = false
+								}else{
+									this.isStop = true
+								}
 								this.result = JSON.parse(data.data)
 								this.result.data = this.result.CODE.split(',') || []
 								this.leftTime = getSecond(this.result.TIME) + 15
@@ -377,6 +384,14 @@
 				this.socketTask.onClose(() => {
 					console.log("已经被关闭了")
 				})
+			},
+			getCurStatus(){
+				let curTime = parseInt(getCurTime())
+				if(curTime >=55800 && curTime <= 65900){
+					this.curStatus = false
+				}else{
+					this.curStatus = true
+				}
 			},
 			startCount(){
 				if(this.fptime > 0){
@@ -469,6 +484,7 @@
 				
 			},
 			submit(){
+				if(this.isStop) return;
 				if(this.orgtype==1){
 					uni.showToast({
 						title:'代理不能下注',
@@ -477,8 +493,6 @@
 					})
 					return
 				}
-				if(this.isStop) return;
-				
 				this.$refs.form.validate().then(res=>{
 					let arr = this.items.filter(item=>item.check==true) || []
 					if(arr.length == 0){
@@ -507,7 +521,6 @@
 				})
 			},
 			goUrl(){
-				// window.location.href = this.link.src
 				window.open(this.link.src,'_blank')
 			},
 			goBack(){

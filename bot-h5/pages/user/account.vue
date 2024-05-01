@@ -3,7 +3,7 @@
 		<uni-nav-bar left-icon="left"  title="代理中心" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
 		<view class="row">
 			<view class="text">当前账号： {{getStatus(userinfo.clevel)}} - {{userno}}</view>
-			<view class="text" v-if="userinfo.clevel > 1">所属{{getStatus(userinfo.clevel - 1)}}: {{userinfo.parentNo}}</view>
+			<!-- <view class="text" v-if="userinfo.clevel > 1">所属{{getStatus(userinfo.clevel - 1)}}: {{userinfo.parentNo}}</view> -->
 		</view>
 		<view class="tab-bar">
 			<view class="tab-item"  :class="item.clevel == tabIndex ? 'active':''" v-for="(item,index) in tabs" :key="index" @click="findData(item)" v-if="item.clevel > userinfo.clevel">
