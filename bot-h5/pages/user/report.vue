@@ -33,7 +33,7 @@
 					<view class="row-col col4" v-if="item.orgtype==1">{{item.realBail }}</view>
 					<view class="row-col col4" v-else :class="item.num > 0?'link':''" @click="showRecord(item)">{{item.realBail}}</view>
 					<view class="row-col col5">0</view>
-					<view class="row-col col6">{{item.loss - item.comm}}</view>
+					<view class="row-col col6">{{getRealLoss(item.loss , item.comm)}}</view>
 				 </view>
 				 <view class="table-row" v-if="userRecord.length > 0">
 					<view class="row-col col1">合计</view>
@@ -41,7 +41,7 @@
 					<view class="row-col col3">{{userRecordSum.bailmoney}}</view>
 					<view class="row-col col4">{{userRecordSum.realBail}}</view>
 					<view class="row-col col5">0</view>
-					<view class="row-col col6">{{userRecordSum.loss - userRecordSum.comm}}</view>
+					<view class="row-col col6">{{getRealLoss(userRecordSum.loss , userRecordSum.comm)}}</view>
 				 </view>
 			 </view>
 		</view>
@@ -66,7 +66,7 @@
 					<view class="row-col col3">{{item.sumBAIL}}</view>
 					<view class="row-col col4" :class="item.nums > 0?'link':''" @click="showRecord(item)">{{item.realBail}}</view>
 					<view class="row-col col5">0</view>
-					<view class="row-col col6">{{item.loss - item.comm}}</view>
+					<view class="row-col col6">{{getRealLoss(item.loss , item.comm)}}</view>
 				 </view>
 				 <view class="table-row">
 					<view class="row-col col1">合计</view>
@@ -74,7 +74,7 @@
 					<view class="row-col col3">{{sum.sumBAIL}}</view>
 					<view class="row-col col4">{{sum.realBail}}</view>
 					<view class="row-col col5">0</view>
-					<view class="row-col col6">{{sum.loss - sum.comm}}</view>
+					<view class="row-col col6">{{getRealLoss(sum.loss , sum.comm)}}</view>
 				 </view>
 			 </view>
 		</view>
@@ -148,6 +148,10 @@
 			this.searchUserData()
 		},
 		methods: {
+			getRealLoss(loss,comm){
+				console.log(loss,comm)
+				return (loss-comm).toFixed(2)
+			},
 			searchUserData(){
 				this.userRecord = []
 				this.userRecordSum = {
@@ -305,33 +309,33 @@
 			justify-content: space-between;
 			align-items: center;
 			border-bottom: 1upx solid #eeeeee;
-			padding-top:20upx;
-			padding-bottom:20upx;
+			padding:20upx;
 			.row-col{
-				text-align: center;
+				text-align: right;
 				font-size: 13px;
 			}
 			.col1{
 				width: 150upx;
+				text-align: left;
 			}
 			.col2{
 				width: 100upx;
 			}
 			.col3{
-				width: 120upx;
+				width: 130upx;
 			}
 			.col4{
-				width: 120upx;
+				width: 130upx;
 			}
 			.link{
 				color:rgb(40,148,255);
 				cursor: pointer;
 			}
 			.col5{
-				width: 100upx;
+				width: 90upx;
 			}
 			.col6{
-				width: 120upx;
+				width: 130upx;
 			}
 		}
 	}

@@ -50,7 +50,7 @@ export const divide100 = (num) =>{
 
 export const getSecond = (time) =>{
 	var currentDate = Date.parse(new Date());
-	var specifiedDate = Date.parse(new Date(time)); // 假设这是你要计算的指定时间
+	var specifiedDate = Date.parse(new Date(time.replace(/-/g,'/'))); // 假设这是你要计算的指定时间
 	var timeDifferenceInMilliseconds = specifiedDate - currentDate;
 	// 转换为秒数
 	var timeDifferenceInSeconds = Math.floor(timeDifferenceInMilliseconds / 1000);
