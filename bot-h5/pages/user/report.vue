@@ -43,6 +43,14 @@
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{getRealLoss(userRecordSum.loss , userRecordSum.comm)}}</view>
 				 </view>
+				 <!-- <view class="table-row">
+					<view class="row-col col1">合计</view>
+					<view class="row-col col2">1876</view>
+					<view class="row-col col3">2288732.12</view>
+					<view class="row-col col4">1314143.12</view>
+					<view class="row-col col5">0</view>
+					<view class="row-col col6">-331281.68</view>
+				 </view> -->
 			 </view>
 		</view>
 		<view class="report-time" v-if="reportType==1">
@@ -83,7 +91,7 @@
 </template>
 
 <script>
-	import {formatDate} from '@/utils/util.js'
+	import {formatDate,getCurTime} from '@/utils/util.js'
 	export default {
 		data() {
 			return {
@@ -142,14 +150,19 @@
 				this.searchForm.endDate = option.endDate
 			}else{
 				var time = new Date().getTime();
-				this.searchForm.startDate = formatDate(time,2) + ' 07:00:00'
-				this.searchForm.endDate = formatDate(time + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
+				const curTime = getCurTime()
+				if(curTime<'070000'){
+					this.searchForm.startDate = formatDate(time - 1000 * 60 * 60 * 24 * 1,2) + ' 07:00:00'
+					this.searchForm.endDate = formatDate(time,2) + ' 06:00:00'
+				}else{
+					this.searchForm.startDate = formatDate(time,2) + ' 07:00:00'
+					this.searchForm.endDate = formatDate(time + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
+				}
 			}
 			this.searchUserData()
 		},
 		methods: {
 			getRealLoss(loss,comm){
-				console.log(loss,comm)
 				return (loss-comm).toFixed(2)
 			},
 			searchUserData(){
@@ -312,30 +325,32 @@
 			padding:20upx;
 			.row-col{
 				text-align: right;
-				font-size: 13px;
+				font-size: 24upx;
+				word-wrap: break-word;
+				word-break: break-all;
 			}
 			.col1{
-				width: 150upx;
+				width: 80upx;
 				text-align: left;
 			}
 			.col2{
-				width: 100upx;
+				width: 80upx;
 			}
 			.col3{
-				width: 130upx;
+				width: 150upx;
 			}
 			.col4{
-				width: 130upx;
+				width: 150upx;
 			}
 			.link{
 				color:rgb(40,148,255);
 				cursor: pointer;
 			}
 			.col5{
-				width: 90upx;
+				width: 80upx;
 			}
 			.col6{
-				width: 130upx;
+				width: 140upx;
 			}
 		}
 	}
