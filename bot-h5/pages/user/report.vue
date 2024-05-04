@@ -38,8 +38,8 @@
 				 <view class="table-row" v-if="userRecord.length > 0">
 					<view class="row-col col1">合计</view>
 					<view class="row-col col2">{{userRecordSum.num}}</view>
-					<view class="row-col col3">{{userRecordSum.bailmoney}}</view>
-					<view class="row-col col4">{{userRecordSum.realBail}}</view>
+					<view class="row-col col3">{{getRealLoss(userRecordSum.bailmoney,0)}}</view>
+					<view class="row-col col4">{{getRealLoss(userRecordSum.realBail,0)}}</view>
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{getRealLoss(userRecordSum.loss , userRecordSum.comm)}}</view>
 				 </view>
@@ -79,8 +79,8 @@
 				 <view class="table-row">
 					<view class="row-col col1">合计</view>
 					<view class="row-col col2">{{sum.nums}}</view>
-					<view class="row-col col3">{{sum.sumBAIL}}</view>
-					<view class="row-col col4">{{sum.realBail}}</view>
+					<view class="row-col col3">{{getRealLoss(sum.sumBAIL,0)}}</view>
+					<view class="row-col col4">{{getRealLoss(sum.realBail,0)}}</view>
 					<view class="row-col col5">0</view>
 					<view class="row-col col6">{{getRealLoss(sum.loss , sum.comm)}}</view>
 				 </view>

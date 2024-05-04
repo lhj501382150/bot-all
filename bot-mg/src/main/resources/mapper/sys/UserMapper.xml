@@ -187,7 +187,7 @@
 	<select id="findUserLevelCountSum" parameterType="java.util.Map" resultType="java.util.Map">
 		  select count(1) as TOTAL,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 		  ,sum(REALMONEY) as REALMONEY from (
-			  select uno1 as userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+			  select uno1 as userno,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 			  ,sum(REALMONEY) as REALMONEY from (
 				  select t1.*,t2.uno1  from (
 					SELECT userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM

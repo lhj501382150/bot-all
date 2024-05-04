@@ -119,13 +119,13 @@ export default {
     getStartDate(){
       let startTime = getCurrentDate() + ' 07:00:00'
       let sdate = new Date(startTime)
-      return sdate
+      return startTime
     },
     getEndDate(){
       let startTime = getCurrentDate() + ' 07:00:00'
       let sdate = new Date(startTime)
      let edate = Date.parse(new Date(startTime)) + 1000 * 60 * 60 * 23
-     return new Date(edate)
+     return formatWithSeperator(edate,'-',':')
     }
 
 	},

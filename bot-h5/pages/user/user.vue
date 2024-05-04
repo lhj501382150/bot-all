@@ -16,7 +16,7 @@
 			账户余额：{{user.allQuity}}/<text style="color: red;">{{user.useQuity}}</text>
 		</view>
 		<view v-else class="user-money">
-			账户余额：{{user.allQuity}}
+			账户余额：{{user.blance}}
 		</view>
 		
 		<view class="user-menu">
