@@ -169,7 +169,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="g-b-7"></view>
+			<view class="g-b-7" :class="'route'+result.RESULT"></view>
 		</view>
 		<view class="form">
 			<uni-forms ref="form" :modelValue="formData" :rules="rules">
@@ -861,6 +861,18 @@
 			justify-content: space-between;
 			background-size: 100%;
 			background-image: url('../../static/images/home/qp.jpg');
+		}
+		.route1{
+			transform: rotate(180deg);
+		}
+		.route2{
+			transform: rotate(270deg);
+		}
+		.route3{
+			transform: rotate(0deg);
+		}
+		.route4{
+			transform: rotate(90deg);
 		}
 		.active{
 			background-color: #fff!important;
