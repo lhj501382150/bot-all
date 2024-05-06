@@ -68,8 +68,8 @@ public class BotConfig {
 		ENABLE = "Y".equals(status);
 	}
 	
-	@Value("${bot.cert}")
-	public void setExpireDate(String cert) {
-		EXPIRE_DATE = cert;
-	}
+//	@Value("${bot.cert}")
+//	public void setExpireDate(String cert) {
+//		EXPIRE_DATE = cert;
+//	}
 }

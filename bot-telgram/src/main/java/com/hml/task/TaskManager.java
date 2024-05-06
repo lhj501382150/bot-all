@@ -2,6 +2,7 @@ package com.hml.task;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import com.hml.utils.StringUtils;
 import com.hml.websocket.config.WebSocketConfig;
 import com.hml.websocket.server.WebSocketServerApp;
 
+import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -395,10 +397,12 @@ public class TaskManager {
 	
 	private boolean checkAuth() {
 		String priPath = BotConfig.FILE_PATH + "/private_key.pem";
+		String listenPath = BotConfig.FILE_PATH + "/listen.lic";
+		String expireDate = FileUtil.readString(listenPath,Charset.forName("UTF-8"));
 		PrivateKey privateKey = SM2Utils.importPrivateKey(priPath);
-		String decrypt = SM2Utils.decrypt(BotConfig.EXPIRE_DATE, privateKey);
+		String decrypt = SM2Utils.decrypt(expireDate, privateKey);
 		String curDate = DateTimeUtils.getCurrentDate("yyyyMMdd");
-		System.out.println(curDate+"---"+ decrypt+ "=====" + curDate.compareTo(decrypt));
+		log.info(curDate+"---"+ decrypt+ "=====" + curDate.compareTo(decrypt));
 		if(curDate.compareTo(decrypt) > 0) {
 			return false;
 		}else {
