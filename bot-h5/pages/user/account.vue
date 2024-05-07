@@ -90,7 +90,7 @@
 				 
 				<view class="form-btn">
 					<button class="cal-btn" size="mini" @click="closeScorePopup">取消</button>
-					<button class="sub-btn"  size="mini" @click="submitScore">确认</button>
+					<button class="sub-btn"  size="mini" @click="submitScore" :loading="editloding" :disabled="editloding">确认</button>
 				</view>
 			 </view>
 		 </uni-popup>
@@ -143,6 +143,7 @@
 	export default {
 		data() {
 			return {
+				editloding:false,
 				formData:{
 					userno :'',
 					nickname:'',
@@ -333,6 +334,7 @@
 			},
 			submitScore(){
 				this.$refs.scoreForm.validate().then(res=>{
+					this.editloding = true
 					let para = {
 						userId:this.scoreForm.userId,
 						userName: this.scoreForm.userName
@@ -346,6 +348,7 @@
 						  para.outMoney = this.scoreForm.money
 					 }
 					this.$http.post(url,para,(res=>{
+						this.editloding = false
 						if(res.iCode ==0){
 							 uni.showToast({
 							 	title:'操作成功',
