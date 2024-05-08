@@ -29,7 +29,8 @@
 	<kt-table
     :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
     <template #USERNO="scope">
-      <span style="color:blue;cursor: pointer;" @click="showSub(scope.row)">{{ scope.row.USERNO }}</span>
+      <span v-if="scope.row.orgtype==2">{{ scope.row.USERNO }}</span>
+      <span style="color:blue;cursor: pointer;" @click="showSub(scope.row)" v-else>{{ scope.row.USERNO }}</span>
     </template>
     <template #loss="scope">
       {{ scope.row.LOSS-scope.row.COMM }}

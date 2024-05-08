@@ -29,35 +29,35 @@ public class SmsTask {
 	
 	private Deque<Mess> queue = new LinkedList<Mess>();
 
-	@Scheduled(cron ="0/1 * * * * *")
-	public void getSendData(){
-		
-		QueryWrapper<Mess> qw = new QueryWrapper<Mess>();
-		qw.eq("SENDFLAG", 0);
-		List<Mess> list = messService.list(qw);
-		if(list.size() > 0 ) {
-			log.info("查询发送短信数据: " + list.size());
-			for(Mess m : list) {
-				queue.offer(m);
-			}
-		}
-	}
-	@Scheduled(cron ="1/1 * * * * *")
-	public void sendData(){
-		if(queue.size() > 0) {
-			log.info("开始发送短信......");
-			Mess m = queue.poll();
-			while(m !=null) {
-				try {
-					m = SmsUtils.sendMess(m);
-					messService.updateById(m);
-				} catch (Exception e) {
-					log.error("发送短信异常：" + e.getMessage());
-					e.printStackTrace();
-				}
-				m = queue.poll();
-			}
-			log.info("发送短信结束......");
-		}
-	}
+//	@Scheduled(cron ="0/1 * * * * *")
+//	public void getSendData(){
+//		
+//		QueryWrapper<Mess> qw = new QueryWrapper<Mess>();
+//		qw.eq("SENDFLAG", 0);
+//		List<Mess> list = messService.list(qw);
+//		if(list.size() > 0 ) {
+//			log.info("查询发送短信数据: " + list.size());
+//			for(Mess m : list) {
+//				queue.offer(m);
+//			}
+//		}
+//	}
+//	@Scheduled(cron ="1/1 * * * * *")
+//	public void sendData(){
+//		if(queue.size() > 0) {
+//			log.info("开始发送短信......");
+//			Mess m = queue.poll();
+//			while(m !=null) {
+//				try {
+//					m = SmsUtils.sendMess(m);
+//					messService.updateById(m);
+//				} catch (Exception e) {
+//					log.error("发送短信异常：" + e.getMessage());
+//					e.printStackTrace();
+//				}
+//				m = queue.poll();
+//			}
+//			log.info("发送短信结束......");
+//		}
+//	}
 }

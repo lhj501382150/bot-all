@@ -210,8 +210,7 @@
 	</select>
 	
 	<select id="findSubLevelCount" parameterType="java.util.Map" resultType="java.util.Map">
-		  select count(1) as TOTAL,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
-		  ,sum(REALMONEY) as REALMONEY  from (
+		  select t1.*,t2.username,t2.orgtype from (
 				select uno as USERNO,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 						  ,sum(REALMONEY) as REALMONEY from (
 							  select t1.*,${uno} as uno   from (
@@ -237,7 +236,8 @@
 			</if>
 	</select>
 	<select id="findSubLevelCountSum" parameterType="java.util.Map" resultType="java.util.Map">
-		  select t1.*,t2.username,t2.orgtype from (
+		  select count(1) as TOTAL,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+		  ,sum(REALMONEY) as REALMONEY   from (
 				select uno as USERNO,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 						  ,sum(REALMONEY) as REALMONEY from (
 							  select t1.*,${uno} as uno   from (
