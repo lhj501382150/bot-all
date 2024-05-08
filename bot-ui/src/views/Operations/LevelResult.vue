@@ -28,6 +28,9 @@
 	<!--表格内容栏-->
 	<kt-table
     :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
+    <template #USERNO="scope">
+      <span style="color:blue;cursor: pointer;" @click="showSub(scope.row)">{{ scope.row.USERNO }}</span>
+    </template>
     <template #loss="scope">
       {{ scope.row.LOSS-scope.row.COMM }}
     </template>
@@ -53,6 +56,7 @@ export default {
 			filters: {
         fdate: [this.getStartDate(),this.getEndDate()],
         username:'',
+        parentno:''
 			},
 			columns: [
 				{prop:"USERNO", label:"分公司编号", minWidth:120},
@@ -74,6 +78,10 @@ export default {
 		}
 	},
 	methods: {
+    showSub(data){
+      this.filters.parentno = data.USERNO
+      this.findPage(null)
+    },
 		// 获取分页数据
 		findPage: function (data) {
 			if(data !== null) {
@@ -84,7 +92,8 @@ export default {
 			this.pageRequest.params = {
         'btime':this.filters.fdate == null ? '' : this.filters.fdate[0],
         'etime':this.filters.fdate == null ? '' : this.filters.fdate[1],
-        'username':this.filters.username
+        'username':this.filters.username,
+        "parentno":this.filters.parentno
 			}
 			this.$api.order.findLevelCount(this.pageRequest).then((res) => {
 				this.pageResult = res.data

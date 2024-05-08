@@ -4,6 +4,7 @@ package com.hml.mall.service.user;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,14 +78,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		}
 		params.put("page", page);
 		params.put("size", size);
-		List<Map<String, Object>> datas = userMapper.findUserLevelCount(params);
+		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
 		PageResult pageResult = new PageResult();
 		Integer count = datas.size();
-		if(datas!=null  && datas.size()>0) {
-			Map<String, Object> sum = userMapper.findUserLevelCountSum(params);
-			pageResult.setSum(sum);
-			count = Integer.parseInt(sum.get("TOTAL").toString());
+		if(!StringUtils.isBlank(params.get("parentno"))){
+			String pno = params.get("parentno").toString();
+			User puser = userMapper.selectById(pno);
+			if(puser == null || "2".equals(puser.getOrgtype())) {
+				return pageResult;
+			}
+			UserRelation user = userRelationMapper.selectById(pno);
+			params.put("pno", "uno" + user.getClevel());
+			int subLevel = user.getClevel() + 1;
+			params.put("uno", "uno" + subLevel);
+			
+			datas = userMapper.findSubLevelCount(params);
+			if(datas!=null  && datas.size()>0) {
+				Map<String, Object> sum = userMapper.findSubLevelCountSum(params);
+				pageResult.setSum(sum);
+				count = Integer.parseInt(sum.get("TOTAL").toString());
+			}
+		}else {
+			datas = userMapper.findUserLevelCount(params);
+			if(datas!=null  && datas.size()>0) {
+				Map<String, Object> sum = userMapper.findUserLevelCountSum(params);
+				pageResult.setSum(sum);
+				count = Integer.parseInt(sum.get("TOTAL").toString());
+			}
 		}
+		
 		pageResult.setContent(datas);
 		pageResult.setPageNum(page);
 		pageResult.setPageSize(size);

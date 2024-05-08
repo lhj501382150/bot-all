@@ -208,4 +208,55 @@
 				) t group by uno1
 			 ) t
 	</select>
+	
+	<select id="findSubLevelCount" parameterType="java.util.Map" resultType="java.util.Map">
+		  select count(1) as TOTAL,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+		  ,sum(REALMONEY) as REALMONEY  from (
+				select uno as USERNO,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+						  ,sum(REALMONEY) as REALMONEY from (
+							  select t1.*,${uno} as uno   from (
+								SELECT userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+								,sum(case when loss &lt; 0 then loss * -1 else 0 end) as REALMONEY 
+								FROM  tb_jy_order where buyorsal = 'B'
+									<if test="btime != null and btime != ''">
+										and ORDTIME &gt;= #{btime}
+									</if>
+									<if test="etime != null and etime != ''">
+										and ORDTIME &lt;= #{etime}
+									</if>
+									group by USERNO
+								) t1
+								left join tb_hy_user_relation t2 on t1.userno = t2.USERNO
+								left join tb_hy_user t3 on t1.userno = t3.userno
+								where ${pno} = #{parentno}
+							) t group by uno
+				) t1 
+				left join tb_hy_user t2 on t1.USERNO = t2.userno
+			<if test="page != null and page != ''">
+				limit #{page},#{size}
+			</if>
+	</select>
+	<select id="findSubLevelCountSum" parameterType="java.util.Map" resultType="java.util.Map">
+		  select t1.*,t2.username,t2.orgtype from (
+				select uno as USERNO,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+						  ,sum(REALMONEY) as REALMONEY from (
+							  select t1.*,${uno} as uno   from (
+								SELECT userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
+								,sum(case when loss &lt; 0 then loss * -1 else 0 end) as REALMONEY 
+								FROM  tb_jy_order where buyorsal = 'B'
+									<if test="btime != null and btime != ''">
+										and ORDTIME &gt;= #{btime}
+									</if>
+									<if test="etime != null and etime != ''">
+										and ORDTIME &lt;= #{etime}
+									</if>
+									group by USERNO
+								) t1
+								left join tb_hy_user_relation t2 on t1.userno = t2.USERNO
+								left join tb_hy_user t3 on t1.userno = t3.userno
+								where ${pno} = #{parentno}
+							) t group by uno
+				) t1 
+			
+	</select>
 </mapper>
