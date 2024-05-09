@@ -162,7 +162,7 @@
 	
 	<select id="findUserLevelCount" parameterType="java.util.Map" resultType="java.util.Map">
 		  select uno1 as USERNO,USERNAME,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
-		  ,sum(REALMONEY) as REALMONEY from (
+		  ,sum(REALMONEY) as REALMONEY,'1' as clevel,'1' as orgtype from (
 			  select t1.*,t2.uno1,t4.username  from (
 				SELECT userno,count(1) as num,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 				,sum(case when loss &lt; 0 then loss * -1 else 0 end) as REALMONEY 
@@ -210,7 +210,7 @@
 	</select>
 	
 	<select id="findSubLevelCount" parameterType="java.util.Map" resultType="java.util.Map">
-		  select t1.*,t2.username,t2.orgtype from (
+		  select t1.*,t2.username,t2.orgtype,t3.clevel from (
 				select uno as USERNO,sum(NUM) as NUM,sum(BAILMONEY) as BAILMONEY,sum(LOSS) as LOSS,sum(COMM) as COMM
 						  ,sum(REALMONEY) as REALMONEY from (
 							  select t1.*,${uno} as uno   from (
@@ -231,6 +231,7 @@
 							) t group by uno
 				) t1 
 				left join tb_hy_user t2 on t1.USERNO = t2.userno
+				left join tb_hy_user_relation t3 on t1.userno = t3.USERNO
 			<if test="page != null and page != ''">
 				limit #{page},#{size}
 			</if>

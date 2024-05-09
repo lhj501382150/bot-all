@@ -15,8 +15,11 @@
           value-format="yyyy-MM-dd HH:mm:ss">
         </el-date-picker>
 			</el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-input v-model="filters.username" placeholder="分公司名称" clearable></el-input>
+      </el-form-item> -->
+      <el-form-item>
+        <el-input v-model="filters.parentno" placeholder="上级编号" clearable></el-input>
       </el-form-item>
 			<el-form-item>
 				<kt-button icon="fa fa-search" :label="$t('action.search')" perms="operations:levelResult:view" type="primary" @click="findPage(null)"/>
@@ -28,6 +31,12 @@
 	<!--表格内容栏-->
 	<kt-table
     :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
+    <template #orgtype="scope">
+      <el-tag type="danger" v-if="scope.row.orgtype==1">
+          {{ getClevel(scope.row.clevel) }}
+        </el-tag>
+        <el-tag v-if="scope.row.orgtype==2">普通会员</el-tag>
+    </template>
     <template #USERNO="scope">
       <span v-if="scope.row.orgtype==2">{{ scope.row.USERNO }}</span>
       <span style="color:blue;cursor: pointer;" @click="showSub(scope.row)" v-else>{{ scope.row.USERNO }}</span>
@@ -59,9 +68,16 @@ export default {
         username:'',
         parentno:''
 			},
+      clevels:[
+        {key:1,val:'分公司'},
+        {key:2,val:'股东'},
+        {key:3,val:'总代理'},
+        {key:4,val:'代理'}
+      ],
 			columns: [
-				{prop:"USERNO", label:"分公司编号", minWidth:120},
-				{prop:"username", label:"分公司名称", minWidth:120},
+        {prop:"orgtype", label:"类型", width:120},
+				{prop:"USERNO", label:"用户编号", minWidth:120},
+				{prop:"username", label:"用户名称", minWidth:120},
         {prop:"NUM", label:"注数", minWidth:120},
         {prop:"BAILMONEY", label:"下注金额", minWidth:100},
         {prop:"REALMONEY", label:"有效金额", minWidth:120},
@@ -79,6 +95,9 @@ export default {
 		}
 	},
 	methods: {
+    getClevel(level){
+      return this.clevels.find(item=>item.key==level).val
+    },
     showSub(data){
       this.filters.parentno = data.USERNO
       this.findPage(null)

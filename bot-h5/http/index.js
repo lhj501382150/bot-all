@@ -22,7 +22,7 @@ http.beforeResponseFilter = function (res) {
 			uni.showToast({
 				 icon: 'none',
 				 title: res.sMsg,
-				 duration:5000
+				 duration:3000
 			})
 		}
 		return res;
