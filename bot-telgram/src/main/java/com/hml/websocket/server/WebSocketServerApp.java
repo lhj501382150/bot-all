@@ -79,7 +79,7 @@ public class WebSocketServerApp {
             subOnlineCount();
             flag=false;
         }
-        log.info("用户{}退出,当前在线人数为:" ,userId, getOnlineCount());
+        log.info("用户{}退出,当前在线人数为:{}" ,userId, getOnlineCount());
     }
 
     /**
@@ -90,7 +90,7 @@ public class WebSocketServerApp {
     @OnError
     public void onError(Session session, Throwable error) {
         log.error("用户错误:{},原因:{}",this.userId,error.getMessage());
-        error.printStackTrace();
+//        error.printStackTrace();
     }
     /**
      * 实现服务器主动推送

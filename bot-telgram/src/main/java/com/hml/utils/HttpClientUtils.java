@@ -47,8 +47,10 @@ import com.hml.back.config.BackCoreConfig;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HttpClientUtils {
-	 public static String doGet(String url) throws Exception {
-		 	log.info("GET请求：" + url);
+	 public static String doGet(String url,boolean isLog) throws Exception {
+		 	if(isLog) {
+		 		log.info("GET请求：" + url);
+		 	}
 	        try {
 	            CloseableHttpClient httpclient = null;
 		        if(url.startsWith("https:")){
@@ -65,7 +67,9 @@ public class HttpClientUtils {
 	            if (state == HttpStatus.SC_OK) {
 	                HttpEntity responseEntity = response.getEntity();
 	                String jsonString = EntityUtils.toString(responseEntity,"UTF-8");
-	                log.info("返回结果为:" + jsonString);
+	                if(isLog) {
+	    		 		log.info("返回结果为:" + jsonString);
+	    		 	}
 	                return jsonString;
 	            }
 	            else{

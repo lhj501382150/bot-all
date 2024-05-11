@@ -29,7 +29,7 @@ public class GetDataThread extends Thread {
 			try {
 				BackCoreService backCoreService = SpringUtil.getBean(BackCoreService.class);
 				String url ="https://api.api168168.com/pks/getPksDoubleCount.do?date=&lotCode=10012";
-				String ret = HttpClientUtils.doGet(url);
+				String ret = HttpClientUtils.doGet(url,isFirst);
 				JSONObject json = JSONObject.parseObject(ret);
 				if("0".equals(json.getString("errorCode"))) {
 					  JSONObject result = (JSONObject)json.get("result");

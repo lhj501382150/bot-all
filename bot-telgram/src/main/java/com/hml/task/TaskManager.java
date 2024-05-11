@@ -57,7 +57,7 @@ public class TaskManager {
 	
 	private Boolean IS_AUTH = false;
 	
-	@Scheduled(cron="0 0 1 * * *")
+	@Scheduled(cron="0 0 7 * * *")
 	public void checkSysAuth() {
 		IS_AUTH = checkAuth();
 		log.info("当前系统状态：{}",IS_AUTH);
@@ -399,6 +399,7 @@ public class TaskManager {
 		String priPath = BotConfig.FILE_PATH + "/private_key.pem";
 		String listenPath = BotConfig.FILE_PATH + "/listen.lic";
 		String expireDate = FileUtil.readString(listenPath,Charset.forName("UTF-8"));
+		expireDate = expireDate.replace("\n", "").trim();
 		PrivateKey privateKey = SM2Utils.importPrivateKey(priPath);
 		String decrypt = SM2Utils.decrypt(expireDate, privateKey);
 		String curDate = DateTimeUtils.getCurrentDate("yyyyMMdd");
