@@ -493,12 +493,21 @@
 					})
 					return
 				}
+				if(this.formData.money <= 0){
+					uni.showToast({
+						title:'输入金额不正确',
+						icon:'error',
+						duration:2000
+					})
+					return
+				}
 				this.$refs.form.validate().then(res=>{
 					let arr = this.items.filter(item=>item.check==true) || []
 					if(arr.length == 0){
 						uni.showToast({
 							title:'请选择下注类型',
-							icon:'error'
+							icon:'error',
+							duration:2000
 						})
 						return
 					}

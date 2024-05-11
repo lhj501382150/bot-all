@@ -4,6 +4,9 @@
 		<view class="row">
 			<view class="text">当前账号： {{getStatus(userinfo.clevel)}} - {{userno}}</view>
 			<!-- <view class="text" v-if="userinfo.clevel > 1">所属{{getStatus(userinfo.clevel - 1)}}: {{userinfo.parentNo}}</view> -->
+			<view class="search-status">
+				<uni-data-select v-model="search.sex" placeholder="状态筛选" :localdata="sexs"  @change="changeSex" ></uni-data-select>
+			</view>
 		</view>
 		<view class="tab-bar">
 			<view class="tab-item"  :class="item.clevel == tabIndex ? 'active':''" v-for="(item,index) in tabs" :key="index" @click="findData(item)" v-if="item.clevel > userinfo.clevel">
@@ -176,9 +179,9 @@
 					{clevel:99,name:'会员'}
 				],
 				sexs:[
-					{val:0,label:'正常'},
-					{val:1,label:'冻结'},
-					{val:2,label:'停用'}
+					{value:"0",text:'正常'},
+					{value:"1",text:'冻结'},
+					{value:"2",text:'停用'}
 				],
 				tabIndex:0,
 				records:[],
@@ -186,6 +189,7 @@
 					orgtype:'',
 					userno:'',
 					clevel:'',
+					sex:'',
 					pageIdx:0,
 					pageSize:10
 				},
@@ -245,6 +249,9 @@
 			this.loadData()
 		},
 		methods: {
+			changeSex(){
+				this.getRefresherrefresh()
+			},
 			changeStatus(userno,status){
 				let para = {
 					userno:userno,
@@ -424,8 +431,8 @@
 			},
 			getSexLabel(val){
 				if(val){
-					let sex = this.sexs.find(temp=>val==temp.val) || {}
-					return sex.label
+					let sex = this.sexs.find(temp=>val==temp.value) || {}
+					return sex.text
 				}
 			},
 			open() {
@@ -483,6 +490,10 @@
 	background-color: #fff;
 	.row{
 		padding-left: 40upx;
+		padding-right: 40upx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 		.add-btn{
 			width: 400upx;
 			background-color: rgb(40,148,255);
@@ -490,6 +501,10 @@
 			margin-top: 20upx;
 		}
 		.text{
+			margin-top: 40upx;
+		}
+		.search-status{
+			width:200upx;
 			margin-top: 40upx;
 		}
 	}
