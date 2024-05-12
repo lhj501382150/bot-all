@@ -96,7 +96,7 @@ public class UserController {
         	model.setChkuser(SecurityUtils.getUsername());
         	model.setStatus(0);
         	userMoneyChangeApplyService.saveAndAudit(model);
-        	log.info("客户上分：【{}】-{}：{}",user.getUserno(),model.getUserno(),model.getChmoney());
+        	log.info("客户上分：【{}】-{}：{}",user.getLoginno(),model.getUserno(),model.getChmoney());
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -132,7 +132,7 @@ public class UserController {
         	model.setChkuser(SecurityUtils.getUsername());
         	model.setStatus(0);
         	userMoneyChangeApplyService.saveAndAudit(model);
-        	log.info("客户下分：【{}】-{}：{}",user.getUserno(),model.getUserno(),model.getChmoney());
+        	log.info("客户下分：【{}】-{}：{}",user.getLoginno(),model.getUserno(),model.getChmoney());
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
