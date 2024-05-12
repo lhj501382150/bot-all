@@ -55,7 +55,7 @@
 						// this.$http.post("/Notice/GetNotice",para,res => {
 						// 	 this.notice = res.rData.content
 						// })
-						this.notice = datas[0].title
+						this.notice = datas[0].title + '  ' + datas[0].content
 					}
 				})
 			},
