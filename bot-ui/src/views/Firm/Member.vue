@@ -577,7 +577,7 @@ export default {
         {prop:"balance", label:"当前余额", width:100},
         {prop:"enable", label:"可用余额", width:100},
         {prop:"freeze", label:"冻结金额", width:100},
-         {prop:"allquity", label:"已使用金额", width:100},
+         {prop:"limtout", label:"已使用金额", width:100},
         {prop:"sex", label:"状态", width:100},
         // {prop:"usertype", label:"邀请权限", width:100},
         {prop:"chmoney", label:"变动金额", width:120},

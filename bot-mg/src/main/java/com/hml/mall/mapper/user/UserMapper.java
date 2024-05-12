@@ -24,7 +24,7 @@ import com.hml.mall.entity.user.User;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-	@Select("select t.* from (	select t1.* ,COALESCE(t3.BALANCE,0) as BALANCE,COALESCE(t3.ENABLE,0) as ENABLE,COALESCE(t3.FREEZE,0) as FREEZE,COALESCE(t3.ALLQUITY,0) as ALLQUITY"
+	@Select("select t.* from (	select t1.* ,COALESCE(t3.BALANCE,0) as BALANCE,COALESCE(t3.ENABLE,0) as ENABLE,COALESCE(t3.FREEZE,0) as FREEZE,COALESCE(t3.LIMTOUT,0) as LIMTOUT"
 			+ "  ,t4.username as tjusername,t4.nickname as tjnickname "
 			+ " ,t5.CLEVEL as clevel,t5.PARENTNO as parentno,t5.TJNO as tjno "
 			+ " ,t5.uno1,t5.uno2,t5.uno3,t5.uno4,t5.uno5,t5.uno6,t5.uno7,t5.uno8,t5.uno9,t5.uno10,t5.uno11,t5.uno12,t5.uno13,t5.uno14 "

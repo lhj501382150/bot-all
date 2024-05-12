@@ -196,7 +196,7 @@ private static final long serialVersionUID=1L;
     private BigDecimal balance;   //
     
     @TableField(exist = false)
-    private BigDecimal allquity;   //
+    private BigDecimal limtout;   //
     
 
 }
