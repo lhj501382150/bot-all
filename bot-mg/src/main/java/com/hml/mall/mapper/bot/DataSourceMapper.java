@@ -27,4 +27,7 @@ public interface DataSourceMapper extends BaseMapper<DataSource> {
 			+ " left join tb_data_source t2 on t1.contnum = t2.DataId	"
 			+ " ) t ${ew.customSqlSegment}")
 	Page<Map<String,Object>> findPage(Page<DataSource> page,@Param(Constants.WRAPPER)Wrapper wrapper);
+	
+	@Select("select t.* from tb_data_source t where issue < #{issue} order by issue desc limit 0,1")
+	DataSource findNearDataSorce(@Param("issue")String issue);
 }

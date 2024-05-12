@@ -36,6 +36,13 @@ export const findPage = (data) => {
     data
   })
 }
+export const list = (data) => {
+  return axios({
+    url: '/chat/list',
+    method: 'post',
+    data
+  })
+}
 export const pause = (data) => {
   return axios({
     url: '/chat/pause',

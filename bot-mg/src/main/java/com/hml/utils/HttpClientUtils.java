@@ -43,10 +43,12 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class HttpClientUtils {
-	private static Logger log = Logger.getLogger(HttpClientUtils.class);
 	 public static String doGet(String url) throws Exception {
-		 	log.info("GET请求：" + url);
+		 	log.info("GET请求：{}" , url);
 	        try {
 	            CloseableHttpClient httpclient = null;
 		        if(url.startsWith("https:")){
@@ -63,11 +65,11 @@ public class HttpClientUtils {
 	            if (state == HttpStatus.SC_OK) {
 	                HttpEntity responseEntity = response.getEntity();
 	                String jsonString = EntityUtils.toString(responseEntity,"UTF-8");
-	                log.info("返回结果为:" + jsonString);
+	                log.info("返回结果为:{}" , jsonString);
 	                return jsonString;
 	            }
 	            else{
-	                log.error("请求返回:"+state+"("+url+")");
+	                log.error("请求返回:{}({})",state,url);
 	                throw new Exception("请求异常：" + state);
 	            }
 	        } catch (IOException e) {
@@ -76,8 +78,8 @@ public class HttpClientUtils {
 	        return null;
 	    }
 	 public static String doPostStr(String url, Map<String,String> params,String charset){
-	    	log.info("Post请求路径:" + url);
-	    	log.info("Post请求参数:" + params);
+	    	log.info("Post请求路径:{}" , url);
+	    	log.info("Post请求参数:{}" , params);
 	    	
 	        BufferedReader in = null;
 	        try {
@@ -111,17 +113,15 @@ public class HttpClientUtils {
 	                }
 
 	                in.close();
-	                log.info("返回结果为:" + sb.toString());
+	                log.info("返回结果为:{}" , sb.toString());
 	                return sb.toString();
 	            }
 	            else{    //
-	            	log.info("返回状态码为:" + code);
+	            	log.info("返回状态码为:{}" , code);
 	                return null;
 	            }
 	        }catch(Exception e){
-	        	log.error("请求异常:"+ e.getMessage());
-	            e.printStackTrace();
-
+	        	log.error("请求异常:", e);
 	            return null;
 	        }
 	    }
@@ -132,8 +132,8 @@ public class HttpClientUtils {
 	     * @return
 	     */
 	    public static String doPost(String url, Map<String,Object> params){
-	    	log.info("Post请求路径:" + url);
-	    	log.info("Post请求参数:" + params);
+	    	log.info("Post请求路径:{}" , url);
+	    	log.info("Post请求参数:{}" , params);
 	    	
 	        BufferedReader in = null;
 	        try {
@@ -167,17 +167,15 @@ public class HttpClientUtils {
 	                }
 
 	                in.close();
-	                log.info("返回结果为:" + sb.toString());
+	                log.info("返回结果为:{}" , sb.toString());
 	                return sb.toString();
 	            }
 	            else{    //
-	            	log.info("返回状态码为:" + code);
+	            	log.info("返回状态码为:{}" , code);
 	                return null;
 	            }
 	        }catch(Exception e){
-	        	log.error("请求异常:"+ e.getMessage());
-	            e.printStackTrace();
-
+	        	log.error("请求异常:", e);
 	            return null;
 	        }
 	    }
@@ -188,8 +186,8 @@ public class HttpClientUtils {
 	     * @return
 	     */
 	    public static String doPost(String url, String params,Map<String,String> headers) throws Exception {
-	    	log.info("Post请求路径:" + url);
-	    	log.info("Post请求参数:" + params);
+	    	log.info("Post请求路径:{}" , url);
+	    	log.info("Post请求参数:{}" , params);
 	        CloseableHttpClient httpclient = null;
 	        if(url.startsWith("https:")){
 	        	httpclient  = getHttpsClient();
@@ -217,7 +215,7 @@ public class HttpClientUtils {
 	            if (state == HttpStatus.SC_OK) {
 	                HttpEntity responseEntity = response.getEntity();
 	                String jsonString = EntityUtils.toString(responseEntity,"UTF-8");
-	                log.info("返回结果为:" + jsonString);
+	                log.info("返回结果为:{}" , jsonString);
 					if(jsonString.startsWith("\"")) {
 						int beg = jsonString.indexOf("{");
 						int end = jsonString.indexOf("}");
@@ -227,7 +225,7 @@ public class HttpClientUtils {
 	                return jsonString;
 	            }
 	            else{
-	                log.error("请求返回:"+state+"("+url+")");
+	                log.error("请求返回:{}({})",state,url);
 	                throw new Exception("请求异常：" + state);
 	            }
 	        }
@@ -253,8 +251,8 @@ public class HttpClientUtils {
 	     * @return
 	     */
 	    public static String doPost(String url, String params) throws Exception {
-	    	log.info("Post请求路径:" + url);
-	    	log.info("Post请求参数:" + params);
+	    	log.info("Post请求路径:{}" , url);
+	    	log.info("Post请求参数:{}" , params);
 	        CloseableHttpClient httpclient = null;
 	        if(url.startsWith("https:")){
 	        	httpclient  = getHttpsClient();
@@ -277,7 +275,7 @@ public class HttpClientUtils {
 	            if (state == HttpStatus.SC_OK) {
 	                HttpEntity responseEntity = response.getEntity();
 	                String jsonString = EntityUtils.toString(responseEntity,"UTF-8");
-	                log.info("返回结果为:" + jsonString);
+	                log.info("返回结果为:{}" , jsonString);
 					if(jsonString.startsWith("\"")) {
 						int beg = jsonString.indexOf("{");
 						int end = jsonString.indexOf("}");
@@ -287,7 +285,7 @@ public class HttpClientUtils {
 	                return jsonString;
 	            }
 	            else{
-	                log.error("请求返回:"+state+"("+url+")");
+	                log.error("请求返回:{}({})",state,url);
 	                throw new Exception("请求异常：" + state);
 	            }
 	        }

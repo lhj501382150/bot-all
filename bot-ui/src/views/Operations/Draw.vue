@@ -9,6 +9,9 @@
 			<el-form-item>
 				<kt-button icon="fa fa-search" :label="$t('action.search')" perms="operations:draw:view" type="primary" @click="findPage(null)"/>
 			</el-form-item>
+       <el-form-item>
+          <kt-button icon="fa fa-plus" label="行情补录结算" perms="operations:draw:add" type="primary" @click="handleAdd" />
+        </el-form-item>
 		</el-form>
 	</div>
 	<div class="toolbar" style="float:right;padding-top:10px;padding-right:15px;">
@@ -34,10 +37,28 @@
 		@findPage="findPage" @handleEdit="handleEdit">
 	</kt-table>
 	<!--新增编辑界面-->
-	<el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" v-dialogDrag>
+	<el-dialog title="行情补录结算" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" v-dialogDrag>
 		<el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
 			label-position="right">
-			
+      <el-form-item label="期数" prop="issue" >
+				<el-input v-model="dataForm.issue" placeholder="请输入期数"  maxlength="16"></el-input>
+			</el-form-item>
+      <el-form-item label="时间" prop="sTime" >
+        <el-date-picker
+          v-model="dataForm.sTime"
+          type="datetime"
+          value-format="yyyy-MM-dd HH:mm:ss" style="width: 98%;">
+        </el-date-picker>
+      </el-form-item>
+			<el-form-item label="开奖结果" prop="sresult" >
+				<el-input v-model="dataForm.sresult" placeholder="请输入开奖结果"  maxlength="32"></el-input>
+        <div>输入格式为：01,02,03,04,05,06,07,08,09,10 以 , 分隔</div>
+			</el-form-item>
+      <el-form-item label="编号" prop="wareno">
+        <el-select v-model="dataForm.wareno" placeholder="请选择编号" style="width: 98%;" clearable>
+          <el-option v-for="(item,index) in warenos" :key="index" :label="item.chatid" :value="item.chatid"></el-option>
+        </el-select>
+      </el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
 			<el-button :size="size" @click.native="dialogVisible = false">{{$t('action.cancel')}}</el-button>
@@ -81,15 +102,21 @@ export default {
 			},
 			// 新增编辑界面数据
 			dataForm: {
-				botid: '',
-				issue: '',
-				token: '',
-				kefurl:'',
-				playurl:''
-			}
+				DataId: '',
+				sTime: '',
+				sresult: '',
+				issue:'',
+        wareno:''
+			},
+      warenos:[]
 		}
 	},
 	methods: {
+    loadWareno(){
+      this.$api.chat.list({}).then(res=>{
+        this.warenos = res.data
+      })
+    },
 		// 获取分页数据
 		findPage: function (data) {
 			if(data !== null) {
@@ -110,8 +137,10 @@ export default {
 		},
 		// 显示新增界面
 		handleAdd: function () {
-      },
-		
+      this.dialogVisible = true
+			this.operation = true
+    },
+
 		// 显示编辑界面
 		handleEdit: function (data) {
 			this.$confirm('确定要重新发送结算图吗', '提示', {
@@ -139,7 +168,7 @@ export default {
 						this.editLoading = true
 						let params = Object.assign({}, this.dataForm)
             if(this.operation){
-              this.$api.bot.save(params).then((res) => {
+              this.$api.draw.save(params).then((res) => {
                 this.editLoading = false
                 if(res.code == 200) {
                   this.$message({ message: '操作成功', type: 'success' })
@@ -197,6 +226,7 @@ export default {
 	mounted() {
 		this.initColumns()
 		this.initButtons()
+    this.loadWareno()
 	}
 }
 </script>

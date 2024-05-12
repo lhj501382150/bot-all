@@ -16,6 +16,7 @@ public class BackCoreConfig {
 	public static String CLEAR_MONEY = "/Account/ClearAll";
 	public static String ALTER_BOT_INTEGE = "/Data/MdiBodIntege";
 	public static String ALTER_PARA = "/Data/MdiSysPara";
+	public static String ADD_MANA_DATA = "/Data/ManaAddData";
 	
 	public static String ADD_ACCOUNT = "/Account/AddAccount";
 //	账户手动金额调整

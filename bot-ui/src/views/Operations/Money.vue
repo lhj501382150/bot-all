@@ -17,11 +17,9 @@
         </el-date-picker>
 			</el-form-item>
       <el-form-item>
-        <el-input v-model="filters.username" placeholder="用户名" clearable></el-input>
+        <el-input v-model="filters.userno" placeholder="用户名" clearable></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-input v-model="filters.nickname" placeholder="用户昵称" clearable></el-input>
-      </el-form-item>
+
 			<el-form-item>
 				<kt-button icon="fa fa-search" :label="$t('action.search')" perms="operations:money:view" type="primary" @click="findPage(null)"/>
         <kt-button icon="fa fa-download" :label="$t('action.export')" perms="operations:money:view" type="primary" @click="exportExcel"/>
@@ -92,6 +90,7 @@ export default {
 			this.pageRequest.params = {
         'ctime@ge':this.filters.fdate == null ? '' : this.filters.fdate[0],
         'ctime@le':this.filters.fdate == null ? '' : this.filters.fdate[1],
+        userno: this.filters.userno,
         'username@like':this.filters.username,
         'nickname@like':this.filters.nickname
 			}

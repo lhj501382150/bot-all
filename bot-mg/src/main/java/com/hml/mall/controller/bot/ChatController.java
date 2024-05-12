@@ -116,12 +116,9 @@ public class ChatController {
     *
     * @return
     */
-    @PreAuthorize("hasAuthority('sys:chat:view')")
     @RequestMapping("/list")
-    public HttpResult list() {
-        Chat model = new  Chat();
+    public HttpResult list(@RequestBody  Chat model) {
         List<Chat> list =  chatService.list(model);
-        // todo 再包装一层
         return HttpResult.ok(list);
     }
 

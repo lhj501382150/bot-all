@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.hml.backcore.service.BackCoreService;
 import com.hml.core.http.HttpResult;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
@@ -16,6 +18,7 @@ import com.hml.mall.entity.bot.DataSource;
 import com.hml.mall.service.bot.IDataSourceService;
 import com.hml.redis.RedisKey;
 import com.hml.redis.RedisUtils;
+import com.hml.utils.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +66,30 @@ public class DataSourceController {
     	redisUtils.lSet(key, model.getContnum());
     	
     	log.info("重新发送图片：{}-{}", key, model.getContnum() );
+        return HttpResult.ok();
+    }
+    @PreAuthorize("hasAuthority('operations:draw:add')")
+    @RequestMapping("/save")
+    public HttpResult save(@RequestBody DataSource model) throws Exception {
+    	if(StringUtils.isBlank(model.getIssue())) {
+    		throw new Exception("期数不能为空");
+    	}
+    	if(StringUtils.isBlank(model.getSresult())) {
+    		throw new Exception("开奖结果不能为空");
+    	}
+    	
+    	String issue = model.getIssue();
+    	QueryWrapper<DataSource> qw = new QueryWrapper<DataSource>();
+    	qw.eq("issue",issue);
+    	DataSource item = dataSourceService.getOne(qw);
+    	if(item != null) {
+    		throw new Exception("该期结果已存在");
+    	}
+//    	查询ID
+    	Integer id = dataSourceService.findPreDataSource(issue);
+    	model.setDataId(id);
+    	model.setSresult(checkResult(model.getSresult()));
+    	dataSourceService.save(model);
         return HttpResult.ok();
     }
 	/**
@@ -122,4 +149,32 @@ public class DataSourceController {
         return HttpResult.ok(page);
     }
 
+    private String checkResult(String result) throws Exception {
+    	result = result.replaceAll("，", ",");
+    	String[] rets = result.split(",");
+    	if(rets.length != 10) {
+    		throw new Exception("开奖结果应为10位数字");
+    	}
+    	StringBuffer buff = new StringBuffer();
+    	for(int i=0;i < rets.length;i++) {
+    		String num = rets[i].trim();
+    		if(StringUtils.isBlank(num)) {
+    			throw new Exception("开奖结果数字不能为空");
+    		}
+    		int m = Integer.parseInt(num);
+    		if(m < 10) {
+    			buff.append("0").append(m).append(",");
+    		}else {
+    			buff.append(m).append(",");
+    		}
+    	}
+    	String str = buff.toString();
+    	if(str.length() > 0) {
+    		str = str.substring(0,str.length() -1);
+    	}
+    	return str;
+    	
+    }
+    
+     
 }

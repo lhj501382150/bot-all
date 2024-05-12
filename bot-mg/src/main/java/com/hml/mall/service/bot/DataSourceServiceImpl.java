@@ -5,13 +5,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hml.backcore.service.BackCoreService;
 import com.hml.core.page.MybatisPlusPageHelper;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
 import com.hml.mall.entity.bot.DataSource;
 import com.hml.mall.mapper.bot.DataSourceMapper;
+import com.hml.redis.RedisKey;
 
 /**
  * <p>
@@ -26,7 +29,10 @@ import com.hml.mall.mapper.bot.DataSourceMapper;
 public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSource> implements IDataSourceService {
 
 	@Autowired
-	private DataSourceMapper DataSourceMapper;
+	private DataSourceMapper dataSourceMapper;
+	
+	@Autowired
+    private BackCoreService backCoreService;
 
     @Override
     public List< DataSource> list(DataSource model) {
@@ -39,7 +45,35 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
 		 
 //		return MybatisPlusPageHelper.findPage(pageRequest, DataSourceMapper,"findPage");
 		
-		return MybatisPlusPageHelper.findPage(pageRequest, DataSourceMapper);
+		return MybatisPlusPageHelper.findPage(pageRequest, dataSourceMapper);
 	}
+    
+    @Override
+    public Integer findPreDataSource(String issue) {
+    	DataSource item = dataSourceMapper.findNearDataSorce(issue);
+    	if(item == null) {
+    		throw new RuntimeException("未找到上一期结果");
+    	}
+    	int preIssue = Integer.parseInt(item.getIssue());
+    	int curIssue = Integer.parseInt(issue);
+    	int dataId = curIssue - preIssue + item.getDataId();
+    	return dataId;
+    }
+    
+    @Override
+    public boolean save(DataSource entity) {
+    	JSONObject data = new JSONObject();
+    	data.put("id",entity.getDataId());
+    	data.put("botId", Long.valueOf(entity.getWareno()));
+    	data.put("drawIssue", entity.getIssue());
+    	data.put("sTime", entity.getSTime());
+    	data.put("sResult", entity.getSresult());
+    	String res = backCoreService.addManaData(data);
+    	if("ok".equals(res)){
+    		return true;
+		}else{
+			throw new RuntimeException(res);
+		}
+    }
 
 }

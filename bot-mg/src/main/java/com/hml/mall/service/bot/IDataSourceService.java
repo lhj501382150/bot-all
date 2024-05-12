@@ -36,5 +36,7 @@ public interface IDataSourceService extends IService<DataSource> {
     * @return
     */
    PageResult findPage(PageRequest pageRequest);
+   
+   Integer findPreDataSource(String issue);
 
 }

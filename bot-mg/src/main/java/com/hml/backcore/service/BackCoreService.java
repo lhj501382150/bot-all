@@ -27,6 +27,19 @@ public class BackCoreService {
 		return result;
 	}
 	  
+	public String addManaData(JSONObject data){
+		String result = "ok";
+		try {
+			String ret = HttpClientUtils.doPost(BackCoreConfig.URL + BackCoreConfig.ADD_MANA_DATA, data.toJSONString(),null);
+			JSONObject json = JSONObject.parseObject(ret);
+			if(!"0".equals(json.getString("iCode"))){
+				throw new Exception(json.getString("sMsg"));
+			}
+		} catch (Exception e) {
+			result = e.getMessage();
+		}
+		return result;
+	}
 	
 	public String downRob(JSONObject data){
 		String result = "ok";
