@@ -210,14 +210,18 @@
 			</view>
 			
 		</uni-popup>
-
+		<NoticeDialog :isShow="showNotice"></NoticeDialog>
 	</view>
 </template>
 
 <script>
 	import { getSecond,getCurTime } from '../../utils/util'
 	import {botId, webSocketUrl} from '@/static/config/config.js'
+	import NoticeDialog from '@/components/notice-dialog.vue'
 	export default {
+		components:{
+			NoticeDialog
+		},
 		data() {
 			return {
 				user:{},
@@ -281,12 +285,15 @@
 				],
 				orgtype:'',
 				errMsg:'',
-				curStatus:false
+				curStatus:false,
+				showNotice:false,
+				tempShowNotice:false
 			}
 		},
 		onLoad() {
 			this.getUserBalance()
 			this.loadData()
+			this.getShowNoticePara()
 			this.connectSocketInit()
 			let user = JSON.parse(uni.getStorageSync('userinfo'))
 			this.orgtype = user.orgtype
@@ -295,6 +302,20 @@
 			this.closeSocket()
 		},
 		methods: {
+			getShowNoticePara(){
+				let para = {
+					sysid:11
+				}
+				try{
+					this.$http.post('/Query/SysPara',para,res=>{
+					  if(res.iCode==0){
+						  this.tempShowNotice =  res.rData.sval =='Y'
+					  }
+					})
+				}catch(e){
+					this.tempShowNotice = false
+				}
+			},
 			loadData(){
 				this.results = []
 				let para = {
@@ -331,7 +352,6 @@
 					})
 				}
 				let url = webSocketUrl  + userno;
-				console.log(url)
 				this.socketTask = uni.connectSocket({
 					url: url ,
 					success(data) {
@@ -346,7 +366,7 @@
 					this.socketTask.send({
 						data: "uni-app发送一条消息",
 						async success() {
-							console.log("消息发送成功");
+							// console.log("消息发送成功");
 						},
 					});
 					// 注：只有连接正常打开中 ，才能正常收到消息
@@ -357,12 +377,13 @@
 							if(data.status==1){
 								clearTimeout(this.timer)
 								this.getCurStatus()
-								console.log(this.curStatus)
+								// console.log(this.curStatus)
 								if(this.curStatus){
 									this.isStop = false
 								}else{
 									this.isStop = true
 								}
+								this.showNotice = this.tempShowNotice
 								this.result = JSON.parse(data.data)
 								this.result.data = this.result.CODE.split(',') || []
 								this.leftTime = getSecond(this.result.TIME) + 15
@@ -373,6 +394,7 @@
 								this.isStop = true
 								this.fptime = 0
 								this.kjtime = 30
+								this.getShowNoticePara()
 							}
 						}catch(e){
 							console.log('消息处理异常：' + e)
