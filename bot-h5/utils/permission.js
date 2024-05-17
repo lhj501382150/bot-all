@@ -14,7 +14,7 @@ export default function initPermission() {
 	list.forEach(item => { //用遍历的方式分别为,uni.navigateTo,uni.redirectTo,uni.reLaunch,uni.switchTab这4个路由方法添加拦截器
 		uni.addInterceptor(item, {
 			invoke(e) { // 调用前拦截
-				console.log('拦截', e)
+				// console.log('拦截', e)
 				//获取用户的token
 				const token = uni.getStorageSync('Token'),
 					//获取要跳转的页面路径（url去掉"?"和"?"后的参数）

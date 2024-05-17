@@ -4,7 +4,7 @@
 			<img src="../../static/images/home/bg.png" class="bg-img"></img>
 		</view>
 		<view class="notice">
-			<uni-notice-bar scrollable single showIcon :text="notice" :speed="50" background-color="rgb(219,202,80)" color="#000"></uni-notice-bar>
+			<uni-notice-bar scrollable single showIcon :text="notice" :speed="50" background-color="rgb(219,202,80)" color="#000" more-color="#000" :showGetMore="true" @getmore="showDetail"></uni-notice-bar>
 		</view>
 		<view class="games">
 			<view  v-for="(item,index) in games" :key="index" class="game-item" @click="showGame(item)">
@@ -25,6 +25,7 @@
 		data() {
 			return {
 				notice:'公告：每天下午2:00-2:15系统自动维护15分钟',
+				noticeno:'',
 				games:[
 					{name:'四方通宝',img:'../../static/images/home/logo.png',path:'./qmbd'}
 					
@@ -39,6 +40,12 @@
 			this.loadNotice()
 		},
 		methods: {
+			showDetail(){
+				let no = this.noticeno
+				uni.navigateTo({
+					url:'/pages/user/noticeDetail?no='+ no
+				})
+			},
 			showGame(item){
 				uni.navigateTo({
 					url:item.path
@@ -56,6 +63,7 @@
 						// 	 this.notice = res.rData.content
 						// })
 						this.notice = datas[0].title  
+						this.noticeno = datas[0].noticeno
 					}
 				})
 			},

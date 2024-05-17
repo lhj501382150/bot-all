@@ -39,9 +39,19 @@
 				})
 			},
 			goBack(){
-				uni.navigateTo({
-					url:'./notice'
-				})
+				let pages = getCurrentPages()
+				if(pages.length > 1){
+					let path = pages[pages.length-2].route
+					if(!path.startsWith("/")){
+						path = "/" + path
+					}
+					uni.reLaunch({
+						url:path
+					})
+				}else{
+					history.go(-1);
+				}
+				
 			}
 		}
 	}
