@@ -311,11 +311,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     		QueryWrapper<Login> qw = new QueryWrapper<Login>(); 
         	qw.eq("LOGINNO", entity.getUserno());
         	Login login = loginMapper.selectOne(qw);
-        	login.setLoginname(entity.getUsername());
-        	if(!user.getTelno().equals(entity.getTelno())){
-        		login.setTelno(entity.getTelno());
+        	if(login != null) {
+        		login.setLoginname(entity.getUsername());
+            	if(!user.getTelno().equals(entity.getTelno())){
+            		login.setTelno(entity.getTelno());
+            	}
+            	loginMapper.updateById(login);
         	}
-        	loginMapper.updateById(login);
+        	
     	}
     	userMapper.updateById(entity);
 //    	保存客户关系
@@ -400,9 +403,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	QueryWrapper<Login> qw = new QueryWrapper<Login>(); 
     	qw.eq("LOGINNO", entity.getUserno());
     	Login login = loginMapper.selectOne(qw);
-    	login.setIsvalid("N");
-    	loginMapper.updateById(login);
-    	
+    	if(login != null) {
+    		login.setIsvalid("N");
+        	loginMapper.updateById(login);
+    	}
     	redisUtils.hdel(RedisKey.USER_INVITE_AUTH, entity.getUserno());
     	return true;
     }
