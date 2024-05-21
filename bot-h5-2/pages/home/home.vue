@@ -27,7 +27,8 @@
 				notice:'公告：每天下午2:00-2:15系统自动维护15分钟',
 				noticeno:'',
 				games:[
-					{name:'四方通宝',img:'../../static/images/home/logo.png',path:'./qmbd'}
+					{name:'四方通宝',img:'../../static/images/home/logo.png',path:'./qmbd'},
+					{name:'四方牛牛',img:'../../static/images/home/niu.jpg',path:'./qmnn'}
 					
 				],
 				search:{
@@ -101,7 +102,7 @@
 			align-items: center;
 			img{
 				width: 100%;
-				height: auto;
+				height: 310upx;
 			}
 		}
 	}

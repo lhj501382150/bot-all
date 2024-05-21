@@ -125,6 +125,14 @@
 				"enablePullDownRefresh" : false,
 				"navigationStyle":"custom"
 			}
+		},
+		{
+			"path" : "pages/home/qmnn",
+			"style" : 
+			{
+				"enablePullDownRefresh" : false,
+				"navigationStyle":"custom"
+			}
 		}
 	],
 	"tabBar": {

@@ -2,15 +2,11 @@
 	<view class="qmbd-game">
 		<uni-nav-bar  title="四方通宝" background-color="rgb(250,81,81)" color="#fff" left-icon="back" :border="false" right-text="规则" @clickLeft="goBack" @clickRight="openRule"></uni-nav-bar>
 		<view class="tab-bar">
-			<view class="tab-item" :class="tabIndex==0 ? 'active':''">宝斗</view>
+			<view class="tab-item" :class="tabIndex==0 ? 'active':''">牛牛</view>
 			<view class="tab-item" :class="tabIndex==1 ? 'active':''" @click="goRecord">下注记录</view>
 		</view>
 		<view class="row">
 			<view class="draw-time red">{{result.ISSUE-1}}期</view>
-			<view class="draw-num">
-				<view class="tips">{{result.RESULT}}</view>
-				<view class="tips">{{getStatus(result.RESULT)}}</view>
-			</view>
 			<view class="link-btn" @click="goUrl">{{link.title}}</view>
 		</view>
 		<view class="row">
@@ -29,147 +25,9 @@
 			<view class="draw-money">今日输赢：<text style="color: red;">{{user.curLoss}}</text></view>
 		</view>
 		<view class="game-box">
-			<view class="g-b-1">
-				<view class="game-box-1" :class="items[0].check ? 'active':''" @click="chooseItem(items[0])">
-					<view>{{items[0].name}} </view>
-					<view class="rate">{{items[0].rate}}</view>
-				</view>
-				<view class="game-box-2" :class="items[1].check ? 'active':''" @click="chooseItem(items[1])">
-					<view>{{items[1].name}} </view>
-					<view class="rate">{{items[1].rate}} / {{items[1].rate1}}</view>
-				</view>
-				<view class="game-box-2" :class="items[2].check ? 'active':''" @click="chooseItem(items[2])">
-					<view>{{items[2].name}} </view>
-					<view class="rate">{{items[2].rate}} / {{items[1].rate1}}</view>
-				</view>
-				<view class="game-box-1" :class="items[3].check ? 'active':''" @click="chooseItem(items[3])">
-					<view>{{items[3].name}} </view>
-					<view class="rate">{{items[3].rate}}</view>
-				</view>
-			</view>
-			<view class="g-b-2">
-				<view class="game-box-3" :class="items[4].check ? 'active':''" @click="chooseItem(items[4])">
-					<view>{{items[4].name}}</view>
-					<view class="rate">{{items[4].rate}} / {{items[4].rate1}}</view>
-				</view>
-				<view class="game-box-4">
-					<view class="game-box-4-1" :class="items[5].check ? 'active':''" @click="chooseItem(items[5])">
-						<view class="text">
-							<view>{{items[5].name}}</view>
-							<view class="rate">{{items[5].rate}}  /{{items[5].rate1}}</view>
-						</view>
-					</view>
-					<view class="game-box-4-2" :class="items[6].check ? 'active':''" @click="chooseItem(items[6])">
-						<view class="text">
-							<view>{{items[6].name}}</view>
-							<view class="rate">{{items[6].rate}}  / {{items[6].rate1}}</view>
-						</view>
-					</view>
-				</view>
-				<view class="game-box-5">
-					<view class="game-box-5-1" :class="items[7].check ? 'active':''" @click="chooseItem(items[7])">
-						<view class="text">
-							<view>{{items[7].name}}</view>
-							<view class="rate">{{items[7].rate}}</view>
-						</view>
-					</view>
-					<view class="game-box-5-2" :class="items[8].check ? 'active':''" @click="chooseItem(items[8])">
-						<view class="text">
-							<view>{{items[8].name}}</view>
-							<view class="rate">{{items[8].rate}} / {{items[8].rate1}}</view>
-						</view>
-					</view>
-				</view>
-				<view class="game-box-3" :class="items[9].check ? 'active':''" @click="chooseItem(items[9])">
-					<view>{{items[9].name}}</view>
-					<view class="rate">{{items[9].rate}} / {{items[9].rate1}}</view>
-				</view>
-			</view>
-			<view class="g-b-2">
-				<view class="game-box-3" :class="items[10].check ? 'active':''" @click="chooseItem(items[10])">
-					<view>{{items[10].name}}</view>
-					<view class="rate">{{items[10].rate}} / {{items[10].rate1}}</view>
-				</view>
-				<view class="game-box-5">
-					<view class="game-box-5-1" :class="items[11].check ? 'active':''" @click="chooseItem(items[11])">
-						<view class="text">
-							<view>{{items[11].name}}</view>
-							<view class="rate">{{items[11].rate}}</view>
-						</view>
-					</view>
-					<view class="game-box-5-2" :class="items[12].check ? 'active':''" @click="chooseItem(items[12])">
-						<view class="text">
-							<view>{{items[12].name}}</view>
-							<view class="rate">{{items[12].rate}} / {{items[12].rate1}}</view>
-						</view>
-					</view>
-				</view>
-				<view class="game-box-4">
-					<view class="game-box-4-1" :class="items[13].check ? 'active':''" @click="chooseItem(items[13])">
-						<view class="text">
-							<view>{{items[13].name}}</view>
-							<view class="rate">{{items[13].rate}}</view>
-						</view>
-					</view>
-					<view class="game-box-4-2" :class="items[14].check ? 'active':''" @click="chooseItem(items[14])">
-						<view class="text">
-							<view>{{items[14].name}}</view>
-							<view class="rate">{{items[14].rate}}</view>
-						</view>
-					</view>
-				</view>
-				<view class="game-box-3" :class="items[15].check ? 'active':''" @click="chooseItem(items[15])">
-					<view>{{items[15].name}}</view>
-					<view class="rate">{{items[15].rate}} / {{items[15].rate1}}</view>
-				</view>
-			</view>
-			<view class="g-b-1">
-				<view class="game-box-1" :class="items[16].check ? 'active':''" @click="chooseItem(items[16])">
-					<view>{{items[16].name}}</view>
-					<view class="rate">{{items[16].rate}}</view>
-				</view>
-				<view class="game-box-2" :class="items[17].check ? 'active':''" @click="chooseItem(items[17])">
-					<view>{{items[17].name}}</view>
-					<view class="rate">{{items[17].rate}} / {{items[17].rate1}}</view>
-				</view>
-				<view class="game-box-2" :class="items[18].check ? 'active':''" @click="chooseItem(items[18])">
-					<view>{{items[18].name}}</view>
-					<view class="rate">{{items[18].rate}} / {{items[18].rate1}}</view>
-				</view>
-				<view class="game-box-1" :class="items[19].check ? 'active':''" @click="chooseItem(items[19])">
-					<view>{{items[19].name}}</view>
-					<view class="rate">{{items[19].rate}}</view>
-				</view>
-			</view>
-			<view class="g-b-6">
-				<view class="g-b-6-v">
-					<view class="g-b-6-1" :class="items[20].check ? 'active':''" @click="chooseItem(items[20])">
-						<view class="text">
-							<view>{{items[20].name}}</view>
-							<view class="rate">{{items[20].rate}}</view>
-						</view>
-					</view>
-					<view class="g-b-6-2" :class="items[21].check ? 'active':''" @click="chooseItem(items[21])">
-						<view class="text">
-							<view>{{items[21].name}}</view>
-							<view class="rate">{{items[21].rate}}</view>
-						</view>
-					</view>
-					<view class="g-b-6-3" :class="items[22].check ? 'active':''" @click="chooseItem(items[22])">
-						<view class="text">
-							<view>{{items[22].name}}</view>
-							<view class="rate">{{items[22].rate}}</view>
-						</view>
-					</view>
-					<view class="g-b-6-4" :class="items[23].check ? 'active':''" @click="chooseItem(items[23])">
-						<view class="text">
-							<view>{{items[23].name}}</view>
-							<view class="rate">{{items[23].rate}}</view>
-						</view>
-					</view>
-				</view>
-			</view>
-			<view class="g-b-7" :class="'route'+result.RESULT"></view>
+			 <view class="game-item" v-for="(item,index) in items" :key="index" :class="item.check ? 'active':''" @click="chooseItem(item)">
+				 <view class="text">{{item.name}}</view>
+			 </view>
 		</view>
 		<view class="form">
 			<uni-forms ref="form" :modelValue="formData" :rules="rules">
@@ -197,8 +55,8 @@
 		</uni-popup>
 		<uni-popup ref="rulePopup" :mask-click="false" background-color="#fff" borderRadius="10upx 10upx 0upx 0upx">
 			<view class="rule-content">
-				<view>宝斗规则</view>
-				<view>玩法：1入、2龙、3出、4虎</view>
+				<view>牛牛规则</view>
+				<view>玩法：庄，闲一，闲二，闲三，闲四，闲五</view>
 				<view>串、角1:1/同、念1:2/古1:3</view>
 				<view>念角下注要分开（没有明宝）</view>
 				<!-- <view>中奖平台抽水4%</view> -->
@@ -235,30 +93,11 @@
 				fptime:0,
 				kjtime:0,
 				items:[
-					{index:'1',name:'虎入角',rate:1.96,rate1:0,check:false},
-					{index:'2',name:'入正念虎',rate:2.92,rate1:1,check:false},
-					{index:'3',name:'入正念龙',rate:2.92,rate1:1,check:false},
-					{index:'4',name:'龙入角',rate:1.96,rate1:0,check:false},
-					{index:'5',name:'虎正念入',rate:2.92,rate1:1,check:false},
-					{index:'6',name:'虎同',rate:2.92,rate1:1,check:false},
-					{index:'7',name:'入同',rate:2.92,rate1:1,check:false},
-					{index:'8',name:'入串',rate:1.96,rate1:0,check:false},
-					{index:'9',name:'龙同',rate:2.92,rate1:1,check:false},
-					{index:'10',name:'龙正念入',rate:2.92,rate1:1,check:false},
-					{index:'11',name:'虎正念出',rate:2.92,rate1:1,check:false},
-					{index:'12',name:'虎串',rate:1.96,rate1:0,check:false},
-					{index:'13',name:'出同',rate:2.92,rate1:1,check:false},
-					{index:'14',name:'出串',rate:1.96,rate1:0,check:false},
-					{index:'15',name:'龙串',rate:1.96,rate1:0,check:false},
-					{index:'16',name:'龙正念出',rate:2.92,rate1:1,check:false},
-					{index:'17',name:'虎出角',rate:1.96,rate1:0,check:false},
-					{index:'18',name:'出正念虎',rate:2.92,rate1:1,check:false},
-					{index:'19',name:'出正念龙',rate:2.92,rate1:1,check:false},
-					{index:'20',name:'龙出角',rate:1.96,rate1:0,check:false},
-					{index:'21',name:'入古',rate:3.88,rate1:0,check:false},
-					{index:'22',name:'龙古',rate:3.88,rate1:0,check:false},
-					{index:'23',name:'出古',rate:3.88,rate1:0,check:false},
-					{index:'24',name:'虎古',rate:3.88,rate1:0,check:false}
+					{index:'1',name:'闲一',rate:1.96,rate1:0,check:false},
+					{index:'2',name:'闲二',rate:2.92,rate1:1,check:false},
+					{index:'3',name:'闲三',rate:2.92,rate1:1,check:false},
+					{index:'4',name:'闲四',rate:1.96,rate1:0,check:false},
+					{index:'5',name:'闲五',rate:2.92,rate1:1,check:false}
 				],
 				formData:{
 					money:'',
@@ -353,7 +192,7 @@
 					})
 				}
 				let pwd = md5(userno+userno)
-				let url = webSocketUrl + 'bd/' + userno+"-" + pwd;
+				let url = webSocketUrl + 'niu/' + userno+"-" + pwd;
 				this.socketTask = uni.connectSocket({
 					url: url ,
 					success(data) {
