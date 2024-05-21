@@ -1,29 +1,17 @@
 package com.hml.task;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hml.back.bean.Order;
 import com.hml.back.bean.RespBean;
-import com.hml.back.service.BackCoreService;
-import com.hml.bean.CommandTextParser;
-import com.hml.bot.BaseBot;
-import com.hml.command.BossCommand;
-import com.hml.command.ErrorCommand;
 import com.hml.config.BotConfig;
 import com.hml.redis.Redis2Utils;
 import com.hml.redis.RedisKey;
@@ -31,7 +19,8 @@ import com.hml.utils.DateTimeUtils;
 import com.hml.utils.SM2Utils;
 import com.hml.utils.StringUtils;
 import com.hml.websocket.config.WebSocketConfig;
-import com.hml.websocket.server.WebSocketServerApp;
+import com.hml.websocket.server.WebSocketNiuServerApp;
+import com.hml.websocket.server.WebSocketNiuServerApp;
 
 import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +80,7 @@ public class NiuTaskManager {
 					 json.put("RESULT", DrawInfo.RESULT);
 					 json.put("TIME", DrawInfo.DRAW_TIME);
 					 json.put("ID", DrawInfo.ID);
-					 WebSocketServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
+					 WebSocketNiuServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
 				 }
 			 }else if(Flow.CONFIRM_ROB.getStep() == step) {
 				 log.info("【CONFIRM_ROB_2】：{}",step);
@@ -107,14 +96,14 @@ public class NiuTaskManager {
 					 json.put("RESULT", DrawInfo.RESULT);
 					 json.put("TIME", DrawInfo.DRAW_TIME);
 					 json.put("ID", DrawInfo.ID);
-					 WebSocketServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
+					 WebSocketNiuServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
 				 }
 			 }else if(Flow.STOP_ORDER.getStep() == step) {
 				 log.info("【STOP_ORDER_2】：{}",step);
 				 DrawInfo.FLOW = Flow.STOP_ORDER;
 				 stopOrder();
 				 if(WebSocketConfig.ENABLE && IS_AUTH) {
-					 WebSocketServerApp.sendInfo(Flow.STOP_ORDER.getStep(),"");
+					 WebSocketNiuServerApp.sendInfo(Flow.STOP_ORDER.getStep(),"");
 				 }
 			 }else if(Flow.OVER.getStep() == step) {
 				 log.info("【OVER_2】：{}",step);
@@ -182,7 +171,7 @@ public class NiuTaskManager {
 				 
 				if(WebSocketConfig.ENABLE  && IS_AUTH) {
 					DrawInfo.RESULT = String.valueOf(bean.getIWinNo());
-					WebSocketServerApp.sendInfo(Flow.OVER.getStep(),res.toString());
+					WebSocketNiuServerApp.sendInfo(Flow.OVER.getStep(),res.toString());
 				 }
 			    flag = false;
 			}else {

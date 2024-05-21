@@ -31,7 +31,20 @@
 		</view>
 		<view class="form">
 			<uni-forms ref="form" :modelValue="formData" :rules="rules">
-				<uni-forms-item  name="money">
+				<!-- <uni-forms-item  name="type">
+					<radio-group @change="radioChange">
+						<label>
+							<radio value="1" :checked="formData.type==1"/><text>平投</text>
+						</label>
+						<label>
+							<radio value="2" :checked="formData.type==2"/><text>倍投</text>
+						</label>
+					</radio-group>
+				</uni-forms-item> -->
+				<uni-forms-item name="type" required>
+					<uni-data-checkbox v-model="formData.type" :localdata="types" />
+				</uni-forms-item>
+				<uni-forms-item  name="money" required>
 					<uni-easyinput type="number" v-model="formData.money" placeholder="请输入投注金额" />
 				</uni-forms-item>
 			</uni-forms>
@@ -50,6 +63,8 @@
 		</uni-popup>
 		<uni-popup ref="popup" type="dialog">
 			<uni-popup-dialog mode="base" :duration="2000" :before-close="true" @close="close" @confirm="confirm">
+			<text v-if="formData.type==1">平投</text>
+			<text v-if="formData.type==2">倍投</text>
 			共选择了{{formData.selected.length}}注，共计{{formData.money * formData.selected.length}}元
 			</uni-popup-dialog>
 		</uni-popup>
@@ -99,8 +114,13 @@
 					{index:'4',name:'闲四',rate:1.96,rate1:0,check:false},
 					{index:'5',name:'闲五',rate:2.92,rate1:1,check:false}
 				],
+				types:[
+					{text:'平投',value:'1'},
+					{text:'倍投',value:'2'}
+				],
 				formData:{
 					money:'',
+					type:'1',
 					selected:[]
 				},
 				rules: {
@@ -142,6 +162,9 @@
 			this.closeSocket()
 		},
 		methods: {
+			radioChange(value){
+				this.formData.type= value
+			},
 			getShowNoticePara(){
 				let para = {
 					sysid:11
@@ -317,7 +340,8 @@
 				let orders = this.formData.selected.map(item=>{
 					let para = {
 						integRal:this.formData.money,
-						ruId:item.name
+						ruId:item.name,
+						type:this.formData.type
 					}
 					return para
 				})
@@ -332,6 +356,7 @@
 				this.$http.post('/Order/Order',para,(res=>{
 					if(res.iCode ==0){
 						this.formData.money = ''
+						this.formData.type='1'
 						this.formData.selected = []
 						this.items.forEach(item=> item.check=false)
 						this.getUserBalance()
@@ -518,233 +543,21 @@
 	}
 	.game-box{
 		width: 724upx;
-		height: 724upx;
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
 		justify-content: space-between;
 		position: relative;
 		background-color: #eee;
 		margin:15upx auto;
-		.rate{
-			font-size: 24upx;
-		}
-		.g-b-1{
-			display: flex;
-			justify-content: space-between;
-			.game-box-1{
-				background-color: #1785ed;
-				width: 124upx;
-				height: 124upx;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-			}
-			.game-box-2{
-				background-color: #07be5e;
-				width: 234upx;
-				height: 124upx;
-				display: flex;
-				align-items: center;
-				flex-direction: column;
-				justify-content: center;
-			}
-		}
-		.g-b-2{
-			display: flex;
-			justify-content: space-between;
-			.game-box-3{
-				background-color: #07be5e;
-				width: 124upx;
-				height: 234upx;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-			}
-			.game-box-4{
-				height: 234upx;
-				width: 234upx;
-				display: flex;
-				position: relative;
-				overflow: hidden;
-				.game-box-4-1{
-					overflow: hidden;
-					position: absolute;
-					width: 150%;
-					height: 100%;
-					background-color: #f35458;
-					transform: rotate(45deg) translate(-10%, 68.5%);
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					.text{
-						transform: rotate(-45deg);
-						margin-top: -122upx;
-						margin-left: -10upx;
-					}
-				}
-				.game-box-4-2{
-					overflow: hidden;
-					position: absolute;
-					width: 150%;
-					height: 100%;
-					background-color: #f35458;
-					-webkit-transform: rotate(45deg) translate(-10%, -33%);
-					transform: rotate(45deg) translate(-10%, -33%);
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					.text{
-						transform: rotate(-45deg);
-						margin-top: 100upx;
-						margin-left: -44upx;
-					}
-				}
-			}
-			.game-box-5{
-				height: 234upx;
-				width: 234upx;
-				display: flex;
-				position: relative;
-				overflow: hidden;
-				.game-box-5-1{
-					overflow: hidden;
-					position: absolute;
-					width: 150%;
-					height: 100%;
-					background-color: #f35458;
-					-webkit-transform: rotate(135deg) translate(10%, 68.5%);
-					transform: rotate(135deg) translate(10%, 68.5%);
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					.text{
-						transform: rotate(-135deg);
-						margin-top: -46px;
-					}
-				}
-				.game-box-5-2{
-					overflow: hidden;
-					position: absolute;
-					width: 150%;
-					height: 100%;
-					background-color: #f35458;
-					-webkit-transform: rotate(135deg) translate(10%, -33%);
-					transform: rotate(135deg) translate(10%, -33%);
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					.text{
-						transform: rotate(-135deg);
-						margin-left: 0upx;
-						margin-top: 100upx;
-					}
-					
-				}
-			}
-		}
-		.g-b-6{
-			position: absolute;
-			background-color: #eee;
-			width: 248upx;
-			height: 248upx;
-			margin-left: 238upx;
-			margin-top: 238upx;
-			.g-b-6-v{
-				position: relative;
-				width: 248upx;
-				height: 248upx;
-				overflow: hidden;
-				.g-b-6-1{
-					overflow: hidden;
-					position: absolute;
-					width: 150%;
-					height: 100%;
-					background-color: #f99d3d;
-					-webkit-transform: rotate(135deg) translate(-39%, 68%);
-					transform: rotate(135deg) translate(-39%, 68%);
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					.text{
-						transform: rotate(-135deg);
-						margin: -280upx -170upx -114upx 82upx;
-					}
-				}
-				.g-b-6-2{
-					overflow: hidden;
-					position: absolute;
-					width: 150%;
-					height: 100%;
-					background-color: #f99d3d;
-					-webkit-transform: rotate(135deg) translate(-39%, -33%);
-					transform: rotate(135deg) translate(-39%, -33%);
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					.text{
-						transform: rotate(-135deg);
-						margin: 144upx -270upx 0upx 0upx;
-					}
-				}
-				.g-b-6-3{
-					overflow: hidden;
-					position: absolute;
-					width: 150%;
-					height: 100%;
-					background-color: #f99d3d;
-					-webkit-transform: rotate(-135deg) translate(-38.5%, -67.5%);
-					transform: rotate(-135deg) translate(-38.5%, -67.5%);
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					.text{
-						transform: rotate(135deg);
-						margin: 150upx -260upx 0upx 0upx;
-					}
-				}
-				.g-b-6-4{
-					overflow: hidden;
-					position: absolute;
-					width: 150%;
-					height: 100%;
-					background-color: #f99d3d;
-					-webkit-transform: rotate(-135deg) translate(62%, -67.5%);
-					transform: rotate(-135deg) translate(62%, -67.5%);
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					.text{
-						transform: rotate(135deg);
-						margin: 104upx 248upx -30upx 0upx;
-					}
-				}
-			}
-		}
-		.g-b-7{
-			position: absolute;
-			width: 82upx;
-			height: 82upx;
-			background-color: #fff;
-			margin-left: 320upx;
-			margin-top: 320upx;
-			display: flex;
-			justify-content: space-between;
-			background-size: 100%;
-			background-image: url('../../static/images/home/qp.jpg');
-		}
-		.route1{
-			transform: rotate(180deg);
-		}
-		.route2{
-			transform: rotate(270deg);
-		}
-		.route3{
-			transform: rotate(0deg);
-		}
-		.route4{
-			transform: rotate(90deg);
+		padding-bottom: 15upx;
+		.game-item{
+			width: 30%;
+			height: 100upx;
+			line-height: 100upx;
+			background-color: #7B68EE;
+			text-align: center;
+			margin-top: 20upx;
+			border-radius: 20upx;
 		}
 		.active{
 			background-color: #fff!important;
