@@ -293,7 +293,7 @@
 		onLoad() {
 			this.getUserBalance()
 			this.loadData()
-			this.getShowNoticePara()
+			// this.getShowNoticePara()
 			this.connectSocketInit()
 			let user = JSON.parse(uni.getStorageSync('userinfo'))
 			this.orgtype = user.orgtype
