@@ -552,15 +552,20 @@
 		padding-bottom: 15upx;
 		.game-item{
 			width: 30%;
-			height: 100upx;
-			line-height: 100upx;
-			background-color: #7B68EE;
-			text-align: center;
+			height: 120upx;
 			margin-top: 20upx;
 			border-radius: 20upx;
+			background-image: linear-gradient(to bottom,#8f91fa,#5500ff);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 36upx;
+			color: #ffffff;
+			font-weight: 600;
+			letter-spacing: 10upx;
 		}
 		.active{
-			background-color: #fff!important;
+			background-image: linear-gradient(to bottom,#91fa8b,#13ac02);
 		}
 	}
 	.form{
