@@ -13,7 +13,12 @@
 		<view class="report-user" v-if="reportType==0">
 			<uni-datetime-picker type="datetime" placeholder="开始日期" v-model="searchForm.startDate"/>
 			<uni-datetime-picker type="datetime" placeholder="结束日期" v-model="searchForm.endDate"/>
+			
 			<button type="primary" size="mini" @click="searchUserData">查询</button>
+			<button class="time-btn" size="mini" @click="searchBytime(1)">今天</button>
+			<button class="time-btn" size="mini" @click="searchBytime(2)">本周</button>
+			<button class="time-btn" size="mini" @click="searchBytime(3)">上周</button>
+			
 			<view class="table-data">
 				 <view class="table-row">
 					 <view class="row-col col1">用户</view>
@@ -91,7 +96,7 @@
 </template>
 
 <script>
-	import {formatDate,getCurTime} from '@/utils/util.js'
+	import {formatDate,getCurTime,getWeekStartEndDates} from '@/utils/util.js'
 	export default {
 		data() {
 			return {
@@ -149,6 +154,15 @@
 				this.searchForm.startDate = option.startDate
 				this.searchForm.endDate = option.endDate
 			}else{
+				this.getToday()
+			}
+			this.searchUserData()
+		},
+		methods: {
+			getRealLoss(loss,comm){
+				return (loss-comm).toFixed(2)
+			},
+			getToday(){
 				var time = new Date().getTime();
 				const curTime = getCurTime()
 				if(curTime<'070000'){
@@ -158,12 +172,20 @@
 					this.searchForm.startDate = formatDate(time,2) + ' 07:00:00'
 					this.searchForm.endDate = formatDate(time + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
 				}
-			}
-			this.searchUserData()
-		},
-		methods: {
-			getRealLoss(loss,comm){
-				return (loss-comm).toFixed(2)
+			},
+			searchBytime(type){
+				if(type==1){
+					this.getToday()
+				}else if(type==2){
+					let date = getWeekStartEndDates(0)
+					this.searchForm.startDate = date.startOfWeek + ' 07:00:00'
+					this.searchForm.endDate = date.endOfWeek + ' 06:00:00'
+				}else if(type==3){
+					let date = getWeekStartEndDates(-1)
+					this.searchForm.startDate = date.startOfWeek + ' 07:00:00'
+					this.searchForm.endDate = date.endOfWeek + ' 06:00:00'
+				}
+				this.searchUserData()
 			},
 			searchUserData(){
 				this.userRecord = []
@@ -313,6 +335,11 @@
 			border-bottom: 6upx solid rgb(40,148,255);
 		}
 		
+	}
+	.time-btn{
+		margin-left: 30upx;
+		background-color: orange!important;
+		color: #fff;
 	}
 	.table-data{
 		width:100%;

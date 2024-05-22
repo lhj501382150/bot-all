@@ -65,6 +65,8 @@
 					  	<view class="btn-item" v-if="item.sex!=2" @click="changeStatus(item.userno,2)">停用</view>
 					  </view>
 				 </view>
+				 <view class="load-more" v-if="loadMore">加载中...</view>
+				 <view class="load-more" v-if="totalCount > 0 && records.length >= totalCount">---到底了---</view>
 			</view>
 			 
 		</scroll-view>
@@ -195,6 +197,7 @@
 				},
 				totalPage:1,
 				totalCount:0,
+				loadMore:false,
 				refresherTriggered:false,
 				clevelName:'',
 				scoreForm:{
@@ -385,7 +388,10 @@
 			},
 			scrolltolower() {
 				if (this.records.length >= this.totalCount) return
-				this.loadData()
+				if(!this.loadMore){
+					this.loadMore = true
+					this.loadData()
+				}
 			},
 			//下拉刷新
 			getRefresherrefresh(){
@@ -415,6 +421,7 @@
 						this.search.pageIdx = this.search.pageIdx + this.search.pageSize
 					}
 					this.refresherTriggered = false
+					this.loadMore = false
 				})
 			},
 			getStatus(clevel){
@@ -592,7 +599,12 @@
 				}
 			}
 		}
-		
+		.load-more{
+			width: 100%;
+			line-height: 80upx;
+			color: #bfbfbf;
+			text-align: center;
+		}
 	}
 	.form{
 		width:620upx;

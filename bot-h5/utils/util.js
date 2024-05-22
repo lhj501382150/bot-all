@@ -67,3 +67,22 @@ export const getCurTime = ()=>{
       const seconds = ("0" + date.getSeconds()).slice(-2);
 	  return `${hours}${minutes}${seconds}`;
 }
+export const getWeekStartEndDates = (offset = 0) => {
+    const now = new Date();
+    // 调整日期到周日（0代表周日，6代表周六，这里根据实际需要调整，大多数情况下周一是0）
+    const dayOfWeek = (now.getDay() + 6) % 7; // 这里假设周日作为一周开始
+    // 计算本周一的日期
+    const mondayThisWeek = new Date(now.setDate(now.getDate() - dayOfWeek));
+    // 计算上周一的日期
+    const mondayLastWeek = new Date(new Date().setDate(mondayThisWeek.getDate() - 7));
+    
+    // 根据偏移量计算目标周的周一和周日
+    const mondayTargetWeek = new Date(new Date().setDate(mondayThisWeek.getDate() + offset * 7));
+    const sundayTargetWeek = new Date(new Date().setDate(mondayTargetWeek.getDate() + 7));
+    
+    // 返回格式化后的日期（可根据需要调整格式）
+    return {
+        startOfWeek: formatDate(mondayTargetWeek,2), // 或使用其他格式化方法
+        endOfWeek: formatDate(sundayTargetWeek,2)
+    };
+}
