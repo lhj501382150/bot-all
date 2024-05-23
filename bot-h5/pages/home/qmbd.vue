@@ -291,8 +291,8 @@
 			}
 		},
 		onLoad() {
-			this.getUserBalance()
-			this.loadData()
+			// this.getUserBalance()
+			// this.loadData()
 			// this.getShowNoticePara()
 			this.connectSocketInit()
 			let user = JSON.parse(uni.getStorageSync('userinfo'))
@@ -325,13 +325,15 @@
 				}
 				this.$http.post("/Query/ReustList",para,res => {
 					let datas = res.rData || []
+					let temps = []
 					datas.forEach(item=>{
 						let temp ={
 							no:item.bNo,
 							status: this.getStatus(item.bNo)
 						}
-						this.results.push(temp)
+						temps.push(temp)
 					})
+					this.results = temps
 				})
 			},
 			getUserBalance(){

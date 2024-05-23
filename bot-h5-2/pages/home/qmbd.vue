@@ -292,8 +292,8 @@
 			}
 		},
 		onLoad() {
-			this.getUserBalance()
-			this.loadData()
+			// this.getUserBalance()
+			// this.loadData()
 			this.getShowNoticePara()
 			this.connectSocketInit()
 			let user = JSON.parse(uni.getStorageSync('userinfo'))
