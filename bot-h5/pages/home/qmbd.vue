@@ -931,12 +931,11 @@
 		}
 	}
 	.result{
-		margin-top: 60upx;
 		display: flex;
 		justify-content: flex-start;
 		flex-wrap: wrap;
-		padding-left: 20upx;
-		padding-right: 20upx;
+		padding: 20upx;
+		border-top: 10upx solid #e2e2e2;
 		.result-item{
 			width: 60upx;
 			height: 60upx;
