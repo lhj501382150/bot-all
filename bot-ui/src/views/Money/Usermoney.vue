@@ -25,11 +25,11 @@
         <el-input v-model="filters.userno" placeholder="客户编号" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="filters.username" placeholder="客户用户名" clearable></el-input>
+        <el-input v-model="filters.username" placeholder="客户名称" clearable></el-input>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-input v-model="filters.nickname" placeholder="客户昵称" clearable></el-input>
-      </el-form-item>
+      </el-form-item> -->
 			<el-form-item>
 				<kt-button icon="fa fa-search" :label="$t('action.search')" perms="money:usermoney:view" type="primary" @click="findPage(null)"/>
         <kt-button icon="fa fa-download" :label="$t('action.export')" perms="money:usermoney:view" type="primary" @click="exportExcel"/>
@@ -68,7 +68,7 @@ export default {
 			columns: [
 				{prop:"fdate", label:"日期", minWidth:100},
 				{prop:"userno", label:"客户编号", minWidth:120},
-        {prop:"username", label:"客户用户名", minWidth:120},
+        {prop:"username", label:"客户名称", minWidth:120},
 				{prop:"nickname", label:"客户昵称", minWidth:120},
 				{prop:"acctno", label:"账户编号", minWidth:120},
 				{prop:"acctname", label:"账户名称", minWidth:120},
