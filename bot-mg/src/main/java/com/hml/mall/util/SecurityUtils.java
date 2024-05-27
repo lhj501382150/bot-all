@@ -78,6 +78,8 @@ public class SecurityUtils {
 			if(principal != null && principal instanceof JwtUserDetails) {
 				user = ((JwtUserDetails) principal).getLoginUser();
 			}
+		}else {
+			throw new RuntimeException("登录超时，请重新登录");
 		}
 		return user;
 	}

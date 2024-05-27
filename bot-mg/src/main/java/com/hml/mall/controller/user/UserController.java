@@ -202,7 +202,7 @@ public class UserController {
     }
     @PreAuthorize("hasAuthority('firm:member:edit')")
     @RequestMapping("/editPwd")
-    public HttpResult editPwd(@RequestBody User model) {
+    public HttpResult editPwd(@RequestBody User model,HttpServletRequest request) {
         try {
         	LoginUser user = SecurityUtils.getLoginInfo();
         	if(user.getType() > 0) {
@@ -225,7 +225,7 @@ public class UserController {
 			
 			Login login = loginService.getById(item.getUserno());
 			login.setLoginpwd(pwd);
-			
+			log.info("客户密码修改：【{}】-{}：{}",user.getLoginno(),model.getUserno(),IPUtils.getIpAddr(request));
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -253,6 +253,7 @@ public class UserController {
  	   	   		 }
          	}
  			userService.updateStatus(model);
+ 			log.info("客户状态修改：【{}】-{}：{}",user.getLoginno(),model.getUserno(),model.getSex());
  			return HttpResult.ok();
  		} catch (Exception e) {
  			e.printStackTrace();

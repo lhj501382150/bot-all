@@ -4,9 +4,9 @@
 		<view class="row">
 			<view class="text">当前账号： {{getStatus(curClevel)}} - {{userno}}</view>
 			<!-- <view class="text" v-if="curClevel > 1">所属{{getStatus(curClevel - 1)}}: {{parentno}}</view> -->
-			<view class="search-status">
+			<!-- <view class="search-status">
 				<uni-data-select v-model="search.sex" placeholder="状态筛选" :localdata="sexs"  @change="changeSex" ></uni-data-select>
-			</view>
+			</view> -->
 		</view>
 		<view class="tab-bar">
 			<view class="tab-item"  :class="item.clevel == tabIndex ? 'active':''" v-for="(item,index) in tabs" :key="index" @click="findData(item)" v-if="item.clevel > curClevel">

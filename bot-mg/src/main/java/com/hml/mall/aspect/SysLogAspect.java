@@ -2,7 +2,6 @@ package com.hml.mall.aspect;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,14 +17,16 @@ import com.hml.mall.util.HttpUtils;
 import com.hml.mall.util.IPUtils;
 import com.hml.mall.util.SecurityUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 /*
  * 操作日志处理
  */
+@Slf4j
 @Aspect
 @Component
 public class SysLogAspect {
 
-	private Logger logger = Logger.getLogger(SysLogAspect.class);
 	@Autowired
 	private ILogService logService;
 	
@@ -54,36 +55,36 @@ public class SysLogAspect {
 		}
 		String userName = SecurityUtils.getUsername();
 		MethodSignature method = (MethodSignature)joinPoint.getSignature();
-		Log log = new Log();
+		Log sysLog = new Log();
 		
 		String className = joinPoint.getTarget().getClass().getName();
 		String methodName = method.getName();
 
-		log.setMethod(className + "."+methodName +"()"); 
+		sysLog.setMethod(className + "."+methodName +"()"); 
 		Object[] args = joinPoint.getArgs();
 		try {
 			String param = JSONObject.toJSONString(args);
-//			logger.info("请求路径：" + log.getMethod());
-//			logger.info("请求参数为：" + param);
+			log.info("请求路径：{}" , sysLog.getMethod());
+			log.info("请求参数为：{}" , param);
 			if(param.length()>200){
 				param = param.substring(0,200)+"...";
 			}
-			log.setParams(param);
+			sysLog.setParams(param);
 		} catch (Exception e) {
 			
 		}
 		// 获取request
 		HttpServletRequest request = HttpUtils.getHttpServletRequest();
 		// 设置IP地址
-		log.setIp(IPUtils.getIpAddr(request));
+		sysLog.setIp(IPUtils.getIpAddr(request));
 
 		// 用户名
-		log.setOptuser(userName);
+		sysLog.setOptuser(userName);
 		
 		// 执行时长(毫秒)
-		log.setTime(time);
+		sysLog.setTime(time);
 		
 		// 保存系统日志
-		logService.save(log);
+		logService.save(sysLog);
 	}
 }

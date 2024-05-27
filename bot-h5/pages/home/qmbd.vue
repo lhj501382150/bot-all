@@ -309,7 +309,8 @@
 				try{
 					this.$http.post('/Query/SysPara',para,res=>{
 					  if(res.iCode==0){
-						  this.tempShowNotice =  res.rData.sval =='Y'
+						  let val = res.rData || {}
+						  this.tempShowNotice =  val.sval =='Y'
 					  }
 					})
 				}catch(e){
@@ -396,7 +397,7 @@
 								this.isStop = true
 								this.fptime = 0
 								this.kjtime = 30
-								this.getShowNoticePara()
+								// this.getShowNoticePara()
 							}
 						}catch(e){
 							console.log('消息处理异常：' + e)
