@@ -32,14 +32,15 @@ public class WebFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
+        
         String ipAddr = IPUtils.getIpAddr(req);
         if("43.134.222.90".equals(ipAddr)) {
-        	throw new RuntimeException("go out");
+        	return;
         }
-        log.info("黑名单:{}" , blackMap);
+        
         Integer num = blackMap.get(ipAddr);
         
-        if(num != null && num > 10) {
+        if(num != null && num > CONNECTION_RATE_LIMIT) {
         	log.error("禁止请求：{}",ipAddr);
         	return;
         }else {
@@ -63,13 +64,15 @@ public class WebFilter implements Filter {
  
         Long lastConnectionTime = connectionTimes.get(remoteAddress);
         if (lastConnectionTime != null && currentTime - lastConnectionTime < CONNECTION_RATE_INTERVAL * 1000) {
-           log.info("请求IP：{}",remoteAddress);
+        	log.info("黑名单:{}" , blackMap);
+        	log.info("请求IP：{}",remoteAddress);
            Integer num = blackMap.get(ip);
            if(num == null) {
         	   num = 0 ;
            }
-           blackMap.put(ip, num++);
-           if(num >  10) {
+           num = num + 1;
+           blackMap.put(ip, num);
+           if(num >  CONNECTION_RATE_LIMIT) {
         	   flag = false;
            }else {
         	   flag = true;
