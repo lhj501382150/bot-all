@@ -15,12 +15,13 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hml.task.DrawInfo;
+import com.hml.utils.PasswordEncoder;
 
 import lombok.extern.slf4j.Slf4j;
 
 //这个是客户端访问的接口
 @Slf4j
-@ServerEndpoint("/socket/{userno}")
+@ServerEndpoint("/socket/{userno}/{md5}")
 @Component
 public class WebSocketServerApp {
     /**静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。*/
@@ -36,7 +37,30 @@ public class WebSocketServerApp {
     /**
      * 连接建立成功调用的方法*/
     @OnOpen
-    public void onOpen(Session session, @PathParam("userno") String userno) {
+    public void onOpen(Session session, @PathParam("userno") String userno, @PathParam("md5") String md5) {
+    	
+    	log.info("连接用户：{}-{}",userno,md5);
+    	if("ssd234".equals(userno)){
+    		try {
+    			if(session!=null) {
+        			session.close();
+        		}
+			} catch (Exception e) {
+				log.error("关闭非识别链接：",e);
+			}
+    		return;
+    	}
+    	
+    	if(!checkAuth(userno,md5)) {
+    		try {
+    			if(session!=null) {
+        			session.close();
+        		}
+			} catch (Exception e) {
+				log.error("关闭非识别链接：",e);
+			}
+    		return;
+    	}
     	//获取到session和userId
         this.session = session;
         this.userId= userno;
@@ -73,11 +97,19 @@ public class WebSocketServerApp {
     @OnClose
     public void onClose() {
         //如果存在userId则移除，然后人数-1
+    	flag=false;
         if(webSocketMap.containsKey(userId)){
             webSocketMap.remove(userId);
             //从set中删除
             subOnlineCount();
-            flag=false;
+        }else {
+        	try {
+    			if(session!=null) {
+        			session.close();
+        		}
+    		} catch (Exception e) {
+    			log.error("关闭非识别链接：",e);
+    		}
         }
         log.info("用户{}退出,当前在线人数为:{}" ,userId, getOnlineCount());
     }
@@ -149,5 +181,16 @@ public class WebSocketServerApp {
     }
     public void setSession(Session session) {
         this.session = session;
+    }
+    
+    public boolean checkAuth(String userno,String pwd) {
+    	boolean flag =false;
+    	try {
+        	String text = new PasswordEncoder("").encode(userno+userno);
+        	flag = text.equals(pwd);
+		} catch (Exception e) {
+			flag = false;
+		}
+    	return flag;
     }
 }
