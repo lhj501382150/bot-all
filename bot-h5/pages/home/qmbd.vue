@@ -218,6 +218,7 @@
 	import { getSecond,getCurTime } from '../../utils/util'
 	import {botId, webSocketUrl} from '@/static/config/config.js'
 	import NoticeDialog from '@/components/notice-dialog.vue'
+	import md5 from '@/utils/md5.js'
 	export default {
 		components:{
 			NoticeDialog
@@ -354,16 +355,17 @@
 						url:'/pages/login/login'
 					})
 				}
-				let url = webSocketUrl  + userno;
+				let pwd = md5(userno+userno)
+				let url = webSocketUrl  + userno +  "/" + pwd;
 				this.socketTask = uni.connectSocket({
 					url: url ,
 					success(data) {
-						console.log("websocket连接成功");
+						// console.log("websocket连接成功");
 					},
 				});
 				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
 				this.socketTask.onOpen((res) => {
-					console.log("WebSocket连接正常打开中...！");
+					// console.log("WebSocket连接正常打开中...！");
 					this.is_open_socket = true;
 					// 注：只有连接正常打开中 ，才能正常成功发送消息
 					this.socketTask.send({
@@ -374,7 +376,7 @@
 					});
 					// 注：只有连接正常打开中 ，才能正常收到消息
 					this.socketTask.onMessage((res) => {
-						console.log("收到服务器内容：" + res.data);
+						console.log("recive data：" + res.data);
 						try{
 							const data = JSON.parse(res.data);
 							if(data.status==1){
