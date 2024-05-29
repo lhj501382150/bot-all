@@ -33,7 +33,12 @@ public class WebFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         String ipAddr = IPUtils.getIpAddr(req);
+        if("43.134.222.90".equals(ipAddr)) {
+        	throw new RuntimeException("go out");
+        }
+        log.info("黑名单:{}" , blackMap);
         Integer num = blackMap.get(ipAddr);
+        
         if(num != null && num > 10) {
         	log.error("禁止请求：{}",ipAddr);
         	return;
@@ -43,6 +48,9 @@ public class WebFilter implements Filter {
              	filterChain.doFilter(servletRequest, servletResponse);
              }else {
             	 log.error("非法请求：{}-{}",ipAddr,flag);
+            	 HttpServletResponse response = (HttpServletResponse)servletResponse;
+            	 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            	 
              }
         }
        
