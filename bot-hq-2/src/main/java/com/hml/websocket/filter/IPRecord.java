@@ -14,4 +14,6 @@ public class IPRecord{
 	private long curTime;
 	
 	private String uri;
+	
+	private long firstTime;
 }

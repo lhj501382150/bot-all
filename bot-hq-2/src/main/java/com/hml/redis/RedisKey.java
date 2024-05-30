@@ -40,7 +40,7 @@ public class RedisKey {
 	
 	public static String SYSTEM_STATUS =  "SYSTEM:STATUS";
 	
-	public static String BLACK_IP_REQUEST = "BLACK_IP_REQUEST";
+	public static String BLACK_IP_REQUEST = "BLACK_IP_REQUEST:";
 	
 	public static String BLACK_IP_LIST = "BLACK_IP_LIST";
 }

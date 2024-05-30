@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.hml.redis.RedisKey;
 import com.hml.redis.RedisUtils;
 import com.hml.utils.IPUtils;
+import com.hml.utils.PasswordEncoder;
 
 import lombok.extern.slf4j.Slf4j;
  
@@ -28,10 +29,12 @@ import lombok.extern.slf4j.Slf4j;
 public class WebFilter implements Filter {
 	
 	 private static final int CONNECTION_RATE_LIMIT = 10; // 每秒允许的最大连接数
-	 private static final int CONNECTION_RATE_INTERVAL = 500; // 时间间隔（毫秒）
+	 private static final int CONNECTION_RATE_INTERVAL = 1000; // 时间间隔（毫秒）
+	 private static final long EXPIRE_SECOND = 60 * 60 * 24; // 时间间隔（秒）
+	 private static final String BLACK_IP = ",43.134.222.90,";
 	 
 	 private static final ConcurrentHashMap<String, Long> connectionTimes = new ConcurrentHashMap<>();
-	 private static final String BLACK_IP = ",43.134.222.90,";
+ 
 	 @Autowired
 	 private RedisUtils redisUtils;
 	 
@@ -39,9 +42,6 @@ public class WebFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         String ipAddr = IPUtils.getIpAddr(req);
-        if("43.134.222.90".equals(ipAddr)) {
-        	return;
-        }
         Object ipObj = redisUtils.get(RedisKey.BLACK_IP_LIST);
         String blackIps = "";
         if(ipObj!= null) {
@@ -50,13 +50,18 @@ public class WebFilter implements Filter {
         	blackIps = BLACK_IP;
         }
         if(blackIps.indexOf(ipAddr) > -1) {
+        	log.error("黑名单拦截:【{}】-{}-{}" ,ipAddr,req.getRequestURI(),blackIps);
         	return;
         }
         boolean flag = checkAuth(req,ipAddr);
         if(flag) {
-        	filterChain.doFilter(servletRequest, servletResponse);
+        	if(checkUser(req.getRequestURI())) {
+        		filterChain.doFilter(servletRequest, servletResponse);
+        	}else {
+        		HttpServletResponse response = (HttpServletResponse)servletResponse;
+           	 	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        	}
         }else {
-        	 log.error("非法请求：{}-{}",ipAddr,flag);
         	 HttpServletResponse response = (HttpServletResponse)servletResponse;
         	 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -64,28 +69,31 @@ public class WebFilter implements Filter {
     
     public boolean checkAuth(HttpServletRequest req,String remoteAddress) {
     	boolean flag  = false;
-        long currentTime = System.currentTimeMillis();
+    	long currentTime = System.currentTimeMillis();
+    	String redisKey = RedisKey.BLACK_IP_REQUEST + remoteAddress;
+    	Object obj = redisUtils.get(redisKey);
+    	IPRecord ipData = null;
+    	if(obj==null) {
+    		ipData = new IPRecord();
+    		ipData.setFirstTime(currentTime);
+    	}else {
+    		ipData = JSONObject.parseObject(obj.toString(),IPRecord.class);
+    		if(ipData.getNum() >=  CONNECTION_RATE_LIMIT) {
+    		   log.error("非法请求：{}-{}",remoteAddress,req.getRequestURI());
+         	   return false;
+            }
+    	}
  
         Long lastConnectionTime = connectionTimes.get(remoteAddress);
         if (lastConnectionTime != null && currentTime - lastConnectionTime < CONNECTION_RATE_INTERVAL) {
-        	log.info("黑名单:【{}】" ,remoteAddress);
-        	Object obj = redisUtils.hget(RedisKey.BLACK_IP_REQUEST, remoteAddress);
-        	IPRecord ipData = null;
-        	if(obj==null) {
-        		ipData = new IPRecord();
-        	}else {
-        		ipData = JSONObject.parseObject(obj.toString(),IPRecord.class);
-        	}
+        	log.error("异常IP：{}-【{}】-{}",remoteAddress,ipData.getNum(),req.getRequestURI());
+        	ipData.setUri(req.getRequestURI());
         	ipData.setIpAddr(remoteAddress);
         	ipData.setNum(ipData.getNum() + 1);
         	ipData.setCurTime(currentTime);
         	ipData.setPreTime(lastConnectionTime);
-        	redisUtils.hset(RedisKey.BLACK_IP_REQUEST, remoteAddress, JSONObject.toJSONString(ipData));
-            if(ipData.getNum() >  CONNECTION_RATE_LIMIT) {
-        	   flag = false;
-            }else {
-        	   flag = true;
-            }
+        	redisUtils.set(redisKey, JSONObject.toJSONString(ipData),EXPIRE_SECOND);
+        	flag = false;
         } else {
             connectionTimes.put(remoteAddress, currentTime);
             // 允许连接
@@ -94,4 +102,19 @@ public class WebFilter implements Filter {
         return flag;
     }
  
+    public boolean checkUser(String uri) {
+    	boolean flag =false;
+    	try {
+    		String[] paras = uri.split("/");
+    		if(paras.length == 5) {
+    			String userno = paras[3];
+    			String pwd = paras[4];
+    			String text = new PasswordEncoder("").encode(userno+userno);
+            	flag = text.equals(pwd);
+    		}
+		} catch (Exception e) {
+			flag = false;
+		}
+    	return flag;
+    }
 }
