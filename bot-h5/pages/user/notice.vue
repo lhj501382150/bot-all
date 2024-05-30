@@ -29,6 +29,7 @@
 				},
 				totalPage:1,
 				totalCount:0,
+				loadMore:false,
 				refresherTriggered:false,
 			}
 		},
@@ -45,7 +46,10 @@
 			},
 			scrolltolower() {
 				if (this.records.length >= this.totalCount) return
-				this.loadData()
+				if(!this.loadMore){
+					this.loadMore = true
+					this.loadData()
+				}
 			},
 			//下拉刷新
 			getRefresherrefresh(){
@@ -69,6 +73,7 @@
 					}
 						
 					this.refresherTriggered = false
+					this.loadMore = false
 				})
 			},
 			goBack(){
