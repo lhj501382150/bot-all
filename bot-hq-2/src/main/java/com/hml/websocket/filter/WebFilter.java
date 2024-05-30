@@ -28,11 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 public class WebFilter implements Filter {
 	
 	 private static final int CONNECTION_RATE_LIMIT = 10; // 每秒允许的最大连接数
-	 private static final int CONNECTION_RATE_INTERVAL = 1000; // 时间间隔（毫秒）
-	 private static final String BLACK_IP = ",43.134.222.90,";
+	 private static final int CONNECTION_RATE_INTERVAL = 500; // 时间间隔（毫秒）
 	 
 	 private static final ConcurrentHashMap<String, Long> connectionTimes = new ConcurrentHashMap<>();
- 
+	 private static final String BLACK_IP = ",43.134.222.90,";
 	 @Autowired
 	 private RedisUtils redisUtils;
 	 
@@ -40,6 +39,9 @@ public class WebFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         String ipAddr = IPUtils.getIpAddr(req);
+        if("43.134.222.90".equals(ipAddr)) {
+        	return;
+        }
         Object ipObj = redisUtils.get(RedisKey.BLACK_IP_LIST);
         String blackIps = "";
         if(ipObj!= null) {
@@ -73,16 +75,17 @@ public class WebFilter implements Filter {
         		ipData = new IPRecord();
         	}else {
         		ipData = JSONObject.parseObject(obj.toString(),IPRecord.class);
-        		if(ipData.getNum() >  CONNECTION_RATE_LIMIT) {
-             	   flag = false;
-                }
         	}
         	ipData.setIpAddr(remoteAddress);
         	ipData.setNum(ipData.getNum() + 1);
         	ipData.setCurTime(currentTime);
         	ipData.setPreTime(lastConnectionTime);
         	redisUtils.hset(RedisKey.BLACK_IP_REQUEST, remoteAddress, JSONObject.toJSONString(ipData));
-        	flag = false;
+            if(ipData.getNum() >  CONNECTION_RATE_LIMIT) {
+        	   flag = false;
+            }else {
+        	   flag = true;
+            }
         } else {
             connectionTimes.put(remoteAddress, currentTime);
             // 允许连接
