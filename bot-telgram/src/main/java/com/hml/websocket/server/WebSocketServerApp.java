@@ -40,17 +40,6 @@ public class WebSocketServerApp {
     public void onOpen(Session session, @PathParam("userno") String userno, @PathParam("md5") String md5) {
     	
     	log.info("连接用户：{}-{}",userno,md5);
-    	if("ssd234".equals(userno)){
-    		try {
-    			if(session!=null) {
-        			session.close();
-        		}
-			} catch (Exception e) {
-				log.error("关闭非识别链接：",e);
-			}
-    		return;
-    	}
-    	
     	if(!checkAuth(userno,md5)) {
     		try {
     			if(session!=null) {
@@ -90,7 +79,6 @@ public class WebSocketServerApp {
         }
  
     }
-
     /**
      * 连接关闭调用的方法
      */
@@ -129,6 +117,7 @@ public class WebSocketServerApp {
      */
     public void sendMessage(String message) throws IOException {
         this.session.getBasicRemote().sendText(message);
+//    	this.session.getAsyncRemote().sendText(message);
     }
 
     /**
@@ -182,7 +171,6 @@ public class WebSocketServerApp {
     public void setSession(Session session) {
         this.session = session;
     }
-    
     public boolean checkAuth(String userno,String pwd) {
     	boolean flag =false;
     	try {

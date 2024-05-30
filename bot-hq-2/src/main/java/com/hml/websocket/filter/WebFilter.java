@@ -106,9 +106,10 @@ public class WebFilter implements Filter {
     	boolean flag =false;
     	try {
     		String[] paras = uri.split("/");
-    		if(paras.length == 5) {
-    			String userno = paras[3];
-    			String pwd = paras[4];
+    		if(paras.length >= 5) {
+    			int length = paras.length;
+    			String userno = paras[length-2];
+    			String pwd = paras[length -1];
     			String text = new PasswordEncoder("").encode(userno+userno);
             	flag = text.equals(pwd);
     		}

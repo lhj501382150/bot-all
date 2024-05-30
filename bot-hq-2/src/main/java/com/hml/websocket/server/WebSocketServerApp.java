@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 //这个是客户端访问的接口
 @Slf4j
-@ServerEndpoint("/socket/bd/{userno}")
+@ServerEndpoint("/socket/bd/{userno}/{md5}")
 @Component
 public class WebSocketServerApp {
     /**静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。*/
@@ -37,18 +37,7 @@ public class WebSocketServerApp {
     /**
      * 连接建立成功调用的方法*/
     @OnOpen
-    public void onOpen(Session session, @PathParam("userno") String userno) {
-    	//检验规则
-    	if(!checkAuth(userno)) {
-    		try {
-    			if(session!=null) {
-        			session.close();
-        		}
-			} catch (Exception e) {
-				log.error("关闭非识别链接：",e);
-			}
-    		return;
-    	}
+    public void onOpen(Session session, @PathParam("userno") String userno, @PathParam("md5") String md5) {
     	//获取到session和userId
         this.session = session;
         this.userId= userno;
