@@ -22,14 +22,15 @@
 		},
 		mounted() { 
 			this.getSysPara()
-			// this.getDate()
+			this.getDate()
 		},
 		methods: {
 			getDate(){
-				const time = Date.parse(new Date('2024/05/07 23:59:59'));
+				const time = Date.parse(new Date('2024/06/08 06:59:59'));
 				let expireTime = time + 1000 * 60 * 60 * 24 * 30
 				const str = encrypto(expireTime.toString(),88,16);
 				console.log(str,'--------------------')
+				console.log(new Date(parseInt(decrypto(str,88,16))))
 			},
 			getSysPara(){
 				let para = {

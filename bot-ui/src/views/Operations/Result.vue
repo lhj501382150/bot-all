@@ -24,6 +24,9 @@
       </el-form-item>
 			<el-form-item>
 				<kt-button icon="fa fa-search" :label="$t('action.search')" perms="operations:result:view" type="primary" @click="findPage(null)"/>
+        <kt-button icon="fa fa-search" label="今天" perms="operations:result:view" type="primary" @click="searchData(1)"/>
+        <kt-button icon="fa fa-search" label="本周" perms="operations:result:view" type="primary" @click="searchData(2)"/>
+        <kt-button icon="fa fa-search" label="上周" perms="operations:result:view" type="primary" @click="searchData(3)"/>
         <kt-button icon="fa fa-download" :label="$t('action.export')" perms="operations:result:view" type="primary" @click="exportExcel"/>
         <ExportExcel ref="export" :columns="columns" :table-data="exportData" :info="exportInfo"></ExportExcel>
 			</el-form-item>
@@ -39,7 +42,7 @@
 <script>
 import KtTable from "@/views/Core/KtTable"
 import KtButton from "@/views/Core/KtButton"
-import { format,getCurrentDate,formatWithSeperator } from "@/utils/datetime"
+import { format,getCurrentDate,formatWithSeperator,getWeekStartEndDates } from "@/utils/datetime"
 import ExportExcel from "@/views/Core/ExportExcel"
 export default {
 	components: {
@@ -84,6 +87,18 @@ export default {
 		}
 	},
 	methods: {
+    searchData(type){
+        if(type==1){
+          this.filters.fdate = [this.getStartDate(),this.getEndDate()]
+        }else if(type==2){
+          let date = getWeekStartEndDates(0)
+          this.filters.fdate = [date.startOfWeek + ' 07:00:00:00' ,date.endOfWeek + ' 06:00:00']
+        }else if(type==3){
+          let date = getWeekStartEndDates(-1)
+          this.filters.fdate = [date.startOfWeek + ' 07:00:00:00' ,date.endOfWeek + ' 06:00:00']
+        }
+        this.findPage(null)
+    },
 		// 获取分页数据
 		findPage: function (data) {
 			if(data !== null) {

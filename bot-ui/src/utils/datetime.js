@@ -74,3 +74,43 @@ export function subTime(str1,str2,str){
   var datetime = date.getTime() + (date1.getTime() - date2.getTime())
   return formatWithSeperator(datetime,"-",":");
 }
+export const getWeekStartEndDates = (offset = 0) => {
+  const now = new Date();
+  // 调整日期到周日（0代表周日，6代表周六，这里根据实际需要调整，大多数情况下周一是0）
+  const dayOfWeek = (now.getDay() + 6) % 7; // 这里假设周日作为一周开始
+  // 计算本周一的日期
+  const mondayThisWeek = new Date(now.setDate(now.getDate() - dayOfWeek));
+  // 计算上周一的日期
+  const mondayLastWeek = new Date(new Date().setDate(mondayThisWeek.getDate() - 1));
+  
+
+  // 根据偏移量计算目标周的周一和周日
+  const mondayTargetWeek = new Date(mondayThisWeek.setDate(mondayThisWeek.getDate() + offset * 7));
+const temp = new Date(mondayTargetWeek.getTime());
+  const sundayTargetWeek = new Date(temp.setDate(temp.getDate() + 7));
+  
+  // 返回格式化后的日期（可根据需要调整格式）
+  return {
+      startOfWeek: formatDate(mondayTargetWeek,2), // 或使用其他格式化方法
+      endOfWeek: formatDate(sundayTargetWeek,2)
+  };
+}
+
+export const formatDate = (timestamp,type)=>{
+  const date = new Date(timestamp);
+   const year = date.getFullYear();
+     const month = ("0" + (date.getMonth() + 1)).slice(-2);
+     const day = ("0" + date.getDate()).slice(-2);
+     const hours = ("0" + date.getHours()).slice(-2);
+     const minutes = ("0" + date.getMinutes()).slice(-2);
+     const seconds = ("0" + date.getSeconds()).slice(-2);
+   if(type==1){//mm-dd HH:mm
+     return `${month}-${day} ${hours}:${minutes}`;
+   }else if(type==2){//mm-dd HH:mm
+     return `${year}-${month}-${day}`;
+   }else if(type==3){//mm-dd HH:mm
+     return `${hours}${minutes}${seconds}`;
+   }else{
+     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+   }
+}

@@ -29,6 +29,8 @@ import com.hml.mall.security.LoginUser;
 import com.hml.mall.util.IPUtils;
 import com.hml.mall.util.PasswordEncoder;
 import com.hml.mall.util.SecurityUtils;
+import com.hml.redis.RedisKey;
+import com.hml.redis.RedisUtils;
 import com.hml.utils.DateTimeUtils;
 import com.hml.utils.StringUtils;
 
@@ -57,6 +59,10 @@ public class UserController {
     
     @Autowired
     private ILoginService loginService;
+    
+    @Autowired
+    private RedisUtils redisUtils;
+    
     
     @PreAuthorize("hasAuthority('firm:member:addMoney')")
     @RequestMapping("/addMoney")
@@ -224,7 +230,11 @@ public class UserController {
 			userService.updateById(item);
 			
 			Login login = loginService.getById(item.getUserno());
-			login.setLoginpwd(pwd);
+			if(login != null) {
+				login.setLoginpwd(pwd);
+				loginService.updateById(login);	
+			}	
+			redisUtils.del(RedisKey.USER_PWD + item.getUserno());
 			log.info("客户密码修改：【{}】-{}：{}",user.getLoginno(),model.getUserno(),IPUtils.getIpAddr(request));
 			return HttpResult.ok();
 		} catch (Exception e) {

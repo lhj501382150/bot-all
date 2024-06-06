@@ -9,4 +9,7 @@ public class RedisKey {
 	public static String ROB_DOWN = "ROB_DOWN:";
 	
 	public static String USER_INVITE_AUTH = "USER_INVITE_AUTH";
+	
+	public static String USER_PWD = "wyb_user_login:";
+	
 }
