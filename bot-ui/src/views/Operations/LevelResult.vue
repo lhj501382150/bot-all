@@ -54,7 +54,7 @@
 <script>
 import KtTable from "@/views/Core/KtTable"
 import KtButton from "@/views/Core/KtButton"
-import { formatWithSeperator,getCurrentDate,getWeekStartEndDates } from "@/utils/datetime"
+import { formatWithSeperator,getCurrentDate,getWeekStartEndDates,getCurTime,formatDate } from "@/utils/datetime"
 import ExportExcel from "@/views/Core/ExportExcel"
 export default {
 	components: {
@@ -149,14 +149,23 @@ export default {
       })
     },
     getStartDate(){
-      let startTime = getCurrentDate() + ' 07:00:00'
-      return startTime
+      var time = new Date().getTime();
+      const curTime = getCurTime()
+      if(curTime<'070000'){
+        return formatDate(time - 1000 * 60 * 60 * 24 * 1,2) + ' 07:00:00'
+      }else{
+        return formatDate(time,2) + ' 07:00:00'
+      }
     },
     getEndDate(){
-      let startTime = getCurrentDate() + ' 07:00:00'
-      let sdate = new Date(startTime)
-     let edate = Date.parse(new Date(startTime)) + 1000 * 60 * 60 * 23
-     return formatWithSeperator(edate,'-',':')
+        var time = new Date().getTime();
+				const curTime = getCurTime()
+				if(curTime<'070000'){
+					return formatDate(time,2) + ' 06:00:00'
+				}else{
+					return formatDate(time + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
+				}
+
     }
 
 	},
