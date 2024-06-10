@@ -26,7 +26,7 @@ private static final long serialVersionUID=1L;
     private Integer DataId;
 
     @TableField("sTime")
-    private String sTime;
+    private String stime;
 
     @TableField("sresult")
     private String sresult;

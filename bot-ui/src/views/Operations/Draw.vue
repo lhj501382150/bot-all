@@ -43,9 +43,9 @@
       <el-form-item label="期数" prop="issue" >
 				<el-input v-model="dataForm.issue" placeholder="请输入期数"  maxlength="16"></el-input>
 			</el-form-item>
-      <el-form-item label="时间" prop="sTime" >
+      <el-form-item label="时间" prop="stime" >
         <el-date-picker
-          v-model="dataForm.sTime"
+          v-model="dataForm.stime"
           type="datetime"
           value-format="yyyy-MM-dd HH:mm:ss" style="width: 98%;">
         </el-date-picker>
@@ -98,12 +98,18 @@ export default {
 			dataFormRules: {
 				issue: [
 					{ required: true, message: '请输入期数', trigger: 'blur' }
+				],
+				stime: [
+					{ required: true, message: '请输入开奖时间', trigger: 'blur' }
+				],
+				sresult: [
+					{ required: true, message: '请输入开奖结果', trigger: 'blur' }
 				]
 			},
 			// 新增编辑界面数据
 			dataForm: {
 				DataId: '',
-				sTime: '',
+				stime: '',
 				sresult: '',
 				issue:'',
         wareno:''

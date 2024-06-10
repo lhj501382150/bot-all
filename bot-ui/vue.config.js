@@ -118,8 +118,8 @@ module.exports = {
 
       '/api': {
 
-        // target: "http://127.0.0.1:8001/api",
-        target: "http://18.212.105.77//api",
+        target: "http://127.0.0.1:8001/api",
+        // target: "http://18.212.105.77//api",
         changeOrigin: true,
 
         secure: false,

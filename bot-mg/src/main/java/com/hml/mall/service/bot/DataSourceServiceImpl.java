@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -61,12 +62,13 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
     }
     
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(DataSource entity) {
     	JSONObject data = new JSONObject();
     	data.put("id",entity.getDataId());
-    	data.put("botId", Long.valueOf(entity.getWareno()));
-    	data.put("drawIssue", entity.getIssue());
-    	data.put("sTime", entity.getSTime());
+    	data.put("BotId", Long.valueOf(entity.getWareno()));
+    	data.put("drawIssue", Integer.parseInt(entity.getIssue()));
+    	data.put("sTime", entity.getStime());
     	data.put("sResult", entity.getSresult());
     	String res = backCoreService.addManaData(data);
     	if("ok".equals(res)){

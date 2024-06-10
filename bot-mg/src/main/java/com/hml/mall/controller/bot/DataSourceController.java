@@ -77,7 +77,7 @@ public class DataSourceController {
     	if(StringUtils.isBlank(model.getSresult())) {
     		throw new Exception("开奖结果不能为空");
     	}
-    	
+    	log.info("补录开奖结果：{}",model);
     	String issue = model.getIssue();
     	QueryWrapper<DataSource> qw = new QueryWrapper<DataSource>();
     	qw.eq("issue",issue);
