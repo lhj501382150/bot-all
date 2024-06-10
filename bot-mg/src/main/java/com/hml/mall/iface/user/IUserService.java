@@ -58,7 +58,4 @@ public interface IUserService extends IService<User> {
   	BigDecimal checkMoney() throws Exception;
   	
   	PageResult findUserLevelCount(PageRequest pageRequest)throws Exception;
-  	
-  	 public void syncUser(User user) throws Exception;
-  	
 }

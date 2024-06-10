@@ -39,9 +39,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -326,9 +326,9 @@ public class HttpClientUtils {
 			RequestConfig config = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD_STRICT)
 						.setExpectContinueEnabled(Boolean.TRUE)
 						.setTargetPreferredAuthSchemes(Arrays.asList("NTLM","Digest"))
-						.setSocketTimeout(5000)
-					    .setConnectTimeout(5000)
-					    .setConnectionRequestTimeout(5000)
+						.setSocketTimeout(30000)
+					    .setConnectTimeout(30000)
+					    .setConnectionRequestTimeout(30000)
 						.setProxyPreferredAuthSchemes(Arrays.asList("Basic")).build();
 			
 			Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -348,9 +348,9 @@ public class HttpClientUtils {
 	 
 	private static CloseableHttpClient getHttpClient(){
 		RequestConfig config = RequestConfig.custom()
-			    .setSocketTimeout(5000)
-			    .setConnectTimeout(5000)
-			    .setConnectionRequestTimeout(5000)
+			    .setSocketTimeout(30000)
+			    .setConnectTimeout(30000)
+			    .setConnectionRequestTimeout(30000)
 			    .setStaleConnectionCheckEnabled(true)
 			    .build();
 		CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(config).build();

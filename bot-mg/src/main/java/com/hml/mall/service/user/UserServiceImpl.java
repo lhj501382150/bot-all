@@ -352,7 +352,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //   				 log.info("初始化层级信息：【{}】-{}",relation.getUserno(),relation.getTjno());
 //	   		}
 //    	}
-//    	syncUser(entity);
+		
+		entity.setSex("-1");
+    	syncUser(entity);
     	redisUtils.hset(RedisKey.USER_INVITE_AUTH, entity.getUserno(), String.valueOf(entity.getUsertype()));
 		return true;
 	}
@@ -373,7 +375,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	User item = userMapper.selectById(entity.getUserno());
     	item.setSex(entity.getSex());
     	userMapper.updateById(item);
-//    	syncUser(item);
+    	syncUser(item);
     }
     
     @Override
@@ -428,20 +430,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	
     }
     
-    public void syncUser(User user) throws Exception {
+    private void syncUser(User user) throws Exception {
     	JSONObject data = new JSONObject();
 		data.put("userId", user.getUserno());
 		data.put("name", user.getNickname());
 		data.put("userName", user.getUsername());
-		if(StringUtils.isBlank(user.getOpenid())) {
-			data.put("openid", "-1");
-		}else {
-			data.put("openid", user.getOpenid());
-		}
+		data.put("openid", user.getOpenid());
 		data.put("sex", user.getSex());
 		data.put("devType", 1);		
-		data.put("parentno", StringUtils.isBlank(user.getParentno()) ? "" : user.getParentno());
-		data.put("cLevel", user.getClevel());
+		data.put("parentno", user.getParentno());
 		String ret = HttpClientUtils.doPost(BackCoreConfig.URL + BackCoreConfig.ADD_ACCOUNT, data.toJSONString(),null);
 		JSONObject json = JSONObject.parseObject(ret);
 		if(!"0".equals(json.getString("iCode"))){

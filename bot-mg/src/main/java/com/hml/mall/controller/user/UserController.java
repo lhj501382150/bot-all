@@ -176,6 +176,7 @@ public class UserController {
         try {
         	String regDate = DateTimeUtils.getCurrentDate("");
         	model.setRegdate(regDate);
+			userService.saveUser(model);
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,9 +200,6 @@ public class UserController {
         	}
         	model.setPaypwd(item.getPaypwd());
 			userService.updateUser(model);
-			
-			model.setSex("-1");//修改时候不改状态 给 -1
-			userService.syncUser(model);
 			return HttpResult.ok();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -265,11 +263,6 @@ public class UserController {
  	   	   		 }
          	}
  			userService.updateStatus(model);
- 			model = userService.getById(model.getUserno());
- 			UserRelation item = userRelationService.getById(model.getUserno());
- 			model.setClevel(item.getClevel());
- 			
- 			userService.syncUser(model);
  			log.info("客户状态修改：【{}】-{}：{}",user.getLoginno(),model.getUserno(),model.getSex());
  			return HttpResult.ok();
  		} catch (Exception e) {
