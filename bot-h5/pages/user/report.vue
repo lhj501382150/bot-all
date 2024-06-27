@@ -14,10 +14,10 @@
 			<uni-datetime-picker type="datetime" placeholder="开始日期" v-model="searchForm.startDate"/>
 			<uni-datetime-picker type="datetime" placeholder="结束日期" v-model="searchForm.endDate"/>
 			
-			<button type="primary" size="mini" @click="searchUserData">查询</button>
-			<button class="time-btn" size="mini" @click="searchBytime(1)">今天</button>
-			<button class="time-btn" size="mini" @click="searchBytime(2)">本周</button>
-			<button class="time-btn" size="mini" @click="searchBytime(3)">上周</button>
+			<button type="primary" size="mini" @click="searchUserData" :loading="isLoading" :disabled="isLoading">查询</button>
+			<button class="time-btn" size="mini" @click="searchBytime(1)"  :disabled="isLoading">今天</button>
+			<button class="time-btn" size="mini" @click="searchBytime(2)"  :disabled="isLoading">本周</button>
+			<button class="time-btn" size="mini" @click="searchBytime(3)"  :disabled="isLoading">上周</button>
 			
 			<view class="table-data">
 				 <view class="table-row">
@@ -143,6 +143,7 @@
 					comm:0,
 					realBail:0
 				},
+				isLoading:false
 			}
 		},
 		onLoad(option) {
@@ -188,6 +189,8 @@
 				this.searchUserData()
 			},
 			searchUserData(){
+				if(this.isLoading) return
+				this.isLoading = true
 				this.userRecord = []
 				this.userRecordSum = {
 					num:0,
@@ -206,6 +209,7 @@
 					para.clevel = 100
 				}
 				this.$http.post('/Query/SubLevelSumList',para,res=>{
+					this.isLoading = false
 					this.userRecord = res.rData || []
 					this.userRecord.forEach(item=>{
 						this.userRecordSum.num += item.num
