@@ -14,14 +14,11 @@
  
     <!--输出到文件-->
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/bot-mg.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 单个日志文件最多 100MB, 60天的日志周期，最大不能超过20GB,窗口大小是1到3，当保存了3个归档文件后，将覆盖最早的日志 -->
-		   <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">   
-	      <maxFileSize>100MB</maxFileSize>   
-	    </triggeringPolicy>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/bot-hq.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+		</rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
