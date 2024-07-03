@@ -42,7 +42,7 @@
 <script>
 import KtTable from "@/views/Core/KtTable"
 import KtButton from "@/views/Core/KtButton"
-import { format,getCurrentDate,formatWithSeperator,getWeekStartEndDates } from "@/utils/datetime"
+import { format,getCurrentDate,formatDate ,getCurTime ,getWeekStartEndDates } from "@/utils/datetime"
 import ExportExcel from "@/views/Core/ExportExcel"
 export default {
 	components: {
