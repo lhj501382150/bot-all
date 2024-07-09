@@ -20,7 +20,6 @@ import com.hml.utils.SM2Utils;
 import com.hml.utils.StringUtils;
 import com.hml.websocket.config.WebSocketConfig;
 import com.hml.websocket.server.WebSocketNiuServerApp;
-import com.hml.websocket.server.WebSocketNiuServerApp;
 
 import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;

@@ -340,7 +340,7 @@
 				let para = {
 					userNo : userno
 				}
-				this.$http.post('/Query/GetBalance',para,res=>{
+				this.$http.post('/Account/GetBalance',para,res=>{
 					 this.user = res.rData || {}
 				})
 			},
@@ -353,7 +353,7 @@
 					})
 				}
 				let pwd = md5(userno+userno)
-				let url = webSocketUrl + 'bd/' + userno+"-" + pwd;
+				let url = webSocketUrl + 'bd/' + userno+"/" + pwd;
 				this.socketTask = uni.connectSocket({
 					url: url ,
 					success(data) {
@@ -531,7 +531,7 @@
 						uni.showToast({
 							title:'请选择下注类型',
 							icon:'error',
-							duration:2000
+							duration:3000
 						})
 						return
 					}

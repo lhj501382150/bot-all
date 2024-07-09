@@ -3,18 +3,17 @@
 		<uni-nav-bar left-icon="left"  title="代理中心" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
 		<view class="row">
 			<view class="text">当前账号： {{getStatus(curClevel)}} - {{userno}}</view>
-			<!-- <view class="text" v-if="curClevel > 1">所属{{getStatus(curClevel - 1)}}: {{parentno}}</view> -->
-			<view class="search-status">
-				<uni-data-select v-model="search.sex" placeholder="状态筛选" :localdata="sexs"  @change="changeSex" ></uni-data-select>
-			</view>
 		</view>
 		<view class="tab-bar">
 			<view class="tab-item"  :class="item.clevel == tabIndex ? 'active':''" v-for="(item,index) in tabs" :key="index" @click="findData(item)" v-if="item.clevel > curClevel">
 				{{item.name}}
 			</view>
 		</view>
-		<view class="row" v-if="tabIndex == 99 || tabIndex==curClevel + 1">
-			<button class="add-btn" @click="open" size="mini">新建{{getStatus(tabIndex)}}</button>
+		<view class="row" >
+			<button class="add-btn" v-if="tabIndex == 99 || tabIndex==curClevel + 1" @click="open" size="mini">新建{{getStatus(tabIndex)}}</button>
+			<view class="search-status">
+				<uni-data-select v-model="search.sex" placeholder="状态筛选" :localdata="sexs"  @change="changeSex" ></uni-data-select>
+			</view>
 		</view>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 80%;"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
@@ -23,7 +22,8 @@
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
 					  <view class="user-info">
 					  	<view class="left">
-					  		<image src="../../static/images/user/tou.png" mode="scaleToFill"></image>
+					  		<image src="../../static/images/user/tou-login.png" mode="scaleToFill" v-if="item.login"></image>
+					  		<image src="../../static/images/user/tou.png" mode="scaleToFill" v-else></image>
 					  	</view>
 					  	<view class="right">
 							<view class="row-item">
@@ -51,19 +51,25 @@
 					  	<view>上周下注金额：{{item.befBail}}</view>
 					  	<view>上周盈亏：<text class="loss">{{item.befLoss}}</text></view>
 					  </view>
-					  <view class="btn-row">
+					 <view class="btn-row">
 						<view class="btn-item" @click="editBalance(item)">修改现金额度</view>
-						<view class="btn-item" @click="openPwdPopup(item)">密码重置</view>
-					  </view>
-					  <view class="btn-row">
-					  	<view class="btn-item" @click="showSub(item)" v-if="tabIndex <= 4">查看下级</view>
-						<view class="btn-item" @click="showReport(item)">报表查询</view>
-					  </view>
-					  <view class="btn-row">
-					  	<view class="btn-item" v-if="item.sex!=0" @click="changeStatus(item.userno,0)">启用</view>
-						<view class="btn-item" v-if="item.sex!=1" @click="changeStatus(item.userno,1)">冻结</view>
-						<view class="btn-item" v-if="item.sex!=2" @click="changeStatus(item.userno,2)">停用</view>
-					  </view>
+						<view class="btn-item btn-more" @click="changeMenu(item)">
+							更多
+							<uni-icons type="down" size="16" color="rgb(40,148,255)"></uni-icons>
+							<view class="drop-menu" v-show="item.menuMore">
+								<view class="drop-item" @click="openPwdPopup(item)">密码重置</view>
+								<view class="drop-item" @click="openNamePopup(item)">昵称修改</view>
+								<view class="drop-item" v-if="item.sex!=0" @click="changeStatus(item.userno,0)">启用</view>
+								<view class="drop-item" v-if="item.sex!=1" @click="changeStatus(item.userno,1)">冻结</view>
+								<view class="drop-item" v-if="item.sex!=2" @click="changeStatus(item.userno,2)">停用</view>
+							</view>
+						</view>
+					 						
+					 </view>
+					 <view class="btn-row">
+					 	<view class="btn-item" @click="showSub(item)" v-if="tabIndex <= 4">查看下级</view>
+					 	<view class="btn-item" @click="showReport(item)">报表查询</view>
+					 </view>
 				 </view>
 				 
 				 <view class="load-more" v-if="loadMore">加载中...</view>
@@ -116,6 +122,22 @@
 		 				<view class="form-btn">
 		 					<button class="cal-btn" size="mini" @click="closePwdPopup">取消</button>
 		 					<button class="sub-btn"  size="mini" @click="submitPwd">确认</button>
+		 				</view>
+		 			 </view>
+		 </uni-popup>
+		 <uni-popup ref="namePopup" type="center" background-color="#fff">
+		 			 <view class="form">
+		 				 <view class="form-title">昵称修改</view>
+		 				 <view class="form-sub-title">操作账号：{{nameForm.userId}}-{{nameForm.userName}}</view>
+		 				<uni-forms ref="nameForm" :modelValue="nameForm" :rules="nameFormRules" >
+		 					<uni-forms-item label="新昵称" name="userName">
+		 						<uni-easyinput type="text" prefixIcon="person" v-model="nameForm.userName" placeholder="请输入昵称"/>
+		 					</uni-forms-item>
+		 				</uni-forms>
+		 				 
+		 				<view class="form-btn">
+		 					<button class="cal-btn" size="mini" @click="closeNamePopup">取消</button>
+		 					<button class="sub-btn"  size="mini" @click="submitName">确认</button>
 		 				</view>
 		 			 </view>
 		 </uni-popup>
@@ -240,6 +262,17 @@
 					 	]
 					 }
 				},
+				nameForm:{
+					userId:'',
+					userName:''
+				},
+				nameFormRules: {
+					 userName: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入昵称'}
+					 	]
+					 }
+				}
 			}
 		},
 		onLoad(option) {
@@ -254,6 +287,9 @@
 			this.loadData()
 		},
 		methods: {
+			changeMenu(item){
+				item.menuMore =!item.menuMore
+			},
 			changeSex(){
 				this.getRefresherrefresh()
 			},
@@ -344,6 +380,42 @@
 					console.log(err);
 				})
 			},
+			closeNamePopup(){
+				this.$refs.namePopup.close()
+				this.nameForm.userId = ''
+				this.nameForm.userName = ''
+			},
+			openNamePopup(item){
+				this.nameForm.userId = item.userno
+				this.nameForm.userName = item.nickname
+				this.$refs.namePopup.open()
+			},
+			submitPwd(){
+				this.$refs.nameForm.validate().then(res=>{
+					let para = {
+						userno:this.nameForm.userId,
+						nickname: this.nameForm.userName
+					}
+					 let url = '/User/ResetName'
+					this.$http.post(url,para,(res=>{
+						if(res.iCode ==0){
+							 uni.showToast({
+							 	title:'操作成功',
+							 	icon:'success',
+								duration:3000
+							 })
+							 this.closeNamePopup()
+						}else{
+							uni.showToast({
+								title:res.sMsg,
+								icon:'error'
+							})
+						}
+					}))
+				}).catch(err =>{
+					console.log(err);
+				})
+			},
 			submitScore(){
 				this.$refs.scoreForm.validate().then(res=>{
 					let para = {
@@ -413,6 +485,9 @@
 				}
 				this.$http.post("/Query/SubFirmList",this.search,res => {
 					let datas = res.rData || []
+					datas.forEach(item=>{
+						item.menuMore = false
+					})
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
 					if (this.search.pageIdx >= this.totalCount) {
@@ -507,7 +582,7 @@
 		justify-content: space-between;
 		align-items: center;
 		.add-btn{
-			width: 400upx;
+			width: 250upx;
 			background-color: rgb(40,148,255);
 			color: #fff;
 			margin-top: 20upx;
@@ -516,8 +591,8 @@
 			margin-top: 40upx;
 		}
 		.search-status{
-			width:200upx;
-			margin-top: 40upx;
+			width:300upx;
+			margin-top: 20upx;
 		}
 	}
 	.tab-bar{
@@ -564,6 +639,7 @@
 						justify-content: space-between;
 						align-items: center;
 						margin-bottom: 10upx;
+						padding-right: 20upx;
 						.sex0{
 							color: green;
 						}
@@ -596,11 +672,27 @@
 				align-items: center;
 				.btn-item{
 					width: 50%;
+					max-width: 320upx;
 					text-align: center;
 					border: 1px solid #eeeeee;
-					padding:20upx;
+					padding:15upx 20upx;
 					color:rgb(40,148,255);
 					cursor: pointer;
+				}
+				.btn-more{
+					position: relative;
+				}
+				.drop-menu{
+					position: absolute;
+					top: 60upx;
+					right:10upx;
+					border: #bfbfbf 1px solid;
+					width: 240upx;
+					background-color: #ffffff;
+					box-shadow: 0px 0px 3px 1px #f2f2f2;
+					.drop-item{
+						line-height: 60upx;
+					}
 				}
 			}
 		}

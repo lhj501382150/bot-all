@@ -202,7 +202,7 @@
 				let para = {
 					userNo : userno
 				}
-				this.$http.post('/Query/GetBalance',para,res=>{
+				this.$http.post('/Account/GetBalance',para,res=>{
 					 this.user = res.rData || {}
 				})
 			},
