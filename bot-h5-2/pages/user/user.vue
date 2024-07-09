@@ -130,12 +130,26 @@
 				})
 			},
 			logout(){
-				uni.removeStorageSync('Token')
-				uni.removeStorageSync('userinfo')
-				uni.removeStorageSync('userno')
-				uni.navigateTo({
-					url:'/pages/login/login'
+				let userno = uni.getStorageSync('userno')
+				let para = {
+					userno : userno
+				}
+				this.$http.post('/User/LogOut',para,res=>{
+					if(res.iCode ==0){
+					  uni.removeStorageSync('Token')
+					  uni.removeStorageSync('userinfo')
+					  uni.removeStorageSync('userno')
+					  uni.navigateTo({
+						url:'/pages/login/login'
+					  })
+					}else{
+						uni.showToast({
+							title:res.sMsg,
+							icon:'error'
+						})
+					}
 				})
+				
 			},
 			goPage(path){
 				uni.navigateTo({

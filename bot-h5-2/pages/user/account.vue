@@ -22,7 +22,7 @@
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
 					  <view class="user-info">
 					  	<view class="left">
-							<image src="../../static/images/user/tou-login.png" mode="scaleToFill" v-if="item.login"></image>
+							<image src="../../static/images/user/tou-login.png" mode="scaleToFill" v-if="item.isLogin==1"></image>
 					  		<image src="../../static/images/user/tou.png" mode="scaleToFill" v-else></image>
 					  	</view>
 					  	<view class="right">
@@ -389,13 +389,13 @@
 				this.nameForm.userName = item.nickname
 				this.$refs.namePopup.open()
 			},
-			submitPwd(){
+			submitName(){
 				this.$refs.nameForm.validate().then(res=>{
 					let para = {
 						userno:this.nameForm.userId,
-						nickname: this.nameForm.userName
+						nickName: this.nameForm.userName
 					}
-					 let url = '/User/ResetName'
+					 let url = '/User/MdiNickName'
 					this.$http.post(url,para,(res=>{
 						if(res.iCode ==0){
 							 uni.showToast({
@@ -404,6 +404,7 @@
 								duration:3000
 							 })
 							 this.closeNamePopup()
+							  setTimeout(this.getRefresherrefresh,1000)
 						}else{
 							uni.showToast({
 								title:res.sMsg,
