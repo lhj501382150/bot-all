@@ -64,7 +64,7 @@
 				and realstatus  = #{realstatus} 
 			</if> 
 		</where>
-		<if test="pageIndex !=null and pageIndex != ''">
+		<if test="pageIndex !=null">
 			order by userno
 			limit #{pageIndex},#{pageSize}
 		</if>
