@@ -231,9 +231,7 @@
 				</if>
 			</where>
 		order by userno
-		<if test="pageIndex != null and pageIndex != ''">
-			limit #{pageIndex},#{pageSize}
-		</if>
+		limit #{pageIndex},#{pageSize}
 	</select>
 	
 	<select id="findFYCountSum" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">

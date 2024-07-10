@@ -10,10 +10,9 @@
             align="right"
             unlink-panels
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            :picker-options="pickerOptions">
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="yyyy-MM-dd HH:mm:ss">
           </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -52,7 +51,7 @@
 <script>
 import KtTable from "@/views/Core/KtTable"
 import KtButton from "@/views/Core/KtButton"
-import { format } from "@/utils/datetime"
+import { format,formatDate ,getCurTime ,getWeekStartEndDates } from "@/utils/datetime"
 export default {
 	components: {
 		KtTable,
@@ -62,7 +61,7 @@ export default {
 		return {
 			size: 'small',
 			filters: {
-        fdate:'',
+        fdate:[this.getStartDate(),this.getEndDate()],
 				orderno: '',
 				userno: '',
 				wareno: '',
@@ -91,35 +90,8 @@ export default {
       ],
 			pageRequest: { pageNum: 1, pageSize: 50 },
       pageResult: {},
-      showOperation:false,
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      }
-		}
+      showOperation:false
+    }
 	},
 	methods: {
 		// 获取分页数据
@@ -161,7 +133,26 @@ export default {
     // 时间格式化
 	dateFormat: function (row, column, cellValue, index){
 	  return format(row[column.property])
-	  }
+	  },
+    getStartDate(){
+      var time = new Date().getTime();
+      const curTime = getCurTime()
+      if(curTime<'070000'){
+        return formatDate(time - 1000 * 60 * 60 * 24 * 1,2) + ' 07:00:00'
+      }else{
+        return formatDate(time,2) + ' 07:00:00'
+      }
+    },
+    getEndDate(){
+        var time = new Date().getTime();
+				const curTime = getCurTime()
+				if(curTime<'070000'){
+					return formatDate(time,2) + ' 06:00:00'
+				}else{
+					return formatDate(time + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
+				}
+
+    }
 	},
 	mounted() {
 	}

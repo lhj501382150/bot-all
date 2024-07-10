@@ -87,7 +87,7 @@
 import KtTable from "@/views/Core/KtTable"
 import KtButton from "@/views/Core/KtButton"
 import ExportExcel from "@/views/Core/ExportExcel"
-import { format } from "@/utils/datetime"
+import { format,getCurrentMonth } from "@/utils/datetime"
 import htmlToPdf from "@/utils/htmlToPdf";
 
 export default {
@@ -102,7 +102,7 @@ export default {
       align:'center',
       acctlist: [],//账本列表
 			filters: {
-        fdate: '',
+        fdate: getCurrentMonth(),
         acctno: '',
         userno: '',
         orgtype: ''

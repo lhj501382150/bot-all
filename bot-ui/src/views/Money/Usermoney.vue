@@ -47,7 +47,7 @@
 <script>
 import KtTable from "@/views/Core/KtTable"
 import KtButton from "@/views/Core/KtButton"
-import { format } from "@/utils/datetime"
+import { format,getCurrentDate } from "@/utils/datetime"
 import ExportExcel from "@/views/Core/ExportExcel"
 export default {
 	components: {
@@ -60,7 +60,7 @@ export default {
 			size: 'small',
       acctlist: [],//账本列表
 			filters: {
-        fdate: '',
+        fdate: [getCurrentDate(),getCurrentDate()],
         userno: '',
         username:'',
         nickname:''

@@ -60,6 +60,16 @@ export function getCurrentDate(){
     var currentdate = year +'-'+ month  +'-'+ strDate ;
     return currentdate;
 }
+export function getCurrentMonth(){
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth() + 1;
+  if (month >= 1 && month <= 9) {
+    month = "0" + month;
+  }
+  var currentdate = year +'-'+ month ;
+  return currentdate;
+}
 
 
 export function getDate(datetime){

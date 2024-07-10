@@ -6,14 +6,13 @@
 			<el-form-item>
         <el-date-picker
           v-model="filters.fdate"
-          type="daterange"
+          type="datetimerange"
           align="right"
           unlink-panels
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
-          :picker-options="pickerOptions">
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          value-format="yyyy-MM-dd HH:mm:ss">
         </el-date-picker>
 			</el-form-item>
       <el-form-item >
@@ -47,7 +46,7 @@
 <script>
 import KtTable from "@/views/Core/KtTable"
 import KtButton from "@/views/Core/KtButton"
-import { format } from "@/utils/datetime"
+import { format,formatDate ,getCurTime ,getWeekStartEndDates } from "@/utils/datetime"
 import ExportExcel from "@/views/Core/ExportExcel"
 export default {
 	components: {
@@ -60,7 +59,7 @@ export default {
 			size: 'small',
       acctlist: [],//账本列表
 			filters: {
-        fdate: '',
+        fdate: [this.getStartDate(),this.getEndDate()],
         acctno: '',
         userno: '',
         subno:'',
@@ -83,34 +82,7 @@ export default {
 			pageRequest: { pageNum: 1, pageSize: 50 },
       pageResult: {},
       showOperation:false,
-      subs:[],
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      },
+      subs:[], 
       exportData:[],
       exportInfo:{
         id:'record-table',
@@ -127,8 +99,8 @@ export default {
         this.pageRequest = {pageNum: 1, pageSize: 50}
       }
 			this.pageRequest.params = {
-        'fdate@ge':this.filters.fdate == null ? '' : this.filters.fdate[0],
-        'fdate@le':this.filters.fdate == null ? '' : this.filters.fdate[1],
+        'ctime@ge':this.filters.fdate == null ? '' : this.filters.fdate[0],
+        'ctime@le':this.filters.fdate == null ? '' : this.filters.fdate[1],
         'acctno':this.filters.acctno,
         'subno':this.filters.subno,
         'userno':this.filters.userno,
@@ -162,6 +134,24 @@ export default {
       this.$api.subject.findList({}).then(res =>{
         this.subs = res.data
       })
+    },
+    getStartDate(){
+      var time = new Date().getTime();
+      const curTime = getCurTime()
+      if(curTime<'070000'){
+        return formatDate(time - 1000 * 60 * 60 * 24 * 1,2) + ' 07:00:00'
+      }else{
+        return formatDate(time,2) + ' 07:00:00'
+      }
+    },
+    getEndDate(){
+        var time = new Date().getTime();
+				const curTime = getCurTime()
+				if(curTime<'070000'){
+					return formatDate(time,2) + ' 06:00:00'
+				}else{
+					return formatDate(time + 1000 * 60 * 60 * 24 * 1,2) + ' 06:00:00'
+				}
     }
 
 

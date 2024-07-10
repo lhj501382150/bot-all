@@ -303,17 +303,18 @@
 			this.closeSocket()
 		},
 		methods: {
-			getShowNoticePara(){
+			async getShowNoticePara(){
 				let para = {
 					sysid:11
 				}
 				try{
-					this.$http.post('/Query/SysPara',para,res=>{
-					  if(res.iCode==0){
-						  this.tempShowNotice =  res.rData.sval =='Y'
-					  }
-					})
+					let res = await this.$http.post('/Query/SysPara',para)
+					res = res.data
+					if(res.iCode==0){
+						this.tempShowNotice =  res.rData.sval =='Y'
+					}
 				}catch(e){
+					console.error(e)
 					this.tempShowNotice = false
 				}
 			},

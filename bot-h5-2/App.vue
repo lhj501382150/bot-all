@@ -6,6 +6,12 @@
 		},
 		onShow: function() {
 			// console.log('App Show')
+			const mask = uni.getStorageSync('mask')
+			if(!mask){
+				uni.reLaunch({
+					url:'/pages/index/index'
+				})
+			}
 		},
 		onHide: function() {
 			// console.log('App Hide')

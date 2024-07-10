@@ -12,9 +12,9 @@ spring:
 #      url: jdbc:mysql://18.212.105.77:3306/shangcheng?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
 #      username: root
 #      password: aNmanwh6WK3e
-      url: jdbc:mysql://16.162.55.4:3306/shangcheng?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
+      url: jdbc:mysql://16.163.55.65:3306/shangcheng?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
       username: root
-      password: 7VBh9zXUkxUN
+      password: Rs7jVNoPEEEC
       filters: stat,wall,log4j,config
       max-active: 100
       initial-size: 1
@@ -34,9 +34,9 @@ spring:
        max-file-size: 10MB  
        max-request-size: 100MB
   redis: 
-    host: 18.212.105.77
+    host: 16.163.55.65
     port: 6379
-    password: tg_pass
+    password: ZeiQxxKni8wK
     database: 0
     timeout: 10000
     pool: 
