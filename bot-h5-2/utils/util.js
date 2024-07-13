@@ -86,3 +86,16 @@ export const getWeekStartEndDates = (offset = 0) => {
         endOfWeek: formatDate(sundayTargetWeek,2)
     };
 }
+
+export const getIp = () =>{
+	let url = window.location.href
+	const regex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:([^:\/\n?#]+)(?::(\d+))?)?(?:[\/?#]|$)/;
+	const matches = url.match(regex);
+	  
+	  
+	let ip = 'localhost'
+	if (matches && matches.length >= 3) {
+	  ip = `${matches[1]}:${matches[2] || ''}`;
+	} 
+	return `ws://${ip}/socket/`
+}
