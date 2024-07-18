@@ -31,16 +31,6 @@
 		</view>
 		<view class="form">
 			<uni-forms ref="form" :modelValue="formData" :rules="rules">
-				<!-- <uni-forms-item  name="type">
-					<radio-group @change="radioChange">
-						<label>
-							<radio value="1" :checked="formData.type==1"/><text>平投</text>
-						</label>
-						<label>
-							<radio value="2" :checked="formData.type==2"/><text>倍投</text>
-						</label>
-					</radio-group>
-				</uni-forms-item> -->
 				<uni-forms-item name="type" required>
 					<uni-data-checkbox v-model="formData.type" :localdata="types" />
 				</uni-forms-item>
@@ -215,7 +205,7 @@
 					})
 				}
 				let pwd = md5(userno+userno)
-				let url = webSocketUrl + 'niu/' + userno+"-" + pwd;
+				let url = webSocketUrl + 'niu/' + userno+"/" + pwd;
 				this.socketTask = uni.connectSocket({
 					url: url ,
 					success(data) {
@@ -549,11 +539,14 @@
 		position: relative;
 		background-color: #eee;
 		margin:15upx auto;
-		padding-bottom: 15upx;
+		padding: 15upx;
+		background-image: url('../../static/images/home/niu-bg.jpg');
+		background-size: 100% 100%;
 		.game-item{
 			width: 30%;
 			height: 120upx;
-			margin-top: 20upx;
+			margin-top: 30upx;
+			margin-bottom: 30upx;
 			border-radius: 20upx;
 			background-image: linear-gradient(to bottom,#8f91fa,#5500ff);
 			display: flex;

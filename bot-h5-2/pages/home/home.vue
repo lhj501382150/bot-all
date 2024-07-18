@@ -28,7 +28,7 @@
 				noticeno:'',
 				games:[
 					{name:'四方通宝',img:'../../static/images/home/logo.png',path:'./qmbd'},
-					// {name:'四方牛牛',img:'../../static/images/home/niu.jpg',path:'./qmnn'}
+					{name:'四方牛牛',img:'../../static/images/home/niu.jpg',path:'./qmnn'}
 					
 				],
 				search:{
