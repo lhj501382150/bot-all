@@ -16,10 +16,10 @@
           </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="filters.username" placeholder="客户用户名" clearable></el-input>
+        <el-input v-model="filters.username" placeholder="用户名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="filters.nickname" placeholder="客户昵称" clearable></el-input>
+        <el-input v-model="filters.nickname" placeholder="昵称" clearable></el-input>
       </el-form-item>
 			<el-form-item>
 				<el-input v-model="filters.orderno" placeholder="订单编号"></el-input>
@@ -27,14 +27,20 @@
       <el-form-item>
         <el-input v-model="filters.userno" placeholder="USERID"></el-input>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-input v-model="filters.wareno" placeholder="群号"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-input v-model="filters.artid" placeholder="注单"></el-input>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-input v-model="filters.contno" placeholder="邀请人ID"></el-input>
+      </el-form-item> -->
+      <el-form-item>
+        <el-select v-model="filters.mode" placeholder="类型" clearable>
+          <el-option label="通宝" value="0"></el-option>
+          <el-option label="牛牛" value="1"></el-option>
+        </el-select>
       </el-form-item>
 			<el-form-item>
 				<kt-button icon="fa fa-search" :label="$t('action.search')" perms="order:order:view" type="primary" @click="findPage(null)"/>
@@ -42,8 +48,11 @@
 		</el-form>
 	</div>
 	<!--表格内容栏-->
-	<kt-table
-    :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
+	<kt-table :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
+    <template #mode="scope">
+      <el-tag type="primary" v-if="scope.row.mode==0">通宝</el-tag>
+      <el-tag type="success" v-else-if="scope.row.mode==1">牛牛</el-tag>
+    </template>
 	</kt-table>
   </div>
 </template>
@@ -70,7 +79,8 @@ export default {
         status:'',
         username:'',
         nickname:'',
-        contno:''
+        contno:'',
+        mode:''
 			},
 			columns: [
 				{prop:"fdate", label:"订单日期", minWidth:150},
@@ -85,7 +95,7 @@ export default {
         {prop:"comm", label:"手续费", minWidth:80},
         {prop:"transcomm", label:"返佣", minWidth:80},
         {prop:"contno", label:"邀请人", minWidth:80},
-        {prop:"wareno", label:"群号", minWidth:80},
+        {prop:"mode", label:"类型", minWidth:80},
         {prop:"ordtime", label:"下单时间", minWidth:150}
       ],
 			pageRequest: { pageNum: 1, pageSize: 50 },
@@ -112,8 +122,8 @@ export default {
         'artid':this.filters.artid,
         'status':this.filters.status,
         'username@like':this.filters.username,
-        'nickname@like':this.filters.nickname
-
+        'nickname@like':this.filters.nickname,
+        'mode':this.filters.mode
 			}
 			this.$api.order.findPage(this.pageRequest).then((res) => {
 				this.pageResult = res.data

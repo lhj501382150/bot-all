@@ -50,8 +50,8 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
 	}
     
     @Override
-    public Integer findPreDataSource(String issue) {
-    	DataSource item = dataSourceMapper.findNearDataSorce(issue);
+    public Integer findPreDataSource(String issue,int mode) {
+    	DataSource item = dataSourceMapper.findNearDataSorce(issue,mode);
     	if(item == null) {
     		throw new RuntimeException("未找到上一期结果");
     	}
@@ -70,6 +70,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
     	data.put("drawIssue", Integer.parseInt(entity.getIssue()));
     	data.put("sTime", entity.getStime());
     	data.put("sResult", entity.getSresult());
+    	data.put("Mode", entity.getMode());
     	String res = backCoreService.addManaData(data);
     	if("ok".equals(res)){
     		return true;

@@ -107,6 +107,9 @@ private static final long serialVersionUID=1L;
     
     @TableField("ARTID")
     private String artid;
+    
+    @TableField("MODE")
+    private String mode;
 
     @TableField(exist = false)
     private String username;

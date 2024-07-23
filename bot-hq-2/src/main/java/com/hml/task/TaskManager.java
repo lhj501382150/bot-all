@@ -52,17 +52,6 @@ public class TaskManager {
 	@Autowired
 	private ErrorCommand errorCommand;
 	
-	@Autowired
-	private BackCoreService backCoreService;
-	
-	private Boolean IS_AUTH = false;
-	
-	@Scheduled(cron="0 0 7 * * *")
-	public void checkSysAuth() {
-		IS_AUTH = checkAuth();
-		log.info("当前系统状态：{}",IS_AUTH);
-	}
-	
 	@Async
 	@Scheduled(fixedRate = 1000)
 	public void syncStatusSys() {
@@ -73,7 +62,7 @@ public class TaskManager {
 			 }
 			 String status= obj.toString();
 			 int step = Integer.parseInt(status);
-			 if(WebSocketConfig.ENABLE && IS_AUTH) {
+			 if(WebSocketConfig.ENABLE && SysTaskManager.IS_AUTH) {
 				 WebSocketServerApp.sendInfo(step, "Update");
 			 }
 			 redisUtils.del(RedisKey.SYSTEM_STATUS);
@@ -94,7 +83,7 @@ public class TaskManager {
 			buff.append("下庄成功！从下轮起，重新竞选庄家，请广大玩家踊跃参加庄家竞选。");
 			SendPhoto photo = bossCommand.getSendPhoto(BotConfig.CHAT_ID, buff.toString(), "Markdown");
 			try {
-				if(BotConfig.ENABLE && IS_AUTH) {
+				if(BotConfig.ENABLE && SysTaskManager.IS_AUTH) {
 					baseBot.execute(photo);
 				}
 			} catch (TelegramApiException e) {
@@ -117,7 +106,7 @@ public class TaskManager {
 			 log.info("重新下发结果图：{}-{}",RedisKey.ROB_SEND_PIC,obj);
 			 Object res = redisUtils.hget(getResultKey(), obj.toString());
 			 log.info("下发结果：{}",res);
-			 if(res != null && BotConfig.ENABLE  && IS_AUTH) {
+			 if(res != null && BotConfig.ENABLE  && SysTaskManager.IS_AUTH) {
 				 RespBean bean = JSONObject.parseObject(res.toString(), RespBean.class);
 				 sendTable(bean,"开奖成功!("+bean.getIWinNo() + CommandTextParser.getText(bean.getIWinNo()) +")\n本期期数： " + bean.getDrawIssue() ,true);
 			 }
@@ -165,7 +154,7 @@ public class TaskManager {
 				 log.info("【START_ROB】：{}",step);
 				 DrawInfo.FLOW = Flow.START_ROB;
 				 if(BotConfig.ENABLE) start();
-				 if(WebSocketConfig.ENABLE  && IS_AUTH) {
+				 if(WebSocketConfig.ENABLE  && SysTaskManager.IS_AUTH) {
 					 JSONObject json = new JSONObject();
 					 json.put("ISSUE", DrawInfo.DRAW_ISSUE);
 					 json.put("CODE", DrawInfo.PRE_DRAW_CODE);
@@ -182,7 +171,7 @@ public class TaskManager {
 				 log.info("【DOWN_ORDER】：{}",step);
 				 DrawInfo.FLOW = Flow.DOWN_ORDER;
 				 if(BotConfig.ENABLE) drawOrder(resp);
-				 if(WebSocketConfig.ENABLE  && IS_AUTH) {
+				 if(WebSocketConfig.ENABLE  && SysTaskManager.IS_AUTH) {
 					 JSONObject json = new JSONObject();
 					 json.put("ISSUE", DrawInfo.DRAW_ISSUE);
 					 json.put("CODE", DrawInfo.PRE_DRAW_CODE);
@@ -195,7 +184,7 @@ public class TaskManager {
 				 log.info("【STOP_ORDER】：{}",step);
 				 DrawInfo.FLOW = Flow.STOP_ORDER;
 				 stopOrder();
-				 if(WebSocketConfig.ENABLE && IS_AUTH) {
+				 if(WebSocketConfig.ENABLE && SysTaskManager.IS_AUTH) {
 					 WebSocketServerApp.sendInfo(Flow.STOP_ORDER.getStep(),"");
 				 }
 			 }else if(Flow.OVER.getStep() == step) {
@@ -256,7 +245,7 @@ public class TaskManager {
 					 log.info("历史信息当前期数：{}--{}" ,DrawInfo.ID ,bean.getDataId());
 					 return;
 				 }
-				 if(BotConfig.ENABLE  && IS_AUTH) sendTable(bean,"停止下注！",false);
+				 if(BotConfig.ENABLE  && SysTaskManager.IS_AUTH) sendTable(bean,"停止下注！",false);
 				  flag = false;
 			  }else {
 				  index++;
@@ -278,10 +267,10 @@ public class TaskManager {
 				redisUtils.hset(key,bean.getDataId(), res);
 				redisUtils.expire(key, 60 * 60 * 24);
 				log.info("存入结果:{}-{}",bean.getDataId(),res);
-				if(BotConfig.ENABLE  && IS_AUTH) {
+				if(BotConfig.ENABLE  && SysTaskManager.IS_AUTH) {
 					sendTable(bean,"开奖成功!("+bean.getIWinNo() + CommandTextParser.getText(bean.getIWinNo()) +")\n本期期数： " + (DrawInfo.DRAW_ISSUE - 1) ,true);
 				}
-				if(WebSocketConfig.ENABLE  && IS_AUTH) {
+				if(WebSocketConfig.ENABLE  && SysTaskManager.IS_AUTH) {
 					DrawInfo.RESULT = String.valueOf(bean.getIWinNo());
 					WebSocketServerApp.sendInfo(Flow.OVER.getStep(),res.toString());
 				 }
@@ -393,21 +382,5 @@ public class TaskManager {
 		String key = RedisKey.ORDER_RESULT + ":" + date;
 		 
 		return key;
-	}
-	
-	private boolean checkAuth() {
-		String priPath = BotConfig.FILE_PATH + "/private_key.pem";
-		String listenPath = BotConfig.FILE_PATH + "/listen.lic";
-		String expireDate = FileUtil.readString(listenPath,Charset.forName("UTF-8"));
-		expireDate = expireDate.replace("\n", "").trim();
-		PrivateKey privateKey = SM2Utils.importPrivateKey(priPath);
-		String decrypt = SM2Utils.decrypt(expireDate, privateKey);
-		String curDate = DateTimeUtils.getCurrentDate("yyyyMMdd");
-		log.info(curDate+"---"+ decrypt+ "=====" + curDate.compareTo(decrypt));
-		if(curDate.compareTo(decrypt) > 0) {
-			return false;
-		}else {
-			return true;
-		}
 	}
 }

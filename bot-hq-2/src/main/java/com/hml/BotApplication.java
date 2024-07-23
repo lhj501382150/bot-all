@@ -11,6 +11,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import com.hml.bot.BaseBot;
 import com.hml.config.BotConfig;
 import com.hml.thread.GetDataThread;
+import com.hml.thread.NiuGetDataThread;
 
 @SpringBootApplication
 @EnableScheduling
@@ -31,6 +32,7 @@ public class BotApplication {
 			}
 		    
 		    new GetDataThread().start();
+		    new NiuGetDataThread().start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

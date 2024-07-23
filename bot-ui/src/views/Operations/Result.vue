@@ -22,6 +22,12 @@
       <el-form-item>
         <el-input v-model="filters.nickname" placeholder="用户昵称" clearable></el-input>
       </el-form-item>
+      <el-form-item>
+        <el-select v-model="filters.mode" placeholder="类型" clearable>
+          <el-option label="通宝" value="0"></el-option>
+          <el-option label="牛牛" value="1"></el-option>
+        </el-select>
+      </el-form-item>
 			<el-form-item>
 				<kt-button icon="fa fa-search" :label="$t('action.search')" perms="operations:result:view" type="primary" @click="findPage(null)"/>
         <kt-button icon="fa fa-search" label="今天" perms="operations:result:view" type="primary" @click="searchData(1)"/>
@@ -33,8 +39,11 @@
 		</el-form>
 	</div>
 	<!--表格内容栏-->
-	<kt-table
-    :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
+	<kt-table :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
+    <template #mode="scope">
+      <el-tag type="primary" v-if="scope.row.mode==0">通宝</el-tag>
+      <el-tag type="success" v-else-if="scope.row.mode==1">牛牛</el-tag>
+    </template>
 	</kt-table>
   </div>
 </template>
@@ -60,7 +69,8 @@ export default {
         ,this.getEndDate()
         ],
         username:'',
-        nickname:''
+        nickname:'',
+        mode:''
 			},
 			columns: [
 				{prop:"userno", label:"USERID", minWidth:120},
@@ -74,7 +84,8 @@ export default {
         {prop:"xznum", label:"局数", minWidth:100},
         {prop:"balance", label:"余额", minWidth:100},
         {prop:"realmoney", label:"有效金额", minWidth:100},
-        {prop:"openid", label:"邀请人", minWidth:100}
+        {prop:"openid", label:"邀请人", minWidth:100},
+        // {prop:"mode", label:"类型", minWidth:80},
 			],
 			pageRequest: { pageNum: 1, pageSize: 50 },
       pageResult: {},
@@ -110,7 +121,8 @@ export default {
         'btime':this.filters.fdate == null ? '' : this.filters.fdate[0],
         'etime':this.filters.fdate == null ? '' : this.filters.fdate[1],
         'username':this.filters.username,
-        'nickname':this.filters.nickname
+        'nickname':this.filters.nickname,
+        'mode':this.filters.mode
 			}
 			this.$api.order.findCount(this.pageRequest).then((res) => {
 				this.pageResult = res.data
@@ -122,7 +134,8 @@ export default {
         'btime':this.filters.fdate == null ? '' : this.filters.fdate[0],
         'etime':this.filters.fdate == null ? '' : this.filters.fdate[1],
         'username':this.filters.username,
-        'nickname':this.filters.nickname
+        'nickname':this.filters.nickname,
+        'mode':this.filters.mode
 			}
       this.$api.order.findCount(para).then((res) => {
         this.exportData = res.data.content

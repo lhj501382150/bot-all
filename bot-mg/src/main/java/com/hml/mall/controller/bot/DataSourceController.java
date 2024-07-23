@@ -71,6 +71,9 @@ public class DataSourceController {
     @PreAuthorize("hasAuthority('operations:draw:add')")
     @RequestMapping("/save")
     public HttpResult save(@RequestBody DataSource model) throws Exception {
+    	if(StringUtils.isBlank(model.getMode())) {
+    		throw new Exception("类型不能为空");
+    	}
     	if(StringUtils.isBlank(model.getIssue())) {
     		throw new Exception("期数不能为空");
     	}
@@ -81,12 +84,13 @@ public class DataSourceController {
     	String issue = model.getIssue();
     	QueryWrapper<DataSource> qw = new QueryWrapper<DataSource>();
     	qw.eq("issue",issue);
+    	qw.eq("mode", model.getMode());
     	DataSource item = dataSourceService.getOne(qw);
     	if(item != null) {
     		throw new Exception("该期结果已存在");
     	}
 //    	查询ID
-    	Integer id = dataSourceService.findPreDataSource(issue);
+    	Integer id = dataSourceService.findPreDataSource(issue,model.getMode());
     	model.setDataId(id);
     	model.setSresult(checkResult(model.getSresult()));
     	dataSourceService.save(model);

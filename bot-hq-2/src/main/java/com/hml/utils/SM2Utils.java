@@ -191,7 +191,7 @@ public class SM2Utils {
 		System.out.println(privateKey.toString());
 		
 		System.out.println("--------------------------");
-		String str  = encrypt("20240608", publicKey);
+		String str  = encrypt("20301208", publicKey);
 		System.out.println(str);
 		String decrypt = decrypt(str, privateKey);
 		System.out.println(decrypt);

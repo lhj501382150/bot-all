@@ -27,7 +27,16 @@
 		<view class="game-box">
 			 <view class="game-item" v-for="(item,index) in items" :key="index" :class="item.check ? 'active':''" @click="chooseItem(item)">
 				 <view class="text">{{item.name}}</view>
+				 <view class="rate">{{item.rate}}</view>
 			 </view>
+		</view>
+		<view class="rate-box">
+			<view class="rate-item-box" v-for="(item,index) in rates" :key="index">
+				<view class="rate-name">{{item.name}}</view>
+				<view class="rate-item" v-for="(t,i) in item.datas" :key="i">
+					<text>{{t.name}} {{t.rate}}</text>
+				</view>
+			</view>
 		</view>
 		<view class="form">
 			<uni-forms ref="form" :modelValue="formData" :rules="rules">
@@ -61,13 +70,14 @@
 		<uni-popup ref="rulePopup" :mask-click="false" background-color="#fff" borderRadius="10upx 10upx 0upx 0upx">
 			<view class="rule-content">
 				<view>牛牛规则</view>
-				<view>玩法：庄，闲一，闲二，闲三，闲四，闲五</view>
-				<view>串、角1:1/同、念1:2/古1:3</view>
-				<view>念角下注要分开（没有明宝）</view>
-				<!-- <view>中奖平台抽水4%</view> -->
-				<view>开奖结果以1-2-3-4的先后排名为准，最靠近第一名的为最终开奖结果。</view>
-				<view>例如：7-6-10-9-8-2-5-4-3-1</view>
-				<view>开奖结果为（2龙）</view>
+				<view>玩法：</view>
+				<view>庄牌为第1-5球五个数字</view>
+				<view>闲一牌为第2-6球五个数字</view>
+				<view>闲二牌为第3-7球五个数字</view>
+				<view>闲三牌为第4-8球五个数字</view>
+				<view>闲四牌为第5-9球五个数字</view>
+				<view>闲五牌为第6-10球五个数字</view>
+				<view>闲家的牌大于庄家则赢，反之则输</view>
 				
 				<button @click="closeRule" class="pop-btn">关闭</button>
 			</view>
@@ -91,22 +101,29 @@
 				user:{},
 				tabIndex:0,
 				link:{
-					title:'澳洲10在线直播',
-					src:'https://m.228168d.com/html/aozxy10/index.html'
+					title:'138极速赛车',
+					src:'https://m.228168d.com/html/jisusaiche/index.html'
 				},
 				result:{},
 				fptime:0,
 				kjtime:0,
 				items:[
-					{index:'1',name:'闲一',rate:1.96,rate1:0,check:false},
-					{index:'2',name:'闲二',rate:2.92,rate1:1,check:false},
-					{index:'3',name:'闲三',rate:2.92,rate1:1,check:false},
-					{index:'4',name:'闲四',rate:1.96,rate1:0,check:false},
-					{index:'5',name:'闲五',rate:2.92,rate1:1,check:false}
+					{index:'1',name:'闲一',rate:'第2-6球',rate1:0,check:false},
+					{index:'2',name:'闲二',rate:'第3-7球',rate1:1,check:false},
+					{index:'3',name:'闲三',rate:'第4-8球',rate1:1,check:false},
+					{index:'4',name:'闲四',rate:'第5-9球',rate1:0,check:false},
+					{index:'5',name:'闲五',rate:'第6-10球',rate1:1,check:false}
 				],
 				types:[
 					{text:'平投',value:'1'},
 					{text:'倍投',value:'2'}
+				],
+				rates:[
+					{name:'平投倍率',datas:[{name:'',rate:1.95}]},
+					{name:'倍投倍率',datas:[
+						{name:'牛一',rate:1.95},{name:'牛二',rate:2.9},{name:'牛三',rate:3.85},{name:'牛四',rate:4.8},{name:'牛五',rate:5.75},
+						{name:'牛六',rate:6.7},{name:'牛七',rate:7.65},{name:'牛八',rate:8.6},{name:'牛九',rate:9.55},{name:'牛牛',rate:10.5}
+					]}
 				],
 				formData:{
 					money:'',
@@ -479,11 +496,10 @@
 			width: 250upx;
 			height: 60upx;
 			line-height: 60upx;
+			text-align: center;
 			background-color: rgb(250,41,41);
 			color: #fff;
 			margin-right: 20upx;
-			padding-left: 30upx;
-			padding-right: 30upx;
 			border-radius: 20upx;
 		}
 		.red{
@@ -550,15 +566,36 @@
 			border-radius: 20upx;
 			background-image: linear-gradient(to bottom,#8f91fa,#5500ff);
 			display: flex;
+			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 			font-size: 36upx;
 			color: #ffffff;
 			font-weight: 600;
 			letter-spacing: 10upx;
+			opacity: 0.8;
+			.rate{
+				font-size: 14px;
+			}
 		}
 		.active{
-			background-image: linear-gradient(to bottom,#91fa8b,#13ac02);
+			// background-image: linear-gradient(to bottom,#91fa8b,#13ac02);
+			background-image: linear-gradient(to bottom, #f2f7f2, #dfecde);
+			color: #000000;
+		}
+	}
+	.rate-box{
+		padding: 5upx 10upx;
+		.rate-item-box{
+			font-size: 13px;
+			display: flex;
+			flex-wrap: wrap;
+			.rate-name{
+				margin-right: 20upx;
+			}
+			.rate-item{
+				width: 120upx;
+			}
 		}
 	}
 	.form{
@@ -570,6 +607,15 @@
 			height: 100upx;
 			font-size: 30upx;
 			border: 4upx solid #f35458!important;
+		}
+		::v-deep .checklist-text{
+			font-size: 48upx!important;
+			font-weight: 600;
+		}
+		::v-deep .radio__inner{
+			    width: 20px!important;
+			    height: 20px!important;
+			    // border: 2px solid #000000!important;
 		}
 		.btn{
 			background-color: #f35458;

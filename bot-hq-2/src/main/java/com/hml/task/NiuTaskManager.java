@@ -31,14 +31,6 @@ public class NiuTaskManager {
 	@Autowired
 	private Redis2Utils redis2Utils;
 	
-	private Boolean IS_AUTH = false;
-	
-	@Scheduled(cron="0 0 7 * * *")
-	public void checkSysAuth() {
-		IS_AUTH = checkAuth();
-		log.info("牛牛-当前系统状态：{}",IS_AUTH);
-	}
-	
 	@Async
 	@Scheduled(fixedRate = 1000)
 	public void syncStatus() {
@@ -52,10 +44,10 @@ public class NiuTaskManager {
 			 RespBean resp = JSONObject.parseObject(obj.toString(), RespBean.class);
 			 int step = resp.getIStatus();
 			 int dataId = Integer.parseInt(resp.getDataId());
-			 int maxId = DrawInfo.ID + 2;
-			 int minId = DrawInfo.ID - 2;
+			 int maxId = NiuDrawInfo.ID + 2;
+			 int minId = NiuDrawInfo.ID - 2;
 			 if(dataId < minId || dataId > maxId) {
-				 log.info("历史信息当前期数：{}--{}" ,DrawInfo.ID  ,resp.getDataId());
+				 log.info("历史信息当前期数：{}--{}" ,NiuDrawInfo.ID  ,resp.getDataId());
 				 Object res = redis2Utils.lGetAndPop(RedisKey.ORDER_QUERY);
 					
 				 log.info("【result】:{}",res);
@@ -70,43 +62,43 @@ public class NiuTaskManager {
 
 			 if(Flow.START_ROB.getStep() == step) {
 				 log.info("【START_ROB_2】：{}",step);
-				 DrawInfo.FLOW = Flow.START_ROB;
+				 NiuDrawInfo.FLOW = Flow.START_ROB;
 				 if(BotConfig.ENABLE) start();
-				 if(WebSocketConfig.ENABLE  && IS_AUTH) {
+				 if(WebSocketConfig.ENABLE  && SysTaskManager.IS_AUTH) {
 					 JSONObject json = new JSONObject();
-					 json.put("ISSUE", DrawInfo.DRAW_ISSUE);
-					 json.put("CODE", DrawInfo.PRE_DRAW_CODE);
-					 json.put("RESULT", DrawInfo.RESULT);
-					 json.put("TIME", DrawInfo.DRAW_TIME);
-					 json.put("ID", DrawInfo.ID);
+					 json.put("ISSUE", NiuDrawInfo.DRAW_ISSUE);
+					 json.put("CODE", NiuDrawInfo.PRE_DRAW_CODE);
+					 json.put("RESULT", NiuDrawInfo.RESULT);
+					 json.put("TIME", NiuDrawInfo.DRAW_TIME);
+					 json.put("ID", NiuDrawInfo.ID);
 					 WebSocketNiuServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
 				 }
 			 }else if(Flow.CONFIRM_ROB.getStep() == step) {
 				 log.info("【CONFIRM_ROB_2】：{}",step);
-				 DrawInfo.FLOW = Flow.CONFIRM_ROB;
+				 NiuDrawInfo.FLOW = Flow.CONFIRM_ROB;
 			 }else if(Flow.DOWN_ORDER.getStep() == step) {
 				 log.info("【DOWN_ORDER_2】：{}",step);
-				 DrawInfo.FLOW = Flow.DOWN_ORDER;
+				 NiuDrawInfo.FLOW = Flow.DOWN_ORDER;
 				 if(BotConfig.ENABLE) drawOrder(resp);
-				 if(WebSocketConfig.ENABLE  && IS_AUTH) {
+				 if(WebSocketConfig.ENABLE  && SysTaskManager.IS_AUTH) {
 					 JSONObject json = new JSONObject();
-					 json.put("ISSUE", DrawInfo.DRAW_ISSUE);
-					 json.put("CODE", DrawInfo.PRE_DRAW_CODE);
-					 json.put("RESULT", DrawInfo.RESULT);
-					 json.put("TIME", DrawInfo.DRAW_TIME);
-					 json.put("ID", DrawInfo.ID);
+					 json.put("ISSUE", NiuDrawInfo.DRAW_ISSUE);
+					 json.put("CODE", NiuDrawInfo.PRE_DRAW_CODE);
+					 json.put("RESULT", NiuDrawInfo.RESULT);
+					 json.put("TIME", NiuDrawInfo.DRAW_TIME);
+					 json.put("ID", NiuDrawInfo.ID);
 					 WebSocketNiuServerApp.sendInfo(Flow.START_ROB.getStep(),json.toJSONString());
 				 }
 			 }else if(Flow.STOP_ORDER.getStep() == step) {
 				 log.info("【STOP_ORDER_2】：{}",step);
-				 DrawInfo.FLOW = Flow.STOP_ORDER;
+				 NiuDrawInfo.FLOW = Flow.STOP_ORDER;
 				 stopOrder();
-				 if(WebSocketConfig.ENABLE && IS_AUTH) {
+				 if(WebSocketConfig.ENABLE && SysTaskManager.IS_AUTH) {
 					 WebSocketNiuServerApp.sendInfo(Flow.STOP_ORDER.getStep(),"");
 				 }
 			 }else if(Flow.OVER.getStep() == step) {
 				 log.info("【OVER_2】：{}",step);
-				 DrawInfo.FLOW = Flow.OVER;
+				 NiuDrawInfo.FLOW = Flow.OVER;
 				 overResult();
 			 }else if(Flow.TIPS.getStep() == step) {
 				 log.info("【TIME TIPS_2】：{}",step);
@@ -140,10 +132,10 @@ public class NiuTaskManager {
 			  if(res != null) {
 				  RespBean bean = JSONObject.parseObject(res.toString(), RespBean.class);
 				  int dataId = Integer.parseInt(bean.getDataId());
-				  int maxId = DrawInfo.ID + 2;
-				  int minId = DrawInfo.ID - 2;
+				  int maxId = NiuDrawInfo.ID + 2;
+				  int minId = NiuDrawInfo.ID - 2;
 				 if(dataId < minId || dataId > maxId) {
-					 log.info("历史信息当前期数：{}--{}" ,DrawInfo.ID ,bean.getDataId());
+					 log.info("历史信息当前期数：{}--{}" ,NiuDrawInfo.ID ,bean.getDataId());
 					 return;
 				 }
 				  flag = false;
@@ -168,8 +160,8 @@ public class NiuTaskManager {
 				redis2Utils.expire(key, 60 * 60 * 24);
 				log.info("存入结果:{}-{}",bean.getDataId(),res);
 				 
-				if(WebSocketConfig.ENABLE  && IS_AUTH) {
-					DrawInfo.RESULT = String.valueOf(bean.getIWinNo());
+				if(WebSocketConfig.ENABLE  && SysTaskManager.IS_AUTH) {
+					NiuDrawInfo.RESULT = String.valueOf(bean.getIWinNo());
 					WebSocketNiuServerApp.sendInfo(Flow.OVER.getStep(),res.toString());
 				 }
 			    flag = false;
@@ -185,23 +177,6 @@ public class NiuTaskManager {
 	private String getResultKey() {
 		String date = DateTimeUtils.getCurrentDate("yyyyMMdd");
 		String key = RedisKey.ORDER_RESULT + ":" + date;
-		 
 		return key;
-	}
-	
-	private boolean checkAuth() {
-		String priPath = BotConfig.FILE_PATH + "/private_key.pem";
-		String listenPath = BotConfig.FILE_PATH + "/listen.lic";
-		String expireDate = FileUtil.readString(listenPath,Charset.forName("UTF-8"));
-		expireDate = expireDate.replace("\n", "").trim();
-		PrivateKey privateKey = SM2Utils.importPrivateKey(priPath);
-		String decrypt = SM2Utils.decrypt(expireDate, privateKey);
-		String curDate = DateTimeUtils.getCurrentDate("yyyyMMdd");
-		log.info(curDate+"---"+ decrypt+ "=====" + curDate.compareTo(decrypt));
-		if(curDate.compareTo(decrypt) > 0) {
-			return false;
-		}else {
-			return true;
-		}
 	}
 }

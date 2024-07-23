@@ -9,7 +9,7 @@ spring:
     port: 6379
     password: tg_pass
     database: 0
-    database2: 2
+    database2: 1
     timeout: 10000
     pool: 
       max-active: 200

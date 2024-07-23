@@ -28,6 +28,6 @@ public interface DataSourceMapper extends BaseMapper<DataSource> {
 			+ " ) t ${ew.customSqlSegment}")
 	Page<Map<String,Object>> findPage(Page<DataSource> page,@Param(Constants.WRAPPER)Wrapper wrapper);
 	
-	@Select("select t.* from tb_data_source t where issue < #{issue} order by issue desc limit 0,1")
-	DataSource findNearDataSorce(@Param("issue")String issue);
+	@Select("select t.* from tb_data_source t where issue < #{issue} and mode =#{mode} order by issue desc limit 0,1")
+	DataSource findNearDataSorce(@Param("issue")String issue,@Param("mode")Integer mode);
 }

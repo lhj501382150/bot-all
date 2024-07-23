@@ -21,6 +21,12 @@
       <el-form-item>
         <el-input v-model="filters.parentno" placeholder="上级编号" clearable></el-input>
       </el-form-item>
+      <el-form-item>
+        <el-select v-model="filters.mode" placeholder="类型" clearable>
+          <el-option label="通宝" value="0"></el-option>
+          <el-option label="牛牛" value="1"></el-option>
+        </el-select>
+      </el-form-item>
 			<el-form-item>
 				<kt-button icon="fa fa-search" :label="$t('action.search')" perms="operations:levelResult:view" type="primary" @click="findPage(null)"/>
         <kt-button icon="fa fa-search" label="今天" perms="operations:levelResult:view" type="primary" @click="searchData(1)"/>
@@ -69,7 +75,8 @@ export default {
 			filters: {
         fdate: [this.getStartDate(),this.getEndDate()],
         username:'',
-        parentno:''
+        parentno:'',
+        mode:''
 			},
       clevels:[
         {key:1,val:'分公司'},
@@ -128,7 +135,8 @@ export default {
         'btime':this.filters.fdate == null ? '' : this.filters.fdate[0],
         'etime':this.filters.fdate == null ? '' : this.filters.fdate[1],
         'username':this.filters.username,
-        "parentno":this.filters.parentno
+        "parentno":this.filters.parentno,
+        'mode':this.filters.mode
 			}
 			this.$api.order.findLevelCount(this.pageRequest).then((res) => {
 				this.pageResult = res.data

@@ -40,6 +40,12 @@ private static final long serialVersionUID=1L;
     @TableField("ISSUE")
     private String issue;
     
+    @TableField("Mode")
+    private Integer mode;
+    
+    @TableField("bNNo")
+    private String bNNo;
+    
     @TableField(exist = false)
     private String wareno;
     

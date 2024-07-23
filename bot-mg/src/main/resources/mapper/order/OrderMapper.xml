@@ -20,6 +20,9 @@
 				<if test="userno != null and userno != ''">
 					and userno = #{userno}
 				</if>
+				<if test="mode != null and mode != ''">
+					and mode = #{mode}
+				</if>
 			</where>
 			group by userno,wareno,BUYORSAL
 		) t1 
@@ -81,7 +84,7 @@
 				
 			</where>
 			order by userno
-		<if test="pageIndex != null and pageIndex != ''">
+		<if test="pageIndex != null">
 			limit #{pageIndex},#{pageSize}
 		</if>
 	</select>
@@ -102,6 +105,9 @@
 				</if>
 				<if test="userno != null and userno != ''">
 					and userno = #{userno}
+				</if>
+				<if test="mode != null and mode != ''">
+					and mode = #{mode}
 				</if>
 			</where>
 			group by userno,wareno,BUYORSAL
@@ -173,6 +179,9 @@
 			</if>
 			<if test="etime != null and etime != ''">
 				and ordtime &lt;= #{etime}
+			</if>
+			<if test="mode != null and mode != ''">
+				and mode = #{mode}
 			</if>
 			group by contno
 		)  t3 on t3.contno = t1.userno
@@ -247,6 +256,9 @@
 			</if>
 			<if test="etime != null and etime != ''">
 				and ordtime &lt;= #{etime}
+			</if>
+			<if test="mode != null and mode != ''">
+				and mode = #{mode}
 			</if>
 			group by contno
 		)  t3 on t3.contno = t1.userno

@@ -32,12 +32,18 @@
 			@handleFilterColumns="handleFilterColumns">
 		</table-column-filter-dialog>
 	</div>
+	<div class='tab-div'>
+		<el-tabs v-model="mode" @tab-click="findPage(null)">
+			<el-tab-pane label="通宝" name="0"></el-tab-pane>
+			<el-tab-pane label="牛牛" name="1"></el-tab-pane>
+		</el-tabs>
+	</div>
 	<!--表格内容栏-->
 	<kt-table :data="pageResult" :columns="filterColumns" :buttons="buttons" :showOperation="false"
 		@findPage="findPage" @handleEdit="handleEdit">
 	</kt-table>
 	<!--新增编辑界面-->
-	<el-dialog title="行情补录结算" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" v-dialogDrag>
+	<el-dialog :title="mode==0?'通宝行情补录结算':'牛牛行情补录结算'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" v-dialogDrag>
 		<el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
 			label-position="right">
       <el-form-item label="期数" prop="issue" >
@@ -112,26 +118,28 @@ export default {
 				stime: '',
 				sresult: '',
 				issue:'',
-        wareno:''
+        		wareno:''
 			},
-      warenos:[]
+      		warenos:[],
+			mode:'0'
 		}
 	},
 	methods: {
-    loadWareno(){
-      this.$api.chat.list({}).then(res=>{
-        this.warenos = res.data
-      })
-    },
+		loadWareno(){
+		this.$api.chat.list({}).then(res=>{
+			this.warenos = res.data
+		})
+		},
 		// 获取分页数据
 		findPage: function (data) {
 			if(data !== null) {
 				this.pageRequest = data.pageRequest
 			}else{
-        this.pageRequest = {pageNum: 1, pageSize: 50}
-      }
+        		this.pageRequest = {pageNum: 1, pageSize: 50}
+      		}
 			this.pageRequest.params = {
-        'issue':this.filters.issue
+        		'issue':this.filters.issue,
+				'mode':this.mode
 			}
 			this.$api.draw.findPage(this.pageRequest).then((res) => {
 				this.pageResult = res.data
@@ -143,9 +151,9 @@ export default {
 		},
 		// 显示新增界面
 		handleAdd: function () {
-      this.dialogVisible = true
-			this.operation = true
-    },
+				this.dialogVisible = true
+				this.operation = true
+		},
 
 		// 显示编辑界面
 		handleEdit: function (data) {
@@ -173,31 +181,32 @@ export default {
 					this.$confirm('确认提交吗？', '提示', {}).then(() => {
 						this.editLoading = true
 						let params = Object.assign({}, this.dataForm)
-            if(this.operation){
-              this.$api.draw.save(params).then((res) => {
-                this.editLoading = false
-                if(res.code == 200) {
-                  this.$message({ message: '操作成功', type: 'success' })
-                  this.dialogVisible = false
-                  this.$refs['dataForm'].resetFields()
-                } else {
-                  this.$message({message: '操作失败, ' + res.msg, type: 'error'})
-                }
-                this.findPage(null)
-              })
-            }else{
-              this.$api.bot.edit(params).then((res) => {
-                this.editLoading = false
-                if(res.code == 200) {
-                  this.$message({ message: '操作成功', type: 'success' })
-                  this.dialogVisible = false
-                  this.$refs['dataForm'].resetFields()
-                } else {
-                  this.$message({message: '操作失败, ' + res.msg, type: 'error'})
-                }
-                this.findPage(null)
-              })
-            }
+						params.mode = this.mode
+						if(this.operation){
+							this.$api.draw.save(params).then((res) => {
+								this.editLoading = false
+								if(res.code == 200) {
+								this.$message({ message: '操作成功', type: 'success' })
+								this.dialogVisible = false
+								this.$refs['dataForm'].resetFields()
+								} else {
+								this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+								}
+								this.findPage(null)
+							})
+						}else{
+							this.$api.bot.edit(params).then((res) => {
+								this.editLoading = false
+								if(res.code == 200) {
+								this.$message({ message: '操作成功', type: 'success' })
+								this.dialogVisible = false
+								this.$refs['dataForm'].resetFields()
+								} else {
+								this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+								}
+								this.findPage(null)
+							})
+						}
 
 					})
 				}
@@ -237,6 +246,10 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.tab-div{
+	clear:both;
+	padding-left:50px;
+	padding-right:50px;
+}
 </style>
