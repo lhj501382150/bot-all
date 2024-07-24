@@ -58,6 +58,7 @@ public class NiuGetDataThread extends Thread {
 							  req.put("drawIssue", NiuDrawInfo.DRAW_ISSUE - 1);
 							  req.put("sTime", NiuDrawInfo.PRE_DRAW_TIME);
 							  req.put("sResult", NiuDrawInfo.PRE_DRAW_CODE);
+							  req.put("mode","1");
 							  backCoreService.addData(req);
 						  }
 						  

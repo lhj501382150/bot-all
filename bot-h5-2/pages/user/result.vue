@@ -1,13 +1,21 @@
 <template>
 	<view class="result">
 		<uni-nav-bar left-icon="left"  title="开奖公告" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
+		<view class="tab-bar">
+			<view class="tab-item"  :class="item.clevel == mode ? 'active':''" v-for="(item,index) in tabs" :key="index" @click="findData(item)">
+				{{item.name}}
+			</view>
+		</view>
 		<scroll-view scroll-y="true" @scrolltolower="scrolltolower" style="height: 95%;"
 		        @refresherrefresh="getRefresherrefresh" :refresher-enabled="false" :refresher-triggered="refresherTriggered"
 		        refresher-background="transparent">
 			<view class="record-list">
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
 					  <view class="head">
-						  <view class="type">四方通宝</view>
+						  <view class="type">
+							  <text v-if="mode==0">四方宝斗</text>
+							  <text v-else-if="mode==1">四方牛牛</text>
+						  </view>
 						  <view class="draw">{{item.issue}}期</view>
 						   <view class="time">{{item.sTime}}</view>
 					  </view>
@@ -34,6 +42,11 @@
 				totalPage:1,
 				totalCount:0,
 				refresherTriggered:false,
+				mode:0,
+				tabs:[
+					{clevel:0,name:'通宝'},
+					{clevel:1,name:'牛牛'}
+				]
 			}
 		},
 		onLoad() {
@@ -41,6 +54,14 @@
 			this.loadData()
 		},
 		methods: {
+			findData(item){
+				this.mode = item.clevel
+				this.search.pageIdx = 1
+				this.totalPage = 1
+				this.totalCount = 0
+				this.records = []
+				this.loadData()
+			},
 			scrolltolower() {
 				if (this.records.length >= this.totalCount) return
 				this.loadData()
@@ -56,6 +77,7 @@
 			},
 			loadData(){
 				this.search.userno = uni.getStorageSync('userno')
+				this.search.mode = this.mode
 				this.$http.post("/Query/ReustList",this.search,res => {
 					let datas = res.rData || []
 					datas.forEach(item=>{
@@ -85,6 +107,22 @@
 .result{
 	width: 750upx;
 	height: 100vh;
+	.tab-bar{
+		display: flex;
+		width: 670upx;
+		padding-left: 40upx;
+		padding-right: 40upx;
+		.tab-item{
+			width:150upx;
+			height:80upx;
+			line-height: 80upx;
+			text-align: center;
+			border-bottom:5upx solid #eeeeee;
+		}
+		.active{
+			border-bottom: 5upx solid rgb(40,148,255);
+		}
+	}
 	.record-list{
 		padding: 20upx;
 		.record-item{

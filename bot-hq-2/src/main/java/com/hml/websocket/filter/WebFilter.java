@@ -55,7 +55,7 @@ public class WebFilter implements Filter {
         }
         boolean flag = checkAuth(req,ipAddr);
         if(flag) {
-        	if(checkUser(req.getRequestURI())) {
+        	if(checkUser(req.getRequestURI(),ipAddr)) {
         		filterChain.doFilter(servletRequest, servletResponse);
         	}else {
         		HttpServletResponse response = (HttpServletResponse)servletResponse;
@@ -102,7 +102,7 @@ public class WebFilter implements Filter {
         return flag;
     }
  
-    public boolean checkUser(String uri) {
+    public boolean checkUser(String uri,String ipAddr) {
     	boolean flag =false;
     	try {
     		String[] paras = uri.split("/");
@@ -112,6 +112,7 @@ public class WebFilter implements Filter {
     			String pwd = paras[length -1];
     			String text = new PasswordEncoder("").encode(userno+userno);
             	flag = text.equals(pwd);
+            	log.info("用户【{}】-{}连接",userno,ipAddr);
     		}
 		} catch (Exception e) {
 			flag = false;

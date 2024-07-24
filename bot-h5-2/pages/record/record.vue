@@ -7,13 +7,26 @@
 		        refresher-background="transparent">
 			<view class="record-list">
 				 <view class="record-item" v-for="(item,index) in records" :key="index">
-					  <view class="left">
+					  <view class="left" v-if="item.mode==0">
 						 <view class="row" v-if="userinfo.orgtype==1">所属账号：{{item.userno}}</view>
 						  <view class="row">下注单号：No.{{item.orderno}}</view>
 						  <view class="row">期数：{{item.issue}}</view>
 						  <view class="row">开奖号码：<text class="row-result">{{item.result}}</text></view>
 						  <view class="row">龙虎出入：{{getStatus(item.bno)}}</view>
 						  <view class="row">游戏：<text class="red">宝斗</text></view>
+						  <view class="row">玩法：<text class="red">{{item.artid}}</text></view>
+						  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
+						  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
+						  <view class="row">中奖金额：<text class="red" v-if="item.bno">{{item.loss + item.bailmoney - item.comm}}</text></view>
+						  <view class="row">下注时间：{{item.ordtime}}</view>
+					  </view>
+					  <view class="left" v-else-if="item.mode==1">
+						 <view class="row" v-if="userinfo.orgtype==1">所属账号：{{item.userno}}</view>
+						  <view class="row">下注单号：No.{{item.orderno}}</view>
+						  <view class="row">期数：{{item.issue}}</view>
+						  <view class="row">开奖号码：<text class="row-result">{{item.result}}</text></view>
+						  <view class="row"></view>
+						  <view class="row">游戏：<text class="red">牛牛</text></view>
 						  <view class="row">玩法：<text class="red">{{item.artid}}</text></view>
 						  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
 						  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
@@ -46,6 +59,19 @@
 					{val:3,name:'出'},
 					{val:4,name:'虎'}
 				],
+				nstatusList:[
+					{val:0,name:'无牛'},
+					{val:1,name:'牛一'},
+					{val:2,name:'牛二'},
+					{val:3,name:'牛三'},
+					{val:4,name:'牛四'},
+					{val:5,name:'牛五'},
+					{val:6,name:'牛六'},
+					{val:7,name:'牛七'},
+					{val:8,name:'牛八'},
+					{val:9,name:'牛九'},
+					{val:10,name:'牛牛'}
+				],
 				search:{
 					pageIdx:0,
 					pageSize:10
@@ -56,7 +82,8 @@
 				userinfo:{},
 				orgtype:'',
 				userno:'',
-				fdate:''
+				fdate:'',
+				mode:''
 			}
 		},
 		onLoad(option) {
@@ -67,6 +94,8 @@
 			// this.loadData()
 		},
 		onShow(){
+			this.mode = uni.getStorageSync('record_mode')
+			// uni.removeStorageSync('record_mode')
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
 			this.orgtype = this.userinfo.orgtype
 			this.userno = this.userinfo.userno
@@ -99,6 +128,9 @@
 					url = '/Query/GetOrderList'
 				}
 				this.search.userno = this.userno
+				if(this.mode || this.mode == 0){
+					this.search.mode = this.mode
+				}
 				this.$http.post(url,this.search,res => {
 					let datas = res.rData || []
 					this.records = [...this.records,...datas]
@@ -112,9 +144,15 @@
 				})
 			},
 			goBack(){
-				uni.navigateTo({
-					url:'/pages/home/qmbd'
-				})
+				if(this.mode==1){
+					uni.navigateTo({
+						url:'/pages/home/qmnn'
+					})
+				}else{
+					uni.navigateTo({
+						url:'/pages/home/qmbd'
+					})
+				}
 			},
 			getStatus(status){
 				const item = this.statusList.find(item=> item.val==status) || {}

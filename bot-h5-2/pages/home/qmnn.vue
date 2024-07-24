@@ -50,9 +50,31 @@
 			<button :class="isStop?'btn1':'btn'" @click="submit">{{isStop?'封盘中':'确认下注'}}</button>
 		</view>
 		<view class="result">
-			<view class="result-item" :class="'color'+item.no" v-for="(item,index) in results" :key="index">
-				{{item.status}}
-			</view>
+			<uni-collapse v-model="collapse">
+			<uni-collapse-item :show-animation="true" v-for="(item,index) in results" :key="index" :name="index">
+				<template v-slot:title>
+					 <view class="col-title">
+						 <view class="left">期数：{{item.issue}}</view>
+						 <view class="right">
+							 
+						 </view>
+					 </view>
+				</template>
+				<view class="col-content">
+					<view class="col-item" v-for="(temp,i) in item.bNos" :key="i">
+						<view class="left">
+							<text>{{temp.name}}</text>
+							<text>{{temp.status}}</text>
+						</view>
+						<view class="right">
+							<view class="result-item" v-for="(no,n) in temp.nums" :key="n" :class="'color'+no" >
+								{{no}}
+							</view>						 
+						</view>
+					</view>
+				</view>
+			</uni-collapse-item>
+			</uni-collapse>
 		</view>
 		
 		<uni-popup ref="errPopup" type="dialog">
@@ -145,16 +167,24 @@
 				leftTime:0,
 				timer:'',
 				statusList:[
-					{val:1,name:'入'},
-					{val:2,name:'龙'},
-					{val:3,name:'出'},
-					{val:4,name:'虎'}
+					{val:0,name:'无牛'},
+					{val:1,name:'牛一'},
+					{val:2,name:'牛二'},
+					{val:3,name:'牛三'},
+					{val:4,name:'牛四'},
+					{val:5,name:'牛五'},
+					{val:6,name:'牛六'},
+					{val:7,name:'牛七'},
+					{val:8,name:'牛八'},
+					{val:9,name:'牛九'},
+					{val:10,name:'牛牛'}
 				],
 				orgtype:'',
 				errMsg:'',
 				curStatus:false,
 				showNotice:false,
-				tempShowNotice:false
+				tempShowNotice:false,
+				collapse:''
 			}
 		},
 		onLoad() {
@@ -187,22 +217,39 @@
 				}
 			},
 			loadData(){
-				this.results = []
 				let para = {
 					pageIdx:0,
-					pageSize:50,
+					pageSize:20,
+					mode:"1",
 					userno :uni.getStorageSync('userno')
 				}
 				this.$http.post("/Query/ReustList",para,res => {
+					this.results = []
 					let datas = res.rData || []
 					datas.forEach(item=>{
-						let temp ={
-							no:item.bNo,
-							status: this.getStatus(item.bNo)
+						let bNos = item.bNno.split(',') || []
+						let sresult = item.sresult.split(',') || []
+						bNos = bNos.map((item,index)=>{
+							return {
+								name:this.getTitle(index),
+								status:this.getStatus(item),
+								nums:this.getNums(sresult,index)
+							}
+						})
+						let temp = {
+							issue:item.issue,
+							bNos:bNos
 						}
 						this.results.push(temp)
 					})
 				})
+			},
+			getNums(sresult,index){
+				let arr = []
+				for(var i = 0;i<5;i++){
+					arr[i] = sresult[index+i]
+				}
+				return arr
 			},
 			getUserBalance(){
 				let userno = uni.getStorageSync('userno')
@@ -360,7 +407,7 @@
 					orders:orders
 				}
 				
-				this.$http.post('/Order/Order',para,(res=>{
+				this.$http.post('/Order/NOrder',para,(res=>{
 					if(res.iCode ==0){
 						this.formData.money = ''
 						this.formData.type='1'
@@ -416,10 +463,18 @@
 				const item = this.statusList.find(item=> item.val==status) || {}
 				return item.name
 			},
+			getTitle(index){
+				let titles = [{val:0,name:'庄'},{val:1,name:'闲一'}
+							  ,{val:2,name:'闲二'},{val:3,name:'闲三'}
+							  ,{val:4,name:'闲四'},{val:5,name:'闲五'}]
+				const item = titles.find(item=> item.val==index) || {}
+				return item.name
+			},
 			chooseItem(item){
 				item.check = !item.check
 			},
 			goRecord(){
+				uni.setStorageSync('record_mode',1)
 				uni.switchTab({
 					url:'/pages/record/record'
 				})
@@ -627,34 +682,69 @@
 		}
 	}
 	.result{
-		margin-top: 60upx;
-		display: flex;
-		justify-content: flex-start;
-		flex-wrap: wrap;
+		margin-top: 20upx;
 		padding-left: 20upx;
 		padding-right: 20upx;
-		.result-item{
-			width: 60upx;
-			height: 60upx;
-			border-radius: 50%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			margin-bottom: 20upx;
-			color: #fff;
-			margin-left: 10upx;
+		.col-title{
+			height:50upx;
+			line-height:50upx;
 		}
-		.color1{
+		.col-content{
+			.col-item{
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				.left{
+					width:240upx;
+					display: flex;
+					justify-content: space-between;
+				}
+				.right{
+					display: flex;
+					.result-item{
+						width: 50upx;
+						height: 50upx;
+						border-radius: 50%;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						margin-bottom: 20upx;
+						color: #fff;
+						margin-left: 10upx;
+					}
+				}
+			}
+		}
+		
+		.color01{
 			background-color:#FFD700;
 		}
-		.color2{
+		.color02{
 			background-color:#00BFFF;
 		}
-		.color3{
-			background-color:#32CD32;
+		.color03{
+			background-color:#8B4513;
 		}
-		.color4{
+		.color04{
+			background-color:#FFA500;
+		}
+		.color05{
+			background-color:#48D1CC;
+		}
+		.color06{
+			background-color:#7B68EE;
+		}
+		.color07{
+			background-color:#778899;
+		}
+		.color08{
 			background-color:#DC143C;
+		}
+		.color09{
+			background-color:#FA8072;
+		}
+		.color10{
+			background-color:#32CD32;
 		}
 	}
 	.rule-content{

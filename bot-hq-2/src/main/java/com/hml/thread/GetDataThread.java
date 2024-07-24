@@ -58,6 +58,7 @@ public class GetDataThread extends Thread {
 							  req.put("drawIssue", DrawInfo.DRAW_ISSUE - 1);
 							  req.put("sTime", DrawInfo.PRE_DRAW_TIME);
 							  req.put("sResult", DrawInfo.PRE_DRAW_CODE);
+							  req.put("mode", "0");
 							  backCoreService.addData(req);
 						  }
 						  

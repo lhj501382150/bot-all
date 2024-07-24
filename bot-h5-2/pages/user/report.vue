@@ -13,8 +13,12 @@
 		<view class="report-user" v-if="reportType==0">
 			<uni-datetime-picker type="datetime" placeholder="开始日期" v-model="searchForm.startDate"/>
 			<uni-datetime-picker type="datetime" placeholder="结束日期" v-model="searchForm.endDate"/>
+			<view class="select-box">
+				<uni-data-select v-model="searchForm.mode" placeholder="类型选择" :localdata="modes" ></uni-data-select>
+			</view>
 			
-			<button type="primary" size="mini" @click="searchUserData" :loading="isLoading" :disabled="isLoading">查询</button>
+			
+			<button type="primary" class="query-btn" size="mini" @click="searchUserData" :loading="isLoading" :disabled="isLoading">查询</button>
 			<button class="time-btn" size="mini" @click="searchBytime(1)"  :disabled="isLoading">今天</button>
 			<button class="time-btn" size="mini" @click="searchBytime(2)"  :disabled="isLoading">本周</button>
 			<button class="time-btn" size="mini" @click="searchBytime(3)"  :disabled="isLoading">上周</button>
@@ -113,6 +117,10 @@
 					{clevel:4,name:'代理'},
 					{clevel:99,name:'普通会员'}
 				],
+				modes:[
+					{value:0,text:'宝斗'},
+					{value:1,text:'牛牛'}
+				],
 				userno:'',
 				clevel:'',
 				orgtype:'',
@@ -134,6 +142,7 @@
 					clevel:'',
 					startDate:'',
 					endDate:'',
+					mode:'',
 				},
 				userRecord:[],
 				userRecordSum:{
@@ -207,6 +216,9 @@
 				}
 				if(this.orgtype==2){
 					para.clevel = 100
+				}
+				if(this.searchForm.mode >= 0){
+					para.mode = this.searchForm.mode
 				}
 				this.$http.post('/Query/SubLevelSumList',para,res=>{
 					this.isLoading = false
@@ -339,6 +351,13 @@
 			border-bottom: 6upx solid rgb(40,148,255);
 		}
 		
+	}
+	.select-box{
+		padding-left:40upx;
+		margin-bottom:30upx;
+	}
+	.query-btn{
+		margin-left: 30upx;
 	}
 	.time-btn{
 		margin-left: 30upx;

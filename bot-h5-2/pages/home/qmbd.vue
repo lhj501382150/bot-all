@@ -323,6 +323,7 @@
 				let para = {
 					pageIdx:0,
 					pageSize:50,
+					mode:"0",
 					userno :uni.getStorageSync('userno')
 				}
 				this.$http.post("/Query/ReustList",para,res => {
@@ -550,6 +551,7 @@
 				item.check = !item.check
 			},
 			goRecord(){
+				uni.setStorageSync('record_mode',0)
 				uni.switchTab({
 					url:'/pages/record/record'
 				})
