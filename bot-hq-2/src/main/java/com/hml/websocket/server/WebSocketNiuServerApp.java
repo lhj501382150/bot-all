@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hml.task.DrawInfo;
+import com.hml.task.NiuDrawInfo;
 import com.hml.utils.PasswordEncoder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -56,11 +57,11 @@ public class WebSocketNiuServerApp {
 
         try {
         	JSONObject json = new JSONObject();
-			json.put("ISSUE", DrawInfo.DRAW_ISSUE);
-			json.put("CODE", DrawInfo.PRE_DRAW_CODE);
-			json.put("RESULT", DrawInfo.RESULT);
-			json.put("TIME", DrawInfo.DRAW_TIME);
-			json.put("ID", DrawInfo.ID);
+			json.put("ISSUE", NiuDrawInfo.DRAW_ISSUE);
+			json.put("CODE", NiuDrawInfo.PRE_DRAW_CODE);
+			json.put("RESULT", NiuDrawInfo.RESULT);
+			json.put("TIME", NiuDrawInfo.DRAW_TIME);
+			json.put("ID", NiuDrawInfo.ID);
             sendMessage(getMsg(1,json.toJSONString()));
         } catch (IOException e) {
             log.error("用户:{},网络异常!!!!!!",userId,e);

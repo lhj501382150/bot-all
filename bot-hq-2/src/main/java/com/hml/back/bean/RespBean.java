@@ -27,4 +27,5 @@ public class RespBean {
 	private Rank rankList;
 	
 	private String drawIssue;
+	private String sReust;
 }

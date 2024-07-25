@@ -44,7 +44,7 @@
 				refresherTriggered:false,
 				mode:0,
 				tabs:[
-					{clevel:0,name:'通宝'},
+					{clevel:0,name:'宝斗'},
 					{clevel:1,name:'牛牛'}
 				]
 			}
@@ -56,7 +56,7 @@
 		methods: {
 			findData(item){
 				this.mode = item.clevel
-				this.search.pageIdx = 1
+				this.search.pageIdx = 0
 				this.totalPage = 1
 				this.totalCount = 0
 				this.records = []
@@ -69,7 +69,7 @@
 			//下拉刷新
 			getRefresherrefresh(){
 				this.refresherTriggered = true
-				this.search.pageIdx = 1
+				this.search.pageIdx = 0
 				this.totalPage = 1
 				this.totalCount = 0
 				this.records = []

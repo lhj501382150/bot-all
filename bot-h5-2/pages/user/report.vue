@@ -217,7 +217,7 @@
 				if(this.orgtype==2){
 					para.clevel = 100
 				}
-				if(this.searchForm.mode >= 0){
+				if(this.searchForm.mode === 0 || this.searchForm.mode===1){
 					para.mode = this.searchForm.mode
 				}
 				this.$http.post('/Query/SubLevelSumList',para,res=>{

@@ -1,8 +1,6 @@
 package com.hml.task;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.security.PrivateKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -13,15 +11,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import com.alibaba.fastjson.JSONObject;
 import com.hml.back.bean.RespBean;
 import com.hml.config.BotConfig;
-import com.hml.redis.Redis2Utils;
 import com.hml.redis.RedisKey;
+import com.hml.redis.RedisUtils;
 import com.hml.utils.DateTimeUtils;
-import com.hml.utils.SM2Utils;
 import com.hml.utils.StringUtils;
 import com.hml.websocket.config.WebSocketConfig;
 import com.hml.websocket.server.WebSocketNiuServerApp;
 
-import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,17 +25,17 @@ import lombok.extern.slf4j.Slf4j;
 public class NiuTaskManager {
 
 	@Autowired
-	private Redis2Utils redis2Utils;
+	private RedisUtils redisUtils;
 	
 	@Async
 	@Scheduled(fixedRate = 1000)
 	public void syncStatus() {
 		 try {
-			 Object obj = redis2Utils.lGetAndPop(RedisKey.CURRENT_STATUS);
+			 Object obj = redisUtils.lGetAndPop(RedisKey.CURRENT_STATUS_N);
 			 if(StringUtils.isBlank(obj)) {
 				 return;
 			 }
-			 log.info("【Redis-2信息】:{}",obj);
+			 log.info("【Redis-Niu信息】:{}",obj);
 			 
 			 RespBean resp = JSONObject.parseObject(obj.toString(), RespBean.class);
 			 int step = resp.getIStatus();
@@ -48,14 +44,14 @@ public class NiuTaskManager {
 			 int minId = NiuDrawInfo.ID - 2;
 			 if(dataId < minId || dataId > maxId) {
 				 log.info("历史信息当前期数：{}--{}" ,NiuDrawInfo.ID  ,resp.getDataId());
-				 Object res = redis2Utils.lGetAndPop(RedisKey.ORDER_QUERY);
+				 Object res = redisUtils.lGetAndPop(RedisKey.ORDER_QUERY_N);
 					
-				 log.info("【result】:{}",res);
-				 if(res != null && BotConfig.ENABLE) {
+				 log.info("【result_his_2】:{}",res);
+				 if(res != null) {
 					RespBean bean = JSONObject.parseObject(res.toString(), RespBean.class);
 					String key = getResultKey();
-					redis2Utils.hset(key,bean.getDataId(), res);
-					redis2Utils.expire(key, 60 * 60 * 24);
+					redisUtils.hset(key,bean.getDataId(), res);
+					redisUtils.expire(key, 60 * 60 * 24);
 				 }
 				 return;
 			 }
@@ -127,7 +123,7 @@ public class NiuTaskManager {
 		boolean flag = true;
 		int index = 0;
 		while(flag  && index < 5) {
-			Object res = redis2Utils.lGetAndPop(RedisKey.ORDER_QUERY);
+			Object res = redisUtils.lGetAndPop(RedisKey.ORDER_QUERY_N);
 			  log.info("【QUERY_ORDER_2】:{}",res);
 			  if(res != null) {
 				  RespBean bean = JSONObject.parseObject(res.toString(), RespBean.class);
@@ -150,19 +146,19 @@ public class NiuTaskManager {
 		boolean flag = true;
 		int index = 0;
 		while(flag && index < 5) {
-			Object res = redis2Utils.lGetAndPop(RedisKey.ORDER_QUERY);
+			Object res = redisUtils.lGetAndPop(RedisKey.ORDER_QUERY_N);
 			
 			log.info("【result_2】:{}",res);
 			if(res != null) {
 				RespBean bean = JSONObject.parseObject(res.toString(), RespBean.class);
 				String key = getResultKey();
-				redis2Utils.hset(key,bean.getDataId(), res);
-				redis2Utils.expire(key, 60 * 60 * 24);
+				redisUtils.hset(key,bean.getDataId(), res);
+				redisUtils.expire(key, 60 * 60 * 24);
 				log.info("存入结果:{}-{}",bean.getDataId(),res);
 				 
 				if(WebSocketConfig.ENABLE  && SysTaskManager.IS_AUTH) {
-					NiuDrawInfo.RESULT = String.valueOf(bean.getIWinNo());
-					WebSocketNiuServerApp.sendInfo(Flow.OVER.getStep(),res.toString());
+					NiuDrawInfo.RESULT = String.valueOf(bean.getSReust());
+//					WebSocketNiuServerApp.sendInfo(Flow.OVER.getStep(),res.toString());
 				 }
 			    flag = false;
 			}else {
@@ -176,7 +172,7 @@ public class NiuTaskManager {
 	
 	private String getResultKey() {
 		String date = DateTimeUtils.getCurrentDate("yyyyMMdd");
-		String key = RedisKey.ORDER_RESULT + ":" + date;
+		String key = RedisKey.ORDER_RESULT_N + ":" + date;
 		return key;
 	}
 }

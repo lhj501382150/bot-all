@@ -1,4 +1,4 @@
-<template>
+z<template>
 	<view class="qmbd-game">
 		<uni-nav-bar  title="四方通宝" background-color="rgb(250,81,81)" color="#fff" left-icon="back" :border="false" right-text="规则" @clickLeft="goBack" @clickRight="openRule"></uni-nav-bar>
 		<view class="tab-bar">
@@ -7,7 +7,15 @@
 		</view>
 		<view class="row">
 			<view class="draw-time red">{{result.ISSUE-1}}期</view>
+			<view class="draw-num">
+				<view class="tips">{{result.zj.res}}</view>
+			</view>
 			<view class="link-btn" @click="goUrl">{{link.title}}</view>
+		</view>
+		<view class="row">
+			<view class="draw-num" v-for="(item,index) in result.arr" :key="index" v-if="index>0">
+				 {{item.title}}:{{item.res}}
+			</view>
 		</view>
 		<view class="row">
 			<view class="num-item" v-for="(item,index) in result.data" :key="index" :class="'color'+item">
@@ -24,11 +32,21 @@
 			<view class="draw-money">未结金额：<text style="color: blue;">{{user.freeze}}</text></view>
 			<view class="draw-money">今日输赢：<text style="color: red;">{{user.curLoss}}</text></view>
 		</view>
-		<view class="game-box">
-			 <view class="game-item" v-for="(item,index) in items" :key="index" :class="item.check ? 'active':''" @click="chooseItem(item)">
-				 <view class="text">{{item.name}}</view>
-				 <view class="rate">{{item.rate}}</view>
-			 </view>
+		<view class="game-box-view">
+			<view class="game-box">
+				<view class="game-item bg1" v-for="(item,index) in items" :key="index" :class="item.check ? 'active':''" @click="chooseItem(item)" v-if="index < 5">
+					 <view class="text">{{item.name}}</view>
+					 <view class="rate">{{item.rate}}</view>
+				</view>
+			</view>
+			 <view class="game-box">
+				<view class="game-item bg2" v-for="(item,index) in items" :key="index" :class="item.check ? 'active':''" @click="chooseItem(item)" v-if="index >= 5">
+						 <view class="text">{{item.name}}</view>
+						 <view class="rate">{{item.rate}}</view>
+				</view>
+			</view>
+			 
+			
 		</view>
 		<view class="rate-box">
 			<view class="rate-item-box" v-for="(item,index) in rates" :key="index">
@@ -40,9 +58,9 @@
 		</view>
 		<view class="form">
 			<uni-forms ref="form" :modelValue="formData" :rules="rules">
-				<uni-forms-item name="type" required>
+				<!-- <uni-forms-item name="type" required>
 					<uni-data-checkbox v-model="formData.type" :localdata="types" />
-				</uni-forms-item>
+				</uni-forms-item> -->
 				<uni-forms-item  name="money" required>
 					<uni-easyinput type="number" v-model="formData.money" placeholder="请输入投注金额" />
 				</uni-forms-item>
@@ -84,9 +102,14 @@
 		</uni-popup>
 		<uni-popup ref="popup" type="dialog">
 			<uni-popup-dialog mode="base" :duration="2000" :before-close="true" @close="close" @confirm="confirm">
-			<text v-if="formData.type==1">平投</text>
-			<text v-if="formData.type==2">倍投</text>
-			共选择了{{formData.selected.length}}注，共计{{formData.money * formData.selected.length}}元
+					<view class="tip-content">
+						<view v-for="(item,index) in formData.selected">
+								<text v-if="item.rate1==1">平投</text>
+								<text v-if="item.rate1==2">倍投</text>
+								{{item.name}}:{{formData.money}}
+							</view>
+							共选择了{{formData.selected.length}}注
+					</view>
 			</uni-popup-dialog>
 		</uni-popup>
 		<uni-popup ref="rulePopup" :mask-click="false" background-color="#fff" borderRadius="10upx 10upx 0upx 0upx">
@@ -126,15 +149,23 @@
 					title:'138极速赛车',
 					src:'https://m.228168d.com/html/jisusaiche/index.html'
 				},
-				result:{},
+				result:{
+					arr:[],
+					zj:{}
+				},
 				fptime:0,
 				kjtime:0,
 				items:[
-					{index:'1',name:'闲一',rate:'第2-6球',rate1:0,check:false},
-					{index:'2',name:'闲二',rate:'第3-7球',rate1:1,check:false},
-					{index:'3',name:'闲三',rate:'第4-8球',rate1:1,check:false},
-					{index:'4',name:'闲四',rate:'第5-9球',rate1:0,check:false},
-					{index:'5',name:'闲五',rate:'第6-10球',rate1:1,check:false}
+					{index:'1',name:'闲一',rate:'2-6球 平投',rate1:1,check:false},
+					{index:'2',name:'闲二',rate:'3-7球 平投',rate1:1,check:false},
+					{index:'3',name:'闲三',rate:'4-8球 平投',rate1:1,check:false},
+					{index:'4',name:'闲四',rate:'5-9球 平投',rate1:1,check:false},
+					{index:'5',name:'闲五',rate:'6-10球 平投',rate1:1,check:false},
+					{index:'1',name:'闲一',rate:'2-6球 倍投',rate1:2,check:false},
+					{index:'2',name:'闲二',rate:'3-7球 倍投',rate1:2,check:false},
+					{index:'3',name:'闲三',rate:'4-8球 倍投',rate1:2,check:false},
+					{index:'4',name:'闲四',rate:'5-9球 倍投',rate1:2,check:false},
+					{index:'5',name:'闲五',rate:'6-10球 倍投',rate1:2,check:false}
 				],
 				types:[
 					{text:'平投',value:'1'},
@@ -304,14 +335,15 @@
 								this.showNotice = this.tempShowNotice
 								this.result = JSON.parse(data.data)
 								this.result.data = this.result.CODE.split(',') || []
-								this.leftTime = getSecond(this.result.TIME) + 15
+								this.parseResult()
+								this.leftTime = getSecond(this.result.TIME)
 								this.fillTime()
 								this.getUserBalance()
 								this.loadData()
 							}else if(data.status == 4){
 								this.isStop = true
 								this.fptime = 0
-								this.kjtime = 30
+								this.kjtime = 15
 								this.getShowNoticePara()
 							}
 						}catch(e){
@@ -324,6 +356,34 @@
 				this.socketTask.onClose(() => {
 					console.log("已经被关闭了")
 				})
+			},
+			parseResult(){
+				this.result.arr = []
+				this.result.zj = {}
+				try{
+					// let result = '2#6#3#1#4#10#8#7#5#9*2#6#3#1#4-6,6#3#1#4#10-4,3#1#4#10#8-0,1#4#10#8#7-0,4#10#8#7#5-4,10#8#7#5#9-9'
+					let result = this.result.RESULT
+					if(result){
+						let datas = result.split("*") || []
+						if(datas.length == 2){
+							datas = datas[1].split(',') || []
+							datas = datas.map((item,index) =>{
+								let arr = item.split('-');
+								let  t = {
+									index:index,
+									title: this.getTitle(index),
+									res:this.getStatus(arr[1]),
+									code:arr[0].split('#')
+								}
+								return t
+							})
+							this.result.zj = datas[0]
+							this.result.arr = datas
+						}
+					}
+				}catch(e){
+					console.error(e)
+				}
 			},
 			getCurStatus(){
 				let curTime = parseInt(getCurTime())
@@ -345,7 +405,7 @@
 				this.timer = setTimeout(this.startCount,1000)
 			},
 			fillTime(){
-				this.fptime = this.leftTime - 30 < 0 ? 0 :this.leftTime - 30
+				this.fptime = this.leftTime - 15 < 0 ? 0 :this.leftTime - 15
 				this.kjtime = this.leftTime
 				this.startCount()
 			},
@@ -394,8 +454,7 @@
 				let orders = this.formData.selected.map(item=>{
 					let para = {
 						integRal:this.formData.money,
-						ruId:item.name,
-						type:this.formData.type
+						ruId:item.index + '-' +this.formData.money +'-' + item.rate1
 					}
 					return para
 				})
@@ -522,7 +581,7 @@
 		justify-content: space-between;
 		align-items: center;
 		width: 710upx;
-		height: 80upx;
+		height: 60upx;
 		padding: 20upx;
 		border-bottom: 2upx solid #e2e2e2;
 		margin:0 auto;
@@ -531,15 +590,14 @@
 			text-align: center;
 		}
 		.draw-num{
-			width: 27%;
 			display: flex;
 			align-items: center;
 			justify-content: flex-end;
 			.tips{
-				width: 40upx;
+				width: 120upx;
 				height: 40upx;
 				line-height: 40upx;
-				border-radius: 50%;
+				border-radius: 10upx;
 				background-color: rgb(250,81,81);
 				color: #fff;
 				text-align: center;
@@ -602,24 +660,25 @@
 			background-color:#32CD32;
 		}
 	}
-	.game-box{
+	.game-box-view{
 		width: 724upx;
+		background-image: url('../../static/images/home/niu-bg.jpg');
+		background-size: 100% 100%;
+		background-color: #eee;
+		margin:15upx auto;
+		padding: 15upx;
+	}
+	.game-box{
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
 		position: relative;
-		background-color: #eee;
-		margin:15upx auto;
-		padding: 15upx;
-		background-image: url('../../static/images/home/niu-bg.jpg');
-		background-size: 100% 100%;
 		.game-item{
-			width: 30%;
+			width: 32%;
 			height: 120upx;
 			margin-top: 30upx;
 			margin-bottom: 30upx;
 			border-radius: 20upx;
-			background-image: linear-gradient(to bottom,#8f91fa,#5500ff);
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
@@ -632,6 +691,12 @@
 			.rate{
 				font-size: 14px;
 			}
+		}
+		.bg1{
+			background-image: linear-gradient(to bottom,#8f91fa,#5500ff);
+		}
+		.bg2{
+			background-image: linear-gradient(to bottom,#00dada,#00a3a3);
 		}
 		.active{
 			// background-image: linear-gradient(to bottom,#91fa8b,#13ac02);

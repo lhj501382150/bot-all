@@ -7,6 +7,9 @@ public class RedisKey {
 	public static String DRAW_RESULT = "DRAW_RESULT:";
 	
 	public static String CURRENT_STATUS = "CURRENT_STATUS:" + BotConfig.CHAT_ID;
+	public static String CURRENT_STATUS_N = "CURRENT_STATUS_N:" + BotConfig.CHAT_ID;
+	public static String ORDER_QUERY_N = "ORDER_QUERY_N:" + BotConfig.CHAT_ID;
+	public static String ORDER_RESULT_N = "ORDER_RESULT_N:" + BotConfig.CHAT_ID;
 	
 	public static String ROB_MIN_MONEY = "ROB_MIN_MONEY";
 	public static String ROB_MAX_MONEY = "ROB_MAX_MONEY";
