@@ -12,13 +12,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hml.core.page.MybatisPlusPageHelper;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
-import com.hml.mall.entity.money.Usermoney;
-import com.hml.mall.entity.money.UsermoneyChange;
-import com.hml.mall.entity.order.Order;
-import com.hml.mall.iface.order.IOrderService;
-import com.hml.mall.mapper.money.UsermoneyChangeMapper;
-import com.hml.mall.mapper.money.UsermoneyMapper;
-import com.hml.mall.mapper.order.OrderMapper;
+import com.hml.mall.entity.money.HisUsermoney;
+import com.hml.mall.entity.money.HisUsermoneyChange;
+import com.hml.mall.entity.order.HisOrder;
+import com.hml.mall.iface.order.IHisOrderService;
+import com.hml.mall.mapper.money.HisUsermoneyChangeMapper;
+import com.hml.mall.mapper.money.HisUsermoneyMapper;
+import com.hml.mall.mapper.order.HisOrderMapper;
 import com.hml.mall.security.LoginUser;
 import com.hml.mall.util.SecurityUtils;
 import com.hml.utils.DateTimeUtils;
@@ -34,21 +34,22 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2021-04-18
  */
 @Slf4j
-@Service("orderService")
-public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
+@Service("hisOrderService")
+public class HisOrderServiceImpl extends ServiceImpl<HisOrderMapper, HisOrder> implements IHisOrderService {
 
 	@Autowired
-	private OrderMapper orderMapper;
+	private HisOrderMapper hisOrderMapper;
 	
 	@Autowired
-	private UsermoneyMapper usermoneyMapper;
+	private HisUsermoneyMapper hisUsermoneyMapper;
 	
 	@Autowired
-	private UsermoneyChangeMapper usermoneyChangeMapper;
+	private HisUsermoneyChangeMapper hisUsermoneyChangeMapper;
+	
 
     @Override
-    public List<Order> list(Order model) {
-       QueryWrapper<Order> wrapper = new QueryWrapper();
+    public List<HisOrder> list(HisOrder model) {
+       QueryWrapper<HisOrder> wrapper = new QueryWrapper();
        return super.list(wrapper);
     }
 
@@ -59,10 +60,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			return null;
 		}
 		if(user.getType()<=0) {
-			return MybatisPlusPageHelper.findPage(pageRequest, orderMapper,"findPage");
+			return MybatisPlusPageHelper.findPage(pageRequest, hisOrderMapper,"findPage");
 		}else {
 			pageRequest.getParams().put(user.getQueryNo(), SecurityUtils.getUsername());
-			return MybatisPlusPageHelper.findPage(pageRequest, orderMapper,"findPageByUser");
+			return MybatisPlusPageHelper.findPage(pageRequest, hisOrderMapper,"findPageByUser");
 		}
 	}
     @Override
@@ -80,8 +81,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      	if(user.getType() > 0) {
      		params.put(user.getQueryNo(), SecurityUtils.getUsername());
      	}
-     	Map<String, Object> count = orderMapper.findCountSum(params);
-     	List<Map<String, Object>> datas = orderMapper.findCount(params);
+     	Map<String, Object> count = hisOrderMapper.findCountSum(params);
+     	List<Map<String, Object>> datas = hisOrderMapper.findCount(params);
      	
      	PageResult result = new PageResult();
      	result.setContent(datas);
@@ -110,8 +111,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      	if(user.getType() > 0) {
      		params.put(user.getQueryNo(), SecurityUtils.getUsername());
      	}
-     	Map<String, Object> count = orderMapper.findFYCountSum(params);
-     	List<Map<String, Object>> datas = orderMapper.findFYCount(params);
+     	Map<String, Object> count = hisOrderMapper.findFYCountSum(params);
+     	List<Map<String, Object>> datas = hisOrderMapper.findFYCount(params);
      	
      	PageResult result = new PageResult();
      	result.setContent(datas);
@@ -127,27 +128,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     
     @Override
     @Transactional(rollbackFor = Exception.class)
-	public void syncHisData()throws Exception {
-		String fdate = DateTimeUtils.getCurrentDate("yyyy-MM-dd");
-		String date = DateTimeUtils.addDate(fdate, "yyyy-MM-dd", -14);
-		String ordtime = date + " 06:50:00";
-		log.info("同步14天数据：{}-{}",fdate,ordtime);
-		orderMapper.syncHisOrder(ordtime);
-		
-		QueryWrapper<Order> qw = new QueryWrapper<Order>();
-		qw.le("ORDTIME", ordtime);
-		orderMapper.delete(qw);
-		log.info("订单数据完成,开始备份资金:{}",date);
-		usermoneyMapper.syncHisData(date);
-		QueryWrapper<Usermoney> qw1 = new QueryWrapper<Usermoney>();
-		qw1.le("FDATE", date);
-		usermoneyMapper.delete(qw1);
-		log.info("资金数据完成,开始备份变动明细:{}",date);
-		usermoneyChangeMapper.syncHisData(date);
-		QueryWrapper<UsermoneyChange> qw2 = new QueryWrapper<UsermoneyChange>();
-		qw2.le("FDATE", date);
-		usermoneyChangeMapper.delete(qw2);
-		log.info("变动明细处理完成...");
+	public void deleteHisData(String month) throws Exception {
+    	String bdate = month + "-01";
+    	String edate = DateTimeUtils.lastDayOfMonth(month, "yyyy-MM");
+    	String btime = bdate + " 07:00:00";
+    	String etime = edate + " 06:00:00";
+		log.info("删除历史数据:{}-{}",bdate,edate);
+		QueryWrapper<HisOrder> qw = new QueryWrapper<HisOrder>();
+        qw.ge("ORDTIME", btime);
+        qw.le("ORDTIME", etime);
+        hisOrderMapper.delete(qw);
+        
+        QueryWrapper<HisUsermoney> qw1 = new QueryWrapper<HisUsermoney>();
+        QueryWrapper<HisUsermoneyChange> qw2 = new QueryWrapper<HisUsermoneyChange>();
+        
+        qw1.ge("FDATE", bdate);
+        qw1.le("FDATE", edate);
+        hisUsermoneyMapper.delete(qw1);
+        
+        qw2.ge("FDATE", bdate);
+        qw2.le("FDATE", edate);
+        hisUsermoneyChangeMapper.delete(qw2);
 	}
-
 }

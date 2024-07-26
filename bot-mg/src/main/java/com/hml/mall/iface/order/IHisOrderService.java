@@ -5,7 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
-import com.hml.mall.entity.order.Order;
+import com.hml.mall.entity.order.HisOrder;
 
 /**
 * <p>
@@ -17,7 +17,7 @@ import com.hml.mall.entity.order.Order;
 */
 
 
-public interface IOrderService extends IService<Order> {
+public interface IHisOrderService extends IService<HisOrder> {
 
    /**
    * 查询
@@ -25,7 +25,7 @@ public interface IOrderService extends IService<Order> {
    * @param model
    * @return
    */
-   List<Order> list(Order model);
+   List<HisOrder> list(HisOrder model);
 
     /**
     * 分页查询
@@ -41,5 +41,5 @@ public interface IOrderService extends IService<Order> {
 
    PageResult findFYCount(PageRequest pageRequest);
    
-   void syncHisData() throws Exception;
+   void deleteHisData(String month)throws Exception;
 }

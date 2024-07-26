@@ -57,7 +57,8 @@
 							更多
 							<uni-icons type="down" size="16" color="rgb(40,148,255)"></uni-icons>
 							<view class="drop-menu" v-show="item.menuMore">
-								<view class="drop-item" @click="openPwdPopup(item)">密码重置</view>
+								<view class="drop-item" @click="openPwdPopup(item,1)">密码重置</view>
+								<view class="drop-item" @click="openPwdPopup(item,2)">密码批量重置</view>
 								<view class="drop-item" @click="openNamePopup(item)">昵称修改</view>
 								<view class="drop-item" v-if="item.sex!=0" @click="changeStatus(item.userno,0)">启用</view>
 								<view class="drop-item" v-if="item.sex!=1" @click="changeStatus(item.userno,1)">冻结</view>
@@ -107,7 +108,7 @@
 		 </uni-popup>
 		 <uni-popup ref="pwdPopup" type="center" background-color="#fff">
 		 			 <view class="form">
-		 				 <view class="form-title">重置密码</view>
+		 				 <view class="form-title"><text v-if="pwdForm.type==2">批量</text>重置密码</view>
 		 				 <view class="form-sub-title">操作账号：{{pwdForm.userId}}-{{pwdForm.userName}}</view>
 		 				<uni-forms ref="pwdForm" :modelValue="pwdForm" :rules="pwdFormRules" >
 		 					<uni-forms-item label="新密码" name="paypwd">
@@ -241,7 +242,8 @@
 					userId:'',
 					userName:'',
 					paypwd:'',
-					paypwd2:''
+					paypwd2:'',
+					type:1
 				},
 				pwdFormRules: {
 					 paypwd: {
@@ -347,9 +349,10 @@
 				this.pwdForm.paypwd = ''
 				this.pwdForm.paypwd2 = ''
 			},
-			openPwdPopup(item){
+			openPwdPopup(item,type){
 				this.pwdForm.userId = item.userno
 				this.pwdForm.userName = item.nickname
+				this.pwdForm.type = type
 				this.$refs.pwdPopup.open()
 			},
 			submitPwd(){
@@ -359,6 +362,10 @@
 						newPAYPWD: md5(this.pwdForm.userId + this.pwdForm.paypwd)
 					}
 					 let url = '/User/ResetPwd'
+					 if(this.pwdForm.type==2){
+						 para.newPAYPWD = this.pwdForm.paypwd
+						 url = '/User/ResetAllPwd'
+					 }
 					this.$http.post(url,para,(res=>{
 						if(res.iCode ==0){
 							 uni.showToast({

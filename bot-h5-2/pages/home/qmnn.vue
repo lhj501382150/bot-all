@@ -14,7 +14,7 @@ z<template>
 		</view>
 		<view class="row">
 			<view class="draw-num" v-for="(item,index) in result.arr" :key="index" v-if="index>0">
-				 {{item.title}}:{{item.res}}
+				 <text>{{item.title}}:</text>{{item.res}}
 			</view>
 		</view>
 		<view class="row">
@@ -81,8 +81,8 @@ z<template>
 				<view class="col-content">
 					<view class="col-item" v-for="(temp,i) in item.bNos" :key="i">
 						<view class="left">
-							<text>{{temp.name}}</text>
-							<text>{{temp.status}}</text>
+							<view :class="'left-name'+i">{{temp.name}}</view>
+							<view :class="'left-name'+i">{{temp.status}}</view>
 						</view>
 						<view class="right">
 							<view class="result-item" v-for="(no,n) in temp.nums" :key="n" :class="'color'+no" >
@@ -581,7 +581,7 @@ z<template>
 		justify-content: space-between;
 		align-items: center;
 		width: 710upx;
-		height: 60upx;
+		height: 50upx;
 		padding: 20upx;
 		border-bottom: 2upx solid #e2e2e2;
 		margin:0 auto;
@@ -603,6 +603,11 @@ z<template>
 				text-align: center;
 				font-size: 26upx;
 				margin-right: 20upx;
+			}
+			text{
+				color:#999;
+				padding-right: 2upx;
+				padding-left:6upx;
 			}
 		}
 		.link-btn{
@@ -763,6 +768,9 @@ z<template>
 					width:240upx;
 					display: flex;
 					justify-content: space-between;
+					.left-name0{
+						color:red;
+					}
 				}
 				.right{
 					display: flex;
