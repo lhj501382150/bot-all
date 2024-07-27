@@ -131,7 +131,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		String fdate = DateTimeUtils.getCurrentDate("yyyy-MM-dd");
 		String date = DateTimeUtils.addDate(fdate, "yyyy-MM-dd", -14);
 		String ordtime = date + " 06:50:00";
-		log.info("同步14天数据：{}-{}",fdate,ordtime);
+		log.info("同步14天数据：{} ~ {}",fdate,ordtime);
 		orderMapper.syncHisOrder(ordtime);
 		
 		QueryWrapper<Order> qw = new QueryWrapper<Order>();

@@ -44,5 +44,13 @@ public interface HisOrderMapper extends BaseMapper<HisOrder> {
 	List<Map<String,Object>> findFYCount(Map<String,Object> paraMap);
 	Map<String,Object> findFYCountSum(Map<String,Object> paraMap);
 	
+
+	List<Map<String,Object>> findUserLevelCount(Map<String,Object> paraMap);
+	
+	Map<String,Object> findUserLevelCountSum(Map<String,Object> paraMap);
+	
+	List<Map<String,Object>> findSubLevelCount(Map<String,Object> paraMap);
+	
+	Map<String,Object> findSubLevelCountSum(Map<String,Object> paraMap);
 	
 }

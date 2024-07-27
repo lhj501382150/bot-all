@@ -1,5 +1,7 @@
 package com.hml.mall.service.order;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,14 +16,21 @@ import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
 import com.hml.mall.entity.money.HisUsermoney;
 import com.hml.mall.entity.money.HisUsermoneyChange;
+import com.hml.mall.entity.money.UsermoneyChange;
 import com.hml.mall.entity.order.HisOrder;
+import com.hml.mall.entity.user.User;
+import com.hml.mall.entity.user.UserRelation;
 import com.hml.mall.iface.order.IHisOrderService;
 import com.hml.mall.mapper.money.HisUsermoneyChangeMapper;
 import com.hml.mall.mapper.money.HisUsermoneyMapper;
 import com.hml.mall.mapper.order.HisOrderMapper;
+import com.hml.mall.mapper.sys.UserRoleMapper;
+import com.hml.mall.mapper.user.UserMapper;
+import com.hml.mall.mapper.user.UserRelationMapper;
 import com.hml.mall.security.LoginUser;
 import com.hml.mall.util.SecurityUtils;
 import com.hml.utils.DateTimeUtils;
+import com.hml.utils.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +55,12 @@ public class HisOrderServiceImpl extends ServiceImpl<HisOrderMapper, HisOrder> i
 	@Autowired
 	private HisUsermoneyChangeMapper hisUsermoneyChangeMapper;
 	
-
+	@Autowired
+	private UserMapper userMapper;
+	
+	@Autowired
+	private UserRelationMapper userRelationMapper;
+	
     @Override
     public List<HisOrder> list(HisOrder model) {
        QueryWrapper<HisOrder> wrapper = new QueryWrapper();
@@ -128,12 +142,12 @@ public class HisOrderServiceImpl extends ServiceImpl<HisOrderMapper, HisOrder> i
     
     @Override
     @Transactional(rollbackFor = Exception.class)
-	public void deleteHisData(String month) throws Exception {
-    	String bdate = month + "-01";
-    	String edate = DateTimeUtils.lastDayOfMonth(month, "yyyy-MM");
+	public void deleteHisData(String bdate,String edate) throws Exception {
+//    	String bdate = month + "-01";
+//    	String edate = DateTimeUtils.lastDayOfMonth(month, "yyyy-MM");
     	String btime = bdate + " 07:00:00";
     	String etime = edate + " 06:00:00";
-		log.info("删除历史数据:{}-{}",bdate,edate);
+		log.info("删除历史数据:{} ~ {}",bdate,edate);
 		QueryWrapper<HisOrder> qw = new QueryWrapper<HisOrder>();
         qw.ge("ORDTIME", btime);
         qw.le("ORDTIME", etime);
@@ -150,4 +164,73 @@ public class HisOrderServiceImpl extends ServiceImpl<HisOrderMapper, HisOrder> i
         qw2.le("FDATE", edate);
         hisUsermoneyChangeMapper.delete(qw2);
 	}
+    
+    @Override
+   	public PageResult findScorePage(PageRequest pageRequest) {
+       	LoginUser user = SecurityUtils.getLoginInfo();
+   		if(user==null) {
+   			return null;
+   		}
+   		if(user.getType() > 0) {
+//   			分销商/客户 查询 配置当前登陆信息
+   			pageRequest.getParams().put(user.getQueryNo(), SecurityUtils.getUsername());
+   		}
+   		PageResult result = MybatisPlusPageHelper.findPage(pageRequest, hisUsermoneyChangeMapper,"findPageByUser");
+   		if(result.getContent() != null && result.getContent().size() > 0) {
+   			QueryWrapper<?> qw = MybatisPlusPageHelper.getQueryWrapper(pageRequest);
+   			HisUsermoneyChange sum = hisUsermoneyChangeMapper.findSum(qw);
+   			result.setSum(sum);
+   		}
+   		return result;
+   		
+   		
+   	}
+    
+    @Override
+	@Transactional(rollbackFor = Exception.class)
+	public PageResult findUserLevelCount(PageRequest pageRequest) throws Exception {
+		Integer page = pageRequest.getPageNum();
+		Integer size = pageRequest.getPageSize();
+		page = (page-1) * size;
+		Map<String, Object> params = pageRequest.getParams();
+		if(params == null) {
+			params = new HashMap<String, Object>();
+		}
+		params.put("page", page);
+		params.put("size", size);
+		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
+		PageResult pageResult = new PageResult();
+		Integer count = datas.size();
+		if(!StringUtils.isBlank(params.get("parentno"))){
+			String pno = params.get("parentno").toString();
+			User puser = userMapper.selectById(pno);
+			if(puser == null || "2".equals(puser.getOrgtype())) {
+				return pageResult;
+			}
+			UserRelation user = userRelationMapper.selectById(pno);
+			params.put("pno", "uno" + user.getClevel());
+			int subLevel = user.getClevel() + 1;
+			params.put("uno", "uno" + subLevel);
+			
+			datas = hisOrderMapper.findSubLevelCount(params);
+			if(datas!=null  && datas.size()>0) {
+				Map<String, Object> sum = hisOrderMapper.findSubLevelCountSum(params);
+				pageResult.setSum(sum);
+				count = Integer.parseInt(sum.get("TOTAL").toString());
+			}
+		}else {
+			datas = hisOrderMapper.findUserLevelCount(params);
+			if(datas!=null  && datas.size()>0) {
+				Map<String, Object> sum = hisOrderMapper.findUserLevelCountSum(params);
+				pageResult.setSum(sum);
+				count = Integer.parseInt(sum.get("TOTAL").toString());
+			}
+		}
+		
+		pageResult.setContent(datas);
+		pageResult.setPageNum(page);
+		pageResult.setPageSize(size);
+		pageResult.setTotalSize(count);
+		return pageResult;
+	}	
 }

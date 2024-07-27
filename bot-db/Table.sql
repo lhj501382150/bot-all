@@ -105,7 +105,7 @@ CREATE TABLE `tb_zj_his_usermoney` (
 
 DROP TABLE IF EXISTS `tb_zj_his_usermoney_change`;
 CREATE TABLE `tb_zj_his_usermoney_change` (
-  `WARTNO` bigint NOT NULL AUTO_INCREMENT COMMENT '流水号',
+  `WARTNO` bigint NOT NULL COMMENT '流水号',
   `FDATE` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '结算日期',
   `USERNO` varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '用户编号',
   `ACCTNO` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '账本编号',
@@ -121,4 +121,4 @@ CREATE TABLE `tb_zj_his_usermoney_change` (
   `EXTEN` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '扩展信息',
   PRIMARY KEY (`WARTNO`) USING BTREE,
   KEY `index_fdate_userno` (`FDATE`,`USERNO`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=30651 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ;

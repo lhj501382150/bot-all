@@ -41,5 +41,9 @@ public interface IHisOrderService extends IService<HisOrder> {
 
    PageResult findFYCount(PageRequest pageRequest);
    
-   void deleteHisData(String month)throws Exception;
+   PageResult findScorePage(PageRequest pageRequest);
+   
+   void deleteHisData(String bdate,String edate)throws Exception;
+   
+   PageResult findUserLevelCount(PageRequest pageRequest)throws Exception;
 }

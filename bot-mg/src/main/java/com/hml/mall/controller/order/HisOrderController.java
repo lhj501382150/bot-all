@@ -1,7 +1,8 @@
 package com.hml.mall.controller.order;
 
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,15 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hml.core.http.HttpResult;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
-import com.hml.mall.entity.order.HisOrder;
-import com.hml.mall.entity.order.Order;
 import com.hml.mall.iface.order.IHisOrderService;
-import com.hml.mall.iface.user.IUserService;
-import com.hml.utils.DateTimeUtils;
 import com.hml.utils.StringUtils;
 
 
@@ -35,10 +31,6 @@ public class HisOrderController {
     @Autowired
     private IHisOrderService  hisOrderService;
     
-    @Autowired
-    private IUserService userService;
-
-     
 	/**
     * 删除
     *
@@ -48,11 +40,14 @@ public class HisOrderController {
     */
     @PreAuthorize("hasAuthority('order:his:del')")
     @RequestMapping("/delete")
-    public HttpResult delete(@RequestBody HisOrder model) throws Exception {
-        if(StringUtils.isBlank(model.getFdate())) {
-        	return HttpResult.error("请传入删除月份");
+    public HttpResult delete(@RequestBody Map<String,String> paraMap) throws Exception {
+        if(StringUtils.isBlank(paraMap.get("bdate"))) {
+        	return HttpResult.error("开始日期不能为空");
         }
-        hisOrderService.deleteHisData(model.getFdate());
+        if(StringUtils.isBlank(paraMap.get("edate"))) {
+        	return HttpResult.error("结束日期不能为空");
+        }
+        hisOrderService.deleteHisData(paraMap.get("bdate"),paraMap.get("edate"));
         
         return HttpResult.ok();
     }
@@ -73,6 +68,16 @@ public class HisOrderController {
         return HttpResult.ok(page);
     }
     
+    @PreAuthorize("hasAuthority('hisquery:money:view')")
+    @RequestMapping("/findScorePage")
+    public HttpResult findScorePage(@RequestBody PageRequest pageRequest) {
+
+    	pageRequest.getParams().put("SUBNO@IN", Arrays.asList("100","101"));
+        PageResult page = hisOrderService.findScorePage(pageRequest);
+        // todo 再包装一层
+        return HttpResult.ok(page);
+    }
+    
     @RequestMapping("/findCount")
     public HttpResult findCount(@RequestBody PageRequest pageRequest) {
     	
@@ -83,7 +88,7 @@ public class HisOrderController {
     @RequestMapping("/findLevelCount")
     public HttpResult findLevelCount(@RequestBody PageRequest pageRequest) throws Exception {
     	
-    	PageResult page = userService.findUserLevelCount(pageRequest);
+    	PageResult page = hisOrderService.findUserLevelCount(pageRequest);
     	return HttpResult.ok(page);
     }
     
