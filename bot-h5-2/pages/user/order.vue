@@ -39,14 +39,44 @@
 						 <view class="left" >
 							 <view class="row" v-if="userinfo.orgtype==1">所属账号：{{item.userno}}</view>
 							  <view class="row">下注单号：No.{{item.orderno}}</view>
-							  <view class="row">期数：{{item.issue}}</view>
+							  <view class="row">
+							  <uni-collapse>
+								<uni-collapse-item :show-animation="true" :name="index">
+									<template v-slot:title>
+										 <view class="col-title">
+											 <view class="left">期数：{{item.issue}}</view>
+										 </view>
+									</template>
+									<view class="col-content">
+										<view class="col-item" v-for="(temp,i) in item.bNos" :key="i">
+											<view class="left">
+												<view :class="'left-name'+i">{{temp.name}}</view>
+												<view :class="'left-name'+i">{{temp.status}}</view>
+											</view>
+											<view class="right">
+												<view class="result-item" v-for="(no,n) in temp.nums" :key="n" :class="'color'+no" >
+													{{no}}
+												</view>						 
+											</view>
+										</view>
+									</view>
+								</uni-collapse-item>
+								</uni-collapse>
+							  </view>
 							  <view class="row">开奖号码：<text class="row-result">{{item.result}}</text></view>
-							  <view class="row"></view>
 							  <view class="row">游戏：<text class="red">牛牛</text></view>
-							  <view class="row">玩法：<text class="red">{{getTitle(item.artid)}}</text></view>
+							  <view class="row">玩法：
+								<text class="red">{{getTitle(item.artid)}}
+									<text v-if="item.recvno==0">（平投）</text>
+									<text v-if="item.recvno==1">（倍投）</text>
+								</text>
+							  </view>
 							  <view class="row">倍率：<text class="red">{{item.cpright}}</text></view>
 							  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
-							  <view class="row">中奖金额：<text class="red">{{item.loss + item.bailmoney - item.comm}}</text></view>
+							  <view class="row">本局输赢：	
+									<text class="red" v-if="item.loss > 0">{{item.loss + item.bailmoney - item.comm}}</text>
+									<text class="red" v-else>{{item.loss - item.comm}}</text>
+							  </view>
 							  <view class="row">下注时间：{{item.ordtime}}</view>
 						 </view>
 						 <view class="right">
@@ -163,6 +193,20 @@
 				
 				this.$http.post(url,this.search,res => {
 					let datas = res.rData || []
+					datas.forEach(item=>{
+						if(item.bNno){
+							let bNos = item.bNno.split(',') || []
+							let sresult = item.result.split(',') || []
+							bNos = bNos.map((item,index)=>{
+								return {
+									name:this.getTitle(index),
+									status:this.getNstatus(item),
+									nums:this.getNums(sresult,index)
+								}
+							})
+							item.bNos = bNos
+						} 
+					})
 					this.records = [...this.records,...datas]
 					this.totalCount = res.iCount;
 					if (this.search.pageIdx >= this.totalCount) {
@@ -173,6 +217,24 @@
 					this.refresherTriggered = false
 				})
 			},
+			 getNums(sresult,index){
+			 	let arr = []
+			 	for(var i = 0;i<5;i++){
+			 		arr[i] = sresult[index+i]
+			 	}
+			 	return arr
+			 }, 
+			 getNstatus(status){
+			 	const item = this.nstatusList.find(item=> item.val==status) || {}
+			 	return item.name
+			 },
+			 getTitle(index){
+			 	let titles = [{val:0,name:'庄'},{val:1,name:'闲一'}
+			 				  ,{val:2,name:'闲二'},{val:3,name:'闲三'}
+			 				  ,{val:4,name:'闲四'},{val:5,name:'闲五'}]
+			 	const item = titles.find(item=> item.val==index) || {}
+			 	return item.name
+			 },
 			goBack(){
 				const pages = getCurrentPages()
 				if(pages.length > 1){
@@ -185,13 +247,6 @@
 			},
 			getStatus(status){
 				const item = this.statusList.find(item=> item.val==status) || {}
-				return item.name
-			},
-			getTitle(index){
-				let titles = [{val:0,name:'庄'},{val:1,name:'闲一'}
-							  ,{val:2,name:'闲二'},{val:3,name:'闲三'}
-							  ,{val:4,name:'闲四'},{val:5,name:'闲五'}]
-				const item = titles.find(item=> item.val==index) || {}
 				return item.name
 			},
 		}
@@ -243,6 +298,72 @@
 				font-size: 32upx;
 				font-weight: 600;
 				padding-right: 40upx;
+			}
+			.left{
+				.col-title{
+					height:50upx;
+					line-height:50upx;
+				}
+				.col-content{
+					.col-item{
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						.left{
+							width:150upx;
+							display: flex;
+							justify-content: space-between;
+							.left-name0{
+								color:red;
+							}
+						}
+						.right{
+							display: flex;
+							.result-item{
+								width: 50upx;
+								height: 50upx;
+								border-radius: 50%;
+								display: flex;
+								justify-content: center;
+								align-items: center;
+								margin-bottom: 20upx;
+								color: #fff;
+								margin-left: 10upx;
+							}
+						}
+					}
+				}
+				
+				.color01{
+					background-color:#FFD700;
+				}
+				.color02{
+					background-color:#00BFFF;
+				}
+				.color03{
+					background-color:#8B4513;
+				}
+				.color04{
+					background-color:#FFA500;
+				}
+				.color05{
+					background-color:#48D1CC;
+				}
+				.color06{
+					background-color:#7B68EE;
+				}
+				.color07{
+					background-color:#778899;
+				}
+				.color08{
+					background-color:#DC143C;
+				}
+				.color09{
+					background-color:#FA8072;
+				}
+				.color10{
+					background-color:#32CD32;
+				}
 			}
 		}
 	}

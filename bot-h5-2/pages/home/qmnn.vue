@@ -8,7 +8,7 @@ z<template>
 		<view class="row">
 			<view class="draw-time red">{{result.ISSUE-1}}期</view>
 			<view class="draw-num">
-				<view class="tips">{{result.zj.res}}</view>
+				<view class="tips">庄：{{result.zj.res}}</view>
 			</view>
 			<view class="link-btn" @click="goUrl">{{link.title}}</view>
 		</view>
@@ -49,18 +49,12 @@ z<template>
 			
 		</view>
 		<view class="rate-box">
-			<view class="rate-item-box" v-for="(item,index) in rates" :key="index">
-				<view class="rate-name">{{item.name}}</view>
-				<view class="rate-item" v-for="(t,i) in item.datas" :key="i">
-					<text>{{t.name}} {{t.rate}}</text>
-				</view>
+			<view class="rate-item-box" v-for="(item,index) in nums" :key="index" @click="chooseMoney(item)">
+				 {{item}}
 			</view>
 		</view>
 		<view class="form">
 			<uni-forms ref="form" :modelValue="formData" :rules="rules">
-				<!-- <uni-forms-item name="type" required>
-					<uni-data-checkbox v-model="formData.type" :localdata="types" />
-				</uni-forms-item> -->
 				<uni-forms-item  name="money" required>
 					<uni-easyinput type="number" v-model="formData.money" placeholder="请输入投注金额" />
 				</uni-forms-item>
@@ -68,31 +62,22 @@ z<template>
 			<button :class="isStop?'btn1':'btn'" @click="submit">{{isStop?'封盘中':'确认下注'}}</button>
 		</view>
 		<view class="result">
-			<uni-collapse v-model="collapse">
-			<uni-collapse-item :show-animation="true" v-for="(item,index) in results" :key="index" :name="index">
-				<template v-slot:title>
-					 <view class="col-title">
-						 <view class="left">期数：{{item.issue}}</view>
-						 <view class="right">
-							 
-						 </view>
-					 </view>
-				</template>
-				<view class="col-content">
-					<view class="col-item" v-for="(temp,i) in item.bNos" :key="i">
-						<view class="left">
-							<view :class="'left-name'+i">{{temp.name}}</view>
-							<view :class="'left-name'+i">{{temp.status}}</view>
-						</view>
-						<view class="right">
-							<view class="result-item" v-for="(no,n) in temp.nums" :key="n" :class="'color'+no" >
-								{{no}}
-							</view>						 
-						</view>
+			<view class="result-header">
+				<view class="col col0">庄</view>
+				<view class="col">闲一</view>
+				<view class="col">闲二</view>
+				<view class="col">闲三</view>
+				<view class="col">闲四</view>
+				<view class="col">闲五</view>
+			</view>
+			<view class="result-content">
+				<view class="result-row" v-for="(item,index) in results" :key="index">
+					<view class="col" :class="i==0?'col0':'col1'" v-for="(temp,i) in item.bNos" :key="i">
+						{{temp.status}}
 					</view>
 				</view>
-			</uni-collapse-item>
-			</uni-collapse>
+			</view>
+			<!-- -->
 		</view>
 		
 		<uni-popup ref="errPopup" type="dialog">
@@ -215,7 +200,8 @@ z<template>
 				curStatus:false,
 				showNotice:false,
 				tempShowNotice:false,
-				collapse:''
+				collapse:'',
+				nums:[10,20,50,100,200,500,1000,2000,5000,10000]
 			}
 		},
 		onLoad() {
@@ -230,6 +216,9 @@ z<template>
 			this.closeSocket()
 		},
 		methods: {
+			chooseMoney(item){
+				this.formData.money = item
+			},
 			radioChange(value){
 				this.formData.type= value
 			},
@@ -710,17 +699,22 @@ z<template>
 		}
 	}
 	.rate-box{
-		padding: 5upx 10upx;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		padding: 0upx 20upx;
 		.rate-item-box{
-			font-size: 13px;
-			display: flex;
-			flex-wrap: wrap;
-			.rate-name{
-				margin-right: 20upx;
-			}
-			.rate-item{
-				width: 120upx;
-			}
+			 width:130upx;
+			 line-height: 60upx;
+			 background-color: #7B68EE;
+			 color: #fff;
+			 border-radius: 10upx;
+			 margin-bottom: 20upx;
+			 text-align: center;
+		}
+		.rate-item-box:hover{
+			background-color: #e2e2e2;
+			color: #000;
 		}
 	}
 	.form{
@@ -752,72 +746,35 @@ z<template>
 		}
 	}
 	.result{
-		margin-top: 20upx;
-		padding-left: 20upx;
-		padding-right: 20upx;
-		.col-title{
-			height:50upx;
-			line-height:50upx;
+		display:flex;
+		height:380upx;
+		.col{
+			width:100upx;
+			height:60upx;
+			line-height: 60upx;
+			text-align: center;
 		}
-		.col-content{
-			.col-item{
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				.left{
-					width:240upx;
-					display: flex;
-					justify-content: space-between;
-					.left-name0{
-						color:red;
-					}
-				}
-				.right{
-					display: flex;
-					.result-item{
-						width: 50upx;
-						height: 50upx;
-						border-radius: 50%;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						margin-bottom: 20upx;
-						color: #fff;
-						margin-left: 10upx;
-					}
-				}
+		.col0{
+			color:red;
+		}
+		.col1{
+			color:#000!important;
+		}
+		.result-header{
+			display:flex;
+			flex-direction: column;
+		}
+		.result-content{
+			padding:0upx;
+			margin:0upx;
+			overflow-x: auto;
+			display: flex;
+			flex-wrap: nowrap;
+			.result-row{
+				display:flex;
+				flex-direction: column;
+				margin:0upx;
 			}
-		}
-		
-		.color01{
-			background-color:#FFD700;
-		}
-		.color02{
-			background-color:#00BFFF;
-		}
-		.color03{
-			background-color:#8B4513;
-		}
-		.color04{
-			background-color:#FFA500;
-		}
-		.color05{
-			background-color:#48D1CC;
-		}
-		.color06{
-			background-color:#7B68EE;
-		}
-		.color07{
-			background-color:#778899;
-		}
-		.color08{
-			background-color:#DC143C;
-		}
-		.color09{
-			background-color:#FA8072;
-		}
-		.color10{
-			background-color:#32CD32;
 		}
 	}
 	.rule-content{
