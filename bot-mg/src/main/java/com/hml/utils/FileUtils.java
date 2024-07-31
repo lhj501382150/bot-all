@@ -110,11 +110,4 @@ public class FileUtils {
 		String classPath = FileUtils.class.getClassLoader().getResource("").getPath();
 		return classPath;
 	}
-	
-	public static void main(String[] args){
-//        File file = new File("D:/errlog.txt");
-//        System.out.println(readFile(file));
-        System.out.println(getClassPath());
-        System.out.println(getProjectPath());
-    }
 }

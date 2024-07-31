@@ -99,19 +99,29 @@ z<template>
 		</uni-popup>
 		<uni-popup ref="rulePopup" :mask-click="false" background-color="#fff" borderRadius="10upx 10upx 0upx 0upx">
 			<view class="rule-content">
-				<view>牛牛规则</view>
-				<view>玩法：</view>
+				<view>牛牛规则与玩法</view>
+				<view>【规则】</view>
 				<view>庄牌为第1-5球五个数字</view>
-				<view>闲一牌为第2-6球五个数字</view>
-				<view>闲二牌为第3-7球五个数字</view>
-				<view>闲三牌为第4-8球五个数字</view>
-				<view>闲四牌为第5-9球五个数字</view>
-				<view>闲五牌为第6-10球五个数字</view>
-				<view>闲家的牌大于庄家则赢，反之则输</view>
+				<view>闲1 牌为 ：第2球-第6球这五个数字</view>
+				<view>闲2 牌为 ：第3球-第7球这五个数字</view>
+				<view>闲3 牌为 ：第4球-第8球这五个数字</view>
+				<view>闲4 牌为 ：第5球-第9球这五个数字</view>
+				<view>闲5 牌为 ：第6球-第10球这五个数字</view>
+				<view>闲家的牌大于庄家，则赢。反之则输</view>
 				
+				<view class="rule-tip">【玩法】</view>
+				<view>平投：</view>
+				<view>庄闲有牛:点数一样时，则按五个数字从大到小对比，优先大者为赢</view>
+				<view>庄闲无牛:与上一致，按五个数字从大到小对比，优先大者为赢</view>
+				<view>倍投：</view>
+				<view>庄闲同是牛三或牛三以上点数时，按五个数字从大到小对比，优先大者为赢</view>
+				<view>庄闲同是牛二或牛二以下点数时，则庄赢，无需比大小</view>
+				<view class="rule-tip">【闲家单局下注限额】</view>
+				<view>平投:金额10分-10000分，封顶50000分。</view>
+				<view>倍投:金额10分-10000分，封顶10000分</view>
+				<view class="rule-tip">中奖则平台抽取5%，最终一切解释权归本公司所有，同意着才可进行游戏</view>
 				<button @click="closeRule" class="pop-btn">关闭</button>
 			</view>
-			
 		</uni-popup>
 		<NoticeDialog :isShow="showNotice"></NoticeDialog>
 	</view>
@@ -780,6 +790,9 @@ z<template>
 	.rule-content{
 		width: 600upx;
 		padding: 40upx;
+		.rule-tip{
+			margin-top:30upx;
+		}
 		.pop-btn{
 			margin-top: 100upx;
 			width: 200upx;

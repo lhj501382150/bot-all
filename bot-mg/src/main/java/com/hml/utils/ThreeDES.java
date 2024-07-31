@@ -112,12 +112,12 @@ public class ThreeDES {
         return new String(retByte);
     }
 
-    public static void main(String[] args) throws Exception {
-		String key = "77C285E3023F46FCBCF40116";
-		String str = "agent_id=2139365&batch_amt=9.80&batch_no=1014833305407070208&batch_num=1&detail_data=2022083100000004^5^0^6217858000017256600^韩先知^9.80^拍卖结算^河南省^郑州市^郑州高新技术开发区支行&ext_param1=1014833305407070208&key=4923F1D9A7074FE3B9941D76&notify_url=https://www.gaoda123.com/iface/pay/outMoneyNotify&version=3";
-		String aa = encryptThreeDESECB(str,key);
-		System.out.println(aa);
-		String st = decryptThreeDESECB(aa, key);
-		System.out.println(st);
-	}
+//    public static void main(String[] args) throws Exception {
+//		String key = "77C285E3023F46FCBCF40116";
+//		String str = "agent_id=2139365&batch_amt=9.80&batch_no=1014833305407070208&batch_num=1&detail_data=2022083100000004^5^0^6217858000017256600^韩先知^9.80^拍卖结算^河南省^郑州市^郑州高新技术开发区支行&ext_param1=1014833305407070208&key=4923F1D9A7074FE3B9941D76&notify_url=https://www.gaoda123.com/iface/pay/outMoneyNotify&version=3";
+//		String aa = encryptThreeDESECB(str,key);
+//		System.out.println(aa);
+//		String st = decryptThreeDESECB(aa, key);
+//		System.out.println(st);
+//	}
 }

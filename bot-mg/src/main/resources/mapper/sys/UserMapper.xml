@@ -173,6 +173,9 @@
 					<if test="etime != null and etime != ''">
 						and ORDTIME &lt;= #{etime}
 					</if>
+					<if test="mode != null and mode != ''">
+						and mode = #{mode}
+					</if>
 					group by USERNO
 				) t1
 				left join tb_hy_user_relation t2 on t1.userno = t2.USERNO
@@ -199,6 +202,9 @@
 						<if test="etime != null and etime != ''">
 							and ORDTIME &lt;= #{etime}
 						</if>
+						<if test="mode != null and mode != ''">
+							and mode = #{mode}
+						</if>
 						group by USERNO
 					) t1
 					left join tb_hy_user_relation t2 on t1.userno = t2.USERNO
@@ -222,6 +228,9 @@
 									</if>
 									<if test="etime != null and etime != ''">
 										and ORDTIME &lt;= #{etime}
+									</if>
+									<if test="mode != null and mode != ''">
+										and mode = #{mode}
 									</if>
 									group by USERNO
 								) t1
@@ -250,6 +259,9 @@
 									</if>
 									<if test="etime != null and etime != ''">
 										and ORDTIME &lt;= #{etime}
+									</if>
+									<if test="mode != null and mode != ''">
+										and mode = #{mode}
 									</if>
 									group by USERNO
 								) t1

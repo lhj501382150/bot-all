@@ -151,10 +151,12 @@
 			 		<uni-forms-item label="昵称" name="nickname">
 			 			<uni-easyinput type="text" prefixIcon="person" v-model="formData.nickname" placeholder="请输入昵称"/>
 			 		</uni-forms-item>
+					<!-- <uni-forms-item label="分数" name="money">
+						<uni-easyinput type="number" prefixIcon="medal" v-model="formData.money" placeholder="请输入分数"/>
+					</uni-forms-item> -->
 					<uni-forms-item label="密码" name="paypwd">
 						<uni-easyinput type="password" prefixIcon="locked" v-model="formData.paypwd" placeholder="请输入密码"/>
 					</uni-forms-item>
-			 		
 			 	</uni-forms>
 			 	 
 			 	<view class="form-btn">
@@ -175,7 +177,8 @@
 				formData:{
 					userno :'',
 					nickname:'',
-					paypwd:''
+					paypwd:'',
+					// money:''
 				},
 				rules: {
 					userno: {
@@ -547,6 +550,7 @@
 							this.formData.userno = ''
 							this.formData.nickname = ''
 							this.formData.paypwd = ''
+							this.formData.money = ''
 							 uni.showToast({
 							 	title:'添加成功',
 							 	icon:'success',

@@ -187,33 +187,4 @@ public class ThreeDES {
 
         return var8;
     }
-
-
-
-
-    /**
-     * 测试
-     *
-     * @param args
-     * @author SHANHY
-     * @date 2015-8-18
-     */
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        // 添加新安全算法,如果用JCE就要把它添加进去
-        Security.addProvider(new com.sun.crypto.provider.SunJCE());
-
-        // 24字节的密钥（我们可以取apk签名的指纹的前12个byte和后12个byte拼接在一起为我们的密钥）
-        final String keyBytes = "588AA8D960FA4C4D8558BD72";
-        String szSrc = "郭新胜";
-
-        System.out.println("加密前的字符串:" + szSrc);
-
-        String encoded = Des.Encrypt3Des(szSrc, keyBytes,"ToHex16");
-        System.out.println("加密后的字符串:" + encoded);
-
-        String srcBytes = Des.Decrypt3Des(encoded, keyBytes,"ToHex16");
-
-        System.out.println("解密后的字符串:" + srcBytes);
-    }
-
 }

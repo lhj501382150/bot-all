@@ -34,13 +34,17 @@
 	</div>
 	<div class='tab-div'>
 		<el-tabs v-model="mode" @tab-click="findPage(null)">
-			<el-tab-pane label="通宝" name="0"></el-tab-pane>
+			<el-tab-pane label="宝斗" name="0"></el-tab-pane>
 			<el-tab-pane label="牛牛" name="1"></el-tab-pane>
 		</el-tabs>
 	</div>
 	<!--表格内容栏-->
 	<kt-table :data="pageResult" :columns="filterColumns" :buttons="buttons" :showOperation="false"
 		@findPage="findPage" @handleEdit="handleEdit">
+		<template #bno="scope">
+			<span v-if="scope.row.mode==1">{{scope.row.bnno}}</span>
+			<span v-else>{{scope.row.bno}}</span>
+		</template>
 	</kt-table>
 	<!--新增编辑界面-->
 	<el-dialog :title="mode==0?'通宝行情补录结算':'牛牛行情补录结算'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" v-dialogDrag>

@@ -24,7 +24,7 @@
       </el-form-item>
       <el-form-item>
         <el-select v-model="filters.mode" placeholder="类型" clearable>
-          <el-option label="通宝" value="0"></el-option>
+          <el-option label="宝斗" value="0"></el-option>
           <el-option label="牛牛" value="1"></el-option>
         </el-select>
       </el-form-item>

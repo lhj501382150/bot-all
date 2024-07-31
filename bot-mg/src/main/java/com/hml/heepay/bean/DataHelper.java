@@ -256,11 +256,11 @@ public class DataHelper {
 	} 
 
 	
-	public static void main(String[] args) {
-		 String str = "agent_id=2139365&hy_token_id=H2208301208156AF_4168a5ef764c72df340ca4c75502bda4&ret_code=0000&ret_msg=已经发送短信验证码";
-		 Map<String, String> map = URLRequestParams(str);
-		 System.out.println(map);
-	}
+//	public static void main(String[] args) {
+//		 String str = "agent_id=2139365&hy_token_id=H2208301208156AF_4168a5ef764c72df340ca4c75502bda4&ret_code=0000&ret_msg=已经发送短信验证码";
+//		 Map<String, String> map = URLRequestParams(str);
+//		 System.out.println(map);
+//	}
 
 	
 	public static HeepayXMLReturn GetRetuenXmlContent(String xmlString)
