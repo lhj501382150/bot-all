@@ -74,11 +74,13 @@ export const getWeekStartEndDates = (offset = 0) => {
     // 计算本周一的日期
     const mondayThisWeek = new Date(now.setDate(now.getDate() - dayOfWeek));
     // 计算上周一的日期
-    const mondayLastWeek = new Date(new Date().setDate(mondayThisWeek.getDate() - 7));
+    const mondayLastWeek = new Date(new Date().setDate(mondayThisWeek.getDate() - 1));
+    
     
     // 根据偏移量计算目标周的周一和周日
-    const mondayTargetWeek = new Date(new Date().setDate(mondayThisWeek.getDate() + offset * 7));
-    const sundayTargetWeek = new Date(new Date().setDate(mondayTargetWeek.getDate() + 7));
+    const mondayTargetWeek = new Date(mondayThisWeek.setDate(mondayThisWeek.getDate() + offset * 7));
+    const temp = new Date(mondayTargetWeek.getTime());
+    const sundayTargetWeek = new Date(temp.setDate(temp.getDate() + 7));
     
     // 返回格式化后的日期（可根据需要调整格式）
     return {

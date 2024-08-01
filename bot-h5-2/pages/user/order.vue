@@ -194,8 +194,8 @@
 				this.$http.post(url,this.search,res => {
 					let datas = res.rData || []
 					datas.forEach(item=>{
-						if(item.bNno){
-							let bNos = item.bNno.split(',') || []
+						if(item.bnno){
+							let bNos = item.bnno.split(',') || []
 							let sresult = item.result.split(',') || []
 							bNos = bNos.map((item,index)=>{
 								return {
