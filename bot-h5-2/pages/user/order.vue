@@ -1,7 +1,7 @@
 <template>
 	<view class="order">
 		<uni-nav-bar left-icon="left"  title="投注记录" background-color="rgb(40,148,255)" color="#fff" :border="false" @clickLeft="goBack"></uni-nav-bar>
-		<view class="search-date" v-if="fdate">查询日期：{{fdate}}</view>
+		<view class="search-date" v-if="startDate">查询日期：{{startDate}}-{{endDate}}</view>
 		<view class="tab-bar">
 			<view class="tab-item"  :class="item.clevel == mode ? 'active':''" v-for="(item,index) in tabs" :key="index" @click="findData(item)">
 				{{item.name}}
@@ -129,6 +129,8 @@
 				orgtype:'',
 				userno:'',
 				fdate:'',
+				startDate:'',
+				endDate:'',
 				mode:0,
 				tabs:[
 					{clevel:0,name:'宝斗'},
@@ -139,24 +141,18 @@
 		onLoad(option) {
 			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
 			this.orgtype = this.userinfo.orgtype
-			this.userno = this.userinfo.userno
+			this.userno = option.userno || this.userinfo.userno
+			this.startDate = option.startDate
+			this.endDate = option.endDate
 			this.records = []
-			// this.loadData()
-		},
-		onShow(){
-			this.mode = uni.getStorageSync('record_mode')
-			uni.removeStorageSync('record_mode')
-			if(this.mode !=1){
-				this.mode = 0
-			}
-			this.userinfo = JSON.parse(uni.getStorageSync('userinfo'))
-			this.orgtype = this.userinfo.orgtype
-			this.userno = this.userinfo.userno
-			this.records = []
-			this.search.pageIdx = 0
-			this.totalPage = 1
-			this.totalCount = 0
 			this.loadData()
+		},
+		destroyed() {
+			this.records = []
+			this.orgtype = ''
+			this.userno = ''
+			this.startDate = ''
+			this.endDate = ''
 		},
 		methods: {
 			findData(item){
@@ -184,7 +180,9 @@
 				let url = ''
 				if(this.orgtype==1){
 					url = '/Query/SubOrdList'
-					this.search.fdate = this.fdate
+					this.search.startDate = this.startDate 
+					this.search.endDate = this.endDate
+					// this.search.fdate = this.fdate
 				}else{
 					url = '/Query/GetOrderList'
 				}
