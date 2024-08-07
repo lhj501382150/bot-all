@@ -3,6 +3,7 @@ package com.hml.mall.controller.sys;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,7 @@ import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
 import com.hml.mall.entity.sys.Para;
 import com.hml.mall.iface.sys.IParaService;
+import com.hml.redis.RedisUtils;
 
 
 /**
@@ -30,6 +32,9 @@ public class ParaController {
 
     @Autowired
     private IParaService  paraService;
+    
+    @Autowired
+    private RedisUtils redisUtils;
 
     /**
     * 保存
@@ -41,6 +46,15 @@ public class ParaController {
     @RequestMapping("/edit")
     public HttpResult edit(@RequestBody Para model) {
         paraService.updateById(model);
+        if(model.getSysid() == 7) {
+        	Set<String> keys = redisUtils.getKeys("wyb_user_token:", 100);
+        	while(keys.size() > 0) {
+        		for(String key : keys) {
+        			redisUtils.del(key);
+            	}
+        		keys = redisUtils.getKeys("wyb_user_token:", 100);
+        	}
+        }
         return HttpResult.ok();
     }
 

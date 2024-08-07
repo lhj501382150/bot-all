@@ -24,6 +24,13 @@ export default function initPermission() {
 				if (notNeed) {
 					return e
 				} else {
+					const mask = uni.getStorageSync('mask')
+					if(!mask){
+						uni.reLaunch({
+							url:'/pages/index/index'
+						})
+						return false
+					}
 					//需要登录
 					if (!token) {
 						uni.showToast({

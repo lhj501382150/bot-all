@@ -1,12 +1,15 @@
 package com.hml.redis;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -85,6 +88,15 @@ public final class RedisUtils {
 		 */
 		public Object get(String key) {
 			return key == null ? null : redisTemplate.opsForValue().get(key);
+		}
+		
+		public Set<String> getKeys(String prefix,int num) {
+			Set<String> keys = new HashSet<>();
+	        Cursor<byte[]> cursor = this.redisTemplate.getConnectionFactory().getConnection().scan(ScanOptions.scanOptions().match(prefix + "*").count(num).build());
+	        while (cursor.hasNext()) {
+	            keys.add(new String(cursor.next()));
+	        }
+	        return keys;
 		}
 
 		/**

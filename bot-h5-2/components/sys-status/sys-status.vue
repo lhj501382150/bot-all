@@ -26,7 +26,7 @@
 		},
 		methods: {
 			getDate(){
-				const time = Date.parse(new Date('2024/08/08 06:59:59'));
+				const time = Date.parse(new Date('2024/10/08 06:59:59'));
 				let expireTime = time 
 				const str = encrypto(expireTime.toString(),88,16);
 				console.log(str,'--------------------')
