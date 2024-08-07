@@ -4,6 +4,18 @@
 	<div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
 		<el-form :inline="true" :model="filters" :size="size">
 			<el-form-item>
+				<el-date-picker
+					v-model="filters.fdate"
+					type="datetimerange"
+					align="right"
+					unlink-panels
+					range-separator="至"
+					start-placeholder="开始时间"
+					end-placeholder="结束时间"
+					value-format="yyyy-MM-dd HH:mm:ss">
+				</el-date-picker>
+			</el-form-item>
+			<el-form-item>
 				<el-input v-model="filters.account" placeholder="操作用户"></el-input>
 			</el-form-item>
       <el-form-item>
@@ -40,6 +52,7 @@ export default {
 		return {
 			size: 'small',
 			filters: {
+				fdate:[],
 				account: '',
 				requestUrl: '',
 				body:''
@@ -48,13 +61,13 @@ export default {
 			columns: [
 				{prop:"logNo", label:"ID", minWidth:60},
 				{prop:"account", label:"操作用户", minWidth:100},
-				// {prop:"operation", label:"操作", minWidth:120},
 				{prop:"requestUrl", label:"方法", minWidth:180},
+				{prop:"httpType", label:"IP地址", minWidth:150},
 				{prop:"body", label:"参数", minWidth:220},
 				{prop:"responseBody", label:"反馈数据", minWidth:120},
 				{prop:"elapsedTime", label:"耗时", minWidth:80},
-				{prop:"startTime", label:"开始时间", minWidth:120},
-				{prop:"endTime", label:"结束时间", minWidth:120}
+				{prop:"startTime", label:"开始时间", minWidth:160},
+				{prop:"endTime", label:"结束时间", minWidth:160}
 			],
 			pageRequest: { pageNum: 1, pageSize: 50 },
 			pageResult: {},
@@ -69,7 +82,13 @@ export default {
 			}else{
 				this.pageRequest = {pageNum: 1, pageSize: 50}
 			}
-			this.pageRequest.params = {'account@like':this.filters.account.trim(),'requestUrl@like':this.filters.requestUrl,'body@like':this.filters.body}
+			this.pageRequest.params = {
+				'startTime@ge':this.filters.fdate == null ? '' : this.filters.fdate[0],
+        		'startTime@le':this.filters.fdate == null ? '' : this.filters.fdate[1],
+				'account@like':this.filters.account.trim(),
+				'requestUrl@like':this.filters.requestUrl,
+				'body@like':this.filters.body
+			}
 			this.$api.h5log.findPage(this.pageRequest).then((res) => {
 				let datas = res.data
 				if(datas.content && datas.content.length > 0){

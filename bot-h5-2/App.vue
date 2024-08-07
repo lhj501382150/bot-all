@@ -2,16 +2,30 @@
 	import initPermission from './utils/permission'
 	export default {
 		onLaunch: function() {
+			this.plate = uni.getSystemInfoSync().platform
+			if(this.plate.indexOf('ios') < 0){
+				window.addEventListener('beforeunload', this.handleBeforeUnload);
+				const closeTime = uni.getStorageSync('close') || 0
+				const curTime = new Date().getTime()
+				if(closeTime > 0 &&  curTime - closeTime > 5 * 1000){
+					uni.removeStorageSync("userinfo")
+					uni.removeStorageSync("Token")
+					uni.removeStorageSync("userno")
+					uni.removeStorageSync("mask")
+				}
+			}
 			initPermission()
 		},
 		onShow: function() {
-			const leaveTime = uni.getStorageSync('leave') || 0
-			const curTime = new Date().getTime()
-			if(leaveTime > 0 && curTime -leaveTime > 1000 * 60 * 30){
-				uni.removeStorageSync("userinfo")
-				uni.removeStorageSync("Token")
-				uni.removeStorageSync("userno")
-				uni.removeStorageSync("mask")
+			if(this.plate.indexOf('ios') >= 0){
+				const curTime = new Date().getTime()
+				const leaveTime = uni.getStorageSync('leave') || 0
+				if(leaveTime > 0 && curTime -leaveTime > 30 * 60 * 1000){
+					uni.removeStorageSync("userinfo")
+					uni.removeStorageSync("Token")
+					uni.removeStorageSync("userno")
+					uni.removeStorageSync("mask")
+				}
 			}
 			const mask = uni.getStorageSync('mask')
 			if(!mask){
@@ -21,11 +35,21 @@
 			}
 		},
 		onHide: function() {
-			uni.setStorageSync('leave',new Date().getTime())
+			if(this.plate.indexOf('ios') >= 0){
+				uni.setStorageSync('leave',new Date().getTime())
+			}
+		},
+		onUnload() {
+			window.removeEventListener('beforeunload', this.handleBeforeUnload);
 		},
 		data(){
 			return {
-				leaveTime:0
+				plate : ''
+			}
+		},
+		methods:{
+			handleBeforeUnload(){
+				uni.setStorageSync('close',new Date().getTime())
 			}
 		}
 	}

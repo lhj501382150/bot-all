@@ -24,6 +24,9 @@ http.beforeResponseFilter = function (res) {
 	if(res.statusCode==200){
 		res = res.data
 		if(res.iCode==401){
+			uni.removeStorageSync("userinfo")
+			uni.removeStorageSync("Token")
+			uni.removeStorageSync("userno")
 			uni.removeStorageSync("mask")
 			uni.navigateTo({
 				url:'/pages/index/index'
@@ -37,6 +40,9 @@ http.beforeResponseFilter = function (res) {
 		}
 		return res;
 	}else if(res.statusCode==401){
+		uni.removeStorageSync("userinfo")
+		uni.removeStorageSync("Token")
+		uni.removeStorageSync("userno")
 		uni.removeStorageSync("mask")
 		 uni.navigateTo({
 		 	url:'/pages/index/index'
