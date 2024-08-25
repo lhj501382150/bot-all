@@ -133,7 +133,8 @@
 				tabs:[
 					{clevel:0,name:'宝斗'},
 					{clevel:1,name:'牛牛'}
-				]
+				],
+				loadMore:false
 			}
 		},
 		onLoad(option) {
@@ -169,7 +170,10 @@
 			},
 			scrolltolower() {
 				if (this.records.length >= this.totalCount) return
-				this.loadData()
+				if(!this.loadMore){
+					this.loadMore = true
+					this.loadData()
+				}
 			},
 			//下拉刷新
 			getRefresherrefresh(){
@@ -215,6 +219,7 @@
 						this.search.pageIdx = this.search.pageIdx + this.search.pageSize
 					}
 					this.refresherTriggered = false
+					this.loadMore = false
 				})
 			},
 			 getNums(sresult,index){
