@@ -64,6 +64,14 @@
 			}
 		},
 		{
+			"path" : "pages/user/hisOrder",
+			"style" : 
+			{
+				"enablePullDownRefresh" : false,
+				"navigationStyle":"custom"
+			}
+		},
+		{
 			"path" : "pages/user/updatePwd",
 			"style" : 
 			{
