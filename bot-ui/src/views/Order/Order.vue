@@ -50,8 +50,14 @@
 	<!--表格内容栏-->
 	<kt-table :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
     <template #mode="scope">
-      <el-tag type="primary" v-if="scope.row.mode==0">通宝</el-tag>
+      <el-tag type="primary" v-if="scope.row.mode==0">宝斗</el-tag>
       <el-tag type="success" v-else-if="scope.row.mode==1">牛牛</el-tag>
+    </template>
+    <template #oper="scope">
+        <div v-if="scope.row.buyorsal=='B' && scope.row.status=='0'">
+          <el-button type="danger" size="mini" @click="logoff(scope.row)" v-if="scope.row.comm === 0 && scope.row.loss==0">注销</el-button>
+        </div>
+       
     </template>
 	</kt-table>
   </div>
@@ -94,9 +100,11 @@ export default {
         {prop:"cpright", label:"倍数", minWidth:80},
         {prop:"comm", label:"手续费", minWidth:80},
         {prop:"transcomm", label:"返佣", minWidth:80},
-        {prop:"contno", label:"邀请人", minWidth:80},
+        // {prop:"contno", label:"邀请人", minWidth:80},
         {prop:"mode", label:"类型", minWidth:80},
-        {prop:"ordtime", label:"下单时间", minWidth:150}
+        {prop:"ordtime", label:"下单时间", minWidth:150},
+        {prop:"cantime", label:"注销时间", minWidth:150},
+        {prop:"oper", label:"操作", minWidth:100}
       ],
 			pageRequest: { pageNum: 1, pageSize: 50 },
       pageResult: {},
@@ -104,6 +112,22 @@ export default {
     }
 	},
 	methods: {
+    logoff(row){
+      this.$confirm('确认注销吗？', '提示', {}).then(() => {
+        let para = {
+          orderno:row.orderno,
+          status:1
+        }
+         this.$api.order.edit(para).then(res=>{
+            if(res.code == 200) {
+              this.$message({ message: '操作成功', type: 'success' })
+            } else {
+              this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+            }
+            this.findPage(null)
+         })
+      })
+    },
 		// 获取分页数据
 		findPage: function (data) {
 			if(data !== null) {

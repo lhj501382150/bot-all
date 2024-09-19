@@ -12,6 +12,14 @@ export const findPage = (data) => {
   })
 }
 
+export const edit = (data) => {
+  return axios({
+    url: '/order/edit',
+    method: 'post',
+    data
+  })
+}
+
 
 //  查询所有
 export const findList = (data) => {

@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hml.backcore.config.BackCoreConfig;
 import com.hml.core.page.MybatisPlusPageHelper;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
@@ -22,6 +24,7 @@ import com.hml.mall.mapper.order.OrderMapper;
 import com.hml.mall.security.LoginUser;
 import com.hml.mall.util.SecurityUtils;
 import com.hml.utils.DateTimeUtils;
+import com.hml.utils.HttpClientUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -149,5 +152,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		usermoneyChangeMapper.delete(qw2);
 		log.info("变动明细处理完成...");
 	}
-
+    
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+	public boolean updateById(Order entity) {
+		Order item = orderMapper.selectById(entity.getOrderno());
+		if("1".equals(entity.getStatus())) {
+			item.setCantime(DateTimeUtils.getDateTime());
+		}else {
+			item.setCantime("");
+		}
+		item.setStatus(entity.getStatus());
+		 boolean flag = super.updateById(entity);
+		 JSONObject json = new JSONObject();
+		 json.put("orderNo", item.getOrderno());
+		 json.put("mode", item.getMode());
+		 json.put("status", item.getStatus());
+		 
+		 try {
+				String ret = HttpClientUtils.doPost(BackCoreConfig.URL + BackCoreConfig.EDIT_ORDER_STATUS, json.toJSONString(),null);
+				json = JSONObject.parseObject(ret);
+				if(!"0".equals(json.getString("iCode"))){
+					throw new RuntimeException(json.getString("sMsg"));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+		 return flag;
+	}
 }

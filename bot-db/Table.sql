@@ -122,3 +122,16 @@ CREATE TABLE `tb_zj_his_usermoney_change` (
   PRIMARY KEY (`WARTNO`) USING BTREE,
   KEY `index_fdate_userno` (`FDATE`,`USERNO`) USING BTREE
 ) ;
+
+
+DROP TABLE IF EXISTS tb_hy_user_limit;
+CREATE TABLE tb_hy_user_limit (
+  USERNO varchar(16) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci  COMMENT '”√ªß±‡∫≈',
+  MIN_DOU int DEFAULT 0 COMMENT '',
+  MAX_DOU int DEFAULT 0 COMMENT '',
+  MIN_NIU_P int DEFAULT 0 COMMENT '',
+  MAX_NIU_P int DEFAULT 0 COMMENT '',
+  MIN_NIU_B int DEFAULT 0 COMMENT '',
+  MAX_NIU_B int DEFAULT 0 COMMENT '',
+  PRIMARY KEY (USERNO) USING BTREE
+ ) ;

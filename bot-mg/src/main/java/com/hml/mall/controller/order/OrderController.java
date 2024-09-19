@@ -52,7 +52,6 @@ public class OrderController {
     * @param model
     * @return
     */
-    @PreAuthorize("hasAuthority('order:order:edit')")
     @RequestMapping("/edit")
     public HttpResult edit(@RequestBody Order model) {
         orderService.updateById(model);

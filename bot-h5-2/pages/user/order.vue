@@ -25,9 +25,11 @@
 							  <view class="row">金额：<text class="red">{{item.bailmoney}}</text></view>
 							  <view class="row">中奖金额：<text class="red" v-if="item.bno">{{item.loss + item.bailmoney - item.comm}}</text></view>
 							  <view class="row">下注时间：{{item.ordtime}}</view>
+							  <view class="row"  v-if="item.status == 1">注销时间：{{item.cantime}}</view>
 						 </view>
 						 <view class="right">
-							  <view class="red" v-if="!item.bno">未开奖</view>
+							 <view class="red" v-if="item.status == 1">已注销</view>
+							  <view class="red" v-else-if="!item.bno">未开奖</view>
 							  <view v-else>
 								  <view class="red" v-if="item.loss < 0 ">未中奖</view>
 								  <view class="blue" v-else-if="item.loss==0">打和</view>
@@ -78,9 +80,11 @@
 									<text class="red" v-else>{{item.loss - item.comm}}</text>
 							  </view>
 							  <view class="row">下注时间：{{item.ordtime}}</view>
+							  <view class="row"  v-if="item.status == 1">注销时间：{{item.cantime}}</view>
 						 </view>
 						 <view class="right">
-						 		<view class="red" v-if="item.comm === 0 && item.loss==0">未开奖</view>
+							    <view class="red" v-if="item.status == 1">已注销</view>
+						 		<view class="red" v-else-if="item.comm === 0 && item.loss==0">未开奖</view>
 						 		<view v-else>
 									  <view class="red" v-if="item.loss < 0 ">未中奖</view>
 									  <view class="blue" v-else-if="item.loss==0">打和</view>
