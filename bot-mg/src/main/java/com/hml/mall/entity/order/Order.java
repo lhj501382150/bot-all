@@ -77,17 +77,17 @@ private static final long serialVersionUID=1L;
     @TableField("ORDTIME")
     private String ordtime;
 
-    @TableField("ORDTYPE")
-    private String ordtype;
+//    @TableField("ORDTYPE")
+//    private String ordtype;
 
-    @TableField("LOGINNO")
-    private String loginno;
+//    @TableField("LOGINNO")
+//    private String loginno;
 
     /**
     * IP+MAC 移动端设备号
     */
-    @TableField("ORDDEV")
-    private String orddev;
+//    @TableField("ORDDEV")
+//    private String orddev;
 
     /**
     * yyyy-MM-dd HH:mm:ss
@@ -95,14 +95,14 @@ private static final long serialVersionUID=1L;
     @TableField("CANTIME")
     private String cantime;
 
-    @TableField("CLOGINNO")
-    private String cloginno;
+//    @TableField("CLOGINNO")
+//    private String cloginno;
 
     /**
     * IP+MAC 移动端设备号
     */
-    @TableField("CANDEV")
-    private String candev;
+//    @TableField("CANDEV")
+//    private String candev;
     
     @TableField("ARTID")
     private String artid;

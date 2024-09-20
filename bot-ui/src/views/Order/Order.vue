@@ -53,6 +53,10 @@
       <el-tag type="primary" v-if="scope.row.mode==0">宝斗</el-tag>
       <el-tag type="success" v-else-if="scope.row.mode==1">牛牛</el-tag>
     </template>
+    <template #status="scope">
+      <el-tag type="success" v-if="scope.row.status==0">正常</el-tag>
+      <el-tag type="danger" v-else-if="scope.row.status==1">注销</el-tag>
+    </template>
     <template #oper="scope">
         <div v-if="scope.row.buyorsal=='B' && scope.row.status=='0'">
           <el-button type="danger" size="mini" @click="logoff(scope.row)" v-if="scope.row.comm === 0 && scope.row.loss==0">注销</el-button>
@@ -89,20 +93,21 @@ export default {
         mode:''
 			},
 			columns: [
-				{prop:"fdate", label:"订单日期", minWidth:150},
-				{prop:"orderno", label:"订单编号", minWidth:150},
+				{prop:"fdate", label:"订单日期", width:100},
+				{prop:"orderno", label:"订单编号", width:100},
         {prop:"userno", label:"USERID", minWidth:100},
         {prop:"username", label:"客户用户名", minWidth:120},
         {prop:"nickname", label:"客户昵称", minWidth:120},
         {prop:"artid", label:"注单", minWidth:80},
-        {prop:"price", label:"金额", minWidth:60},
-        {prop:"loss", label:"本局输赢", minWidth:80},
+        {prop:"price", label:"金额", minWidth:100},
+        {prop:"loss", label:"本局输赢", minWidth:100},
         {prop:"cpright", label:"倍数", minWidth:80},
         {prop:"comm", label:"手续费", minWidth:80},
         {prop:"transcomm", label:"返佣", minWidth:80},
         // {prop:"contno", label:"邀请人", minWidth:80},
         {prop:"mode", label:"类型", minWidth:80},
         {prop:"ordtime", label:"下单时间", minWidth:150},
+        {prop:"status", label:"状态", minWidth:100},
         {prop:"cantime", label:"注销时间", minWidth:150},
         {prop:"oper", label:"操作", minWidth:100}
       ],

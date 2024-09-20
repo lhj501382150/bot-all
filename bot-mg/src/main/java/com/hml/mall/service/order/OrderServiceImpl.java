@@ -163,7 +163,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			item.setCantime("");
 		}
 		item.setStatus(entity.getStatus());
-		 boolean flag = super.updateById(entity);
+		 boolean flag = super.updateById(item);
 		 JSONObject json = new JSONObject();
 		 json.put("orderNo", item.getOrderno());
 		 json.put("mode", item.getMode());
