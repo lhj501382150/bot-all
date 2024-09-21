@@ -60,6 +60,7 @@
 								<view class="drop-item" @click="openPwdPopup(item,1)">密码重置</view>
 								<view class="drop-item" @click="openPwdPopup(item,2)">密码批量重置</view>
 								<view class="drop-item" @click="openNamePopup(item)">昵称修改</view>
+								<view class="drop-item" @click="openLimitPopup(item)">单项额度限制</view>
 								<view class="drop-item" v-if="item.sex!=0" @click="changeStatus(item.userno,0)">启用</view>
 								<view class="drop-item" v-if="item.sex!=1" @click="changeStatus(item.userno,1)">冻结</view>
 								<view class="drop-item" v-if="item.sex!=2" @click="changeStatus(item.userno,2)">停用</view>
@@ -164,6 +165,31 @@
 					<button class="sub-btn" @click="submit">确认创建</button>
 				</view>
 			 </view>
+		 </uni-popup>
+		 <uni-popup ref="limitPopup" type="center" background-color="#fff">
+		 			 <view class="form">
+		 				 <view class="form-title">单项额度限制</view>
+		 				 <view class="form-sub-title">所属账号：{{limitForm.userno}}</view>
+		 				<uni-forms ref="limitForm" :modelValue="limitForm" :rules="limitFormRules" >
+		 					<uni-forms-item label="宝斗最大限额" name="maxDou">
+		 						<uni-easyinput type="number" v-model="limitForm.maxDou" placeholder="请输入宝斗最大限额"/>
+		 					</uni-forms-item>
+							<uni-forms-item label="牛牛平投最大限额" name="maxNiuP">
+								<uni-easyinput type="number" v-model="limitForm.maxNiuP" placeholder="请输入牛牛平投最大限额"/>
+							</uni-forms-item>
+							<uni-forms-item label="牛牛倍投最大限额" name="maxNiuB">
+								<uni-easyinput type="number" v-model="limitForm.maxNiuB" placeholder="请输入牛牛倍投最大限额"/>
+							</uni-forms-item>
+							<uni-forms-item>
+								<view style="color: red;width: 100%;text-align: center;">* 0代表不限制</view>
+							</uni-forms-item>
+		 				</uni-forms>
+		 				 
+		 				<view class="form-btn">
+		 					<button class="cal-btn" size="mini" @click="closeLimitPopup">取消</button>
+		 					<button class="sub-btn"  size="mini" @click="submitLimit" :loading="editloding" :disabled="editloding">确认</button>
+		 				</view>
+		 			 </view>
 		 </uni-popup>
 	</view>
 </template>
@@ -277,7 +303,49 @@
 					 		{required: true,errorMessage: '请输入昵称'}
 					 	]
 					 }
-				}
+				},
+				limitForm:{
+					userno: "",
+					minDou: 0,
+					maxDou: 0,
+					minNiuP: 0,
+					minNiuB: 0,
+					maxNiuP: 0,
+					maxNiuB: 0
+				},
+				limitFormRules: {
+					 minDou: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入宝斗最小限额'}
+					 	]
+					 },
+					 maxDou: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入宝斗最大限额'}
+					 	]
+					 },
+					 minNiuP: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入牛牛平投最小限额'}
+					 	]
+					 },
+					 minNiuB: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入牛牛倍投最小限额'}
+					 	]
+					 },
+					 maxNiuP: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入牛牛平投最大限额'}
+					 	]
+					 },
+					 maxNiuB: {
+					 	rules: [
+					 		{required: true,errorMessage: '请输入牛牛倍投最大限额'}
+					 	]
+					 }
+					 
+				},
 			}
 		},
 		onLoad() {
@@ -414,6 +482,52 @@
 								duration:3000
 							 })
 							 this.closeNamePopup()
+							  setTimeout(this.getRefresherrefresh,1000)
+						}else{
+							uni.showToast({
+								title:res.sMsg,
+								icon:'error'
+							})
+						}
+					}))
+				}).catch(err =>{
+					console.log(err);
+				})
+			},
+			closeLimitPopup(){
+				this.$refs.limitPopup.close()
+				this.limitForm.userno = ''
+				this.limitForm.minDou = 0
+				this.limitForm.maxDou = 0
+				this.limitForm.minNiuP = 0
+				this.limitForm.minNiuB = 0
+				this.limitForm.maxNiuP = 0
+				this.limitForm.maxNiuB = 0
+			},
+			openLimitPopup(item){
+				this.limitForm.userno = item.userno
+				let url = '/User/QueryUserLimit'
+				this.$http.post(url,{userno:item.userno},(res=>{
+					if(res.iCode ==0 && res.rData.userno != null){
+						this.limitForm = res.rData
+					}
+					this.$refs.limitPopup.open()
+				}))
+			},
+			submitLimit(){
+				this.$refs.limitForm.validate().then(res=>{
+					this.editloding = true
+					let para = Object.assign({},this.limitForm)
+					 let url = '/User/SetUserLimit'
+					this.$http.post(url,para,(res=>{
+						this.editloding = false
+						if(res.iCode ==0){
+							 uni.showToast({
+							 	title:'操作成功',
+							 	icon:'success',
+								duration:3000
+							 })
+							 this.closeLimitPopup()
 							  setTimeout(this.getRefresherrefresh,1000)
 						}else{
 							uni.showToast({
@@ -698,6 +812,7 @@
 					width: 240upx;
 					background-color: #ffffff;
 					box-shadow: 0px 0px 3px 1px #f2f2f2;
+					z-index: 999;
 					.drop-item{
 						line-height: 60upx;
 					}

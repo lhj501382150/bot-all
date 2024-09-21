@@ -102,7 +102,7 @@ export default {
         {prop:"price", label:"金额", minWidth:100},
         {prop:"loss", label:"本局输赢", minWidth:100},
         {prop:"cpright", label:"倍数", minWidth:80},
-        {prop:"comm", label:"手续费", minWidth:80},
+        {prop:"comm", label:"手续费", minWidth:100},
         {prop:"transcomm", label:"返佣", minWidth:80},
         // {prop:"contno", label:"邀请人", minWidth:80},
         {prop:"mode", label:"类型", minWidth:80},

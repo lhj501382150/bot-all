@@ -63,7 +63,7 @@ public class UserLimitController {
     @PreAuthorize("hasAuthority('sys:userLimit:del')")
     @RequestMapping("/delete")
     public HttpResult delete(@RequestBody UserLimit model) {
-        userLimitService.removeById(model);
+        userLimitService.removeById(model.getUserno());
         return HttpResult.ok();
     }
     /**

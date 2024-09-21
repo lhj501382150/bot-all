@@ -29,8 +29,8 @@
 						 </view>
 						 <view class="right">
 							 <view class="red" v-if="item.status == 1">已注销</view>
-							  <view class="red" v-else-if="!item.bno">未开奖</view>
-							  <view v-else>
+							 <view class="red" v-else-if="!item.bno">未开奖</view>
+							 <view v-else>
 								  <view class="red" v-if="item.loss < 0 ">未中奖</view>
 								  <view class="blue" v-else-if="item.loss==0">打和</view>
 								  <view class="blue" v-else>中奖</view>

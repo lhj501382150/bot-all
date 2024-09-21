@@ -26,7 +26,7 @@
           <el-input v-model="filters.tjnickname" placeholder="邀请人用户昵称"></el-input>
         </el-form-item> -->
         <el-form-item>
-          <el-select v-model="filters.sex  " placeholder="状态" clearable>
+          <el-select v-model="filters.sex" placeholder="状态" clearable>
             <el-option label="正常" value="Y"></el-option>
             <el-option label="冻结" value="N"></el-option>
           </el-select>

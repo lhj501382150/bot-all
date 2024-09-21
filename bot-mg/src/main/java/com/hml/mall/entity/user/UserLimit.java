@@ -46,6 +46,13 @@ private static final long serialVersionUID=1L;
 
     @TableField("MAX_NIU_B")
     private Integer maxNiuB;
+    
+    
+    @TableField(exist = false)
+    private Integer orgtype;
+    
+    @TableField(exist = false)
+    private Integer clevel;
 
 
 }

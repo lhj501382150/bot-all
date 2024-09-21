@@ -7,15 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hml.core.page.MybatisPlusPageHelper;
 import com.hml.core.page.PageRequest;
 import com.hml.core.page.PageResult;
+import com.hml.mall.entity.user.User;
 import com.hml.mall.entity.user.UserLimit;
+import com.hml.mall.entity.user.UserRelation;
 import com.hml.mall.iface.user.IUserLimitService;
 import com.hml.mall.mapper.user.UserLimitMapper;
+import com.hml.mall.mapper.user.UserMapper;
+import com.hml.mall.mapper.user.UserRelationMapper;
 import com.hml.redis.RedisUtils;
 
 /**
@@ -34,6 +37,12 @@ public class UserLimitServiceImpl extends ServiceImpl<UserLimitMapper, UserLimit
 	private UserLimitMapper userLimitMapper;
 	
 	@Autowired
+	private UserRelationMapper userRelationMapper;
+	
+	@Autowired
+	private UserMapper userMapper;
+	
+	@Autowired
 	private RedisUtils redisUtils;
 	
 	private String REDIS_KEY = "USER_LIMIT_AUTH:";
@@ -47,27 +56,58 @@ public class UserLimitServiceImpl extends ServiceImpl<UserLimitMapper, UserLimit
     @Override
 	public PageResult findPage(PageRequest pageRequest) {
 		 
-		return MybatisPlusPageHelper.findPage(pageRequest, userLimitMapper);
+		return MybatisPlusPageHelper.findPage(pageRequest, userLimitMapper,"findPage");
 	}
 
     @Override
     @Transactional(rollbackFor = Exception.class)
 	public boolean save(UserLimit entity) {
+    	 User user = userMapper.selectById(entity.getUserno());
+    	 if(user == null) {
+    		 throw new RuntimeException(entity.getUserno() + "不存在");
+    	 }
     	 UserLimit item = userLimitMapper.selectById(entity.getUserno());
     	 if(item != null) {
     		 throw new RuntimeException(entity.getUserno() + "已存在");
     	 }
 		 boolean flag = super.save(entity);
-		 redisUtils.set(REDIS_KEY + entity.getUserno(),  JSONObject.toJSONString(entity));
+		 
+    	 if(user.getOrgtype() == 1) {
+    		 UserRelation relation = userRelationMapper.selectById(entity.getUserno());
+    		 QueryWrapper<UserLimit> qw = new QueryWrapper<UserLimit>();
+    		 qw.eq("uno" + relation.getClevel(), entity.getUserno());
+    		 qw.eq("orgtype", 2);
+    		 List<UserRelation> items = userLimitMapper.findUser(qw);
+    		 for(UserRelation temp : items) {
+    			 userLimitMapper.deleteById(temp.getUserno());
+    			 entity.setUserno(temp.getUserno());
+    			 super.save(entity);
+    			 redisUtils.del(REDIS_KEY + entity.getUserno());
+    		 }
+    	 }
+//		 redisUtils.set(REDIS_KEY + entity.getUserno(),  JSONObject.toJSONString(entity));
 		 return flag;
 	}
     
     @Override
     @Transactional(rollbackFor = Exception.class)
 	public boolean updateById(UserLimit entity) {
-		
 		 boolean flag = super.updateById(entity);
-		 redisUtils.set(REDIS_KEY + entity.getUserno(),  JSONObject.toJSONString(entity));
+		 User user = userMapper.selectById(entity.getUserno());
+		 if(user.getOrgtype() == 1) {
+    		 UserRelation relation = userRelationMapper.selectById(entity.getUserno());
+    		 QueryWrapper<UserLimit> qw = new QueryWrapper<UserLimit>();
+    		 qw.eq("uno" + relation.getClevel(), entity.getUserno());
+    		 qw.eq("orgtype", 2);
+    		 List<UserRelation> items = userLimitMapper.findUser(qw);
+    		 for(UserRelation temp : items) {
+    			 userLimitMapper.deleteById(temp.getUserno());
+    			 entity.setUserno(temp.getUserno());
+    			 super.save(entity);
+    			 redisUtils.del(REDIS_KEY + entity.getUserno());
+    		 }
+    	 }
+//		 redisUtils.set(REDIS_KEY + entity.getUserno(),  JSONObject.toJSONString(entity));
 		 return flag;
 	}
     
@@ -75,7 +115,18 @@ public class UserLimitServiceImpl extends ServiceImpl<UserLimitMapper, UserLimit
     @Transactional(rollbackFor = Exception.class)
     public boolean removeById(Serializable id) {
     	 boolean flag = super.removeById(id);
-    	 redisUtils.del(REDIS_KEY + id);
+    	 User user = userMapper.selectById(id);
+		 if(user.getOrgtype() == 1) {
+    		 UserRelation relation = userRelationMapper.selectById(id);
+    		 QueryWrapper<UserLimit> qw = new QueryWrapper<UserLimit>();
+    		 qw.eq("uno" + relation.getClevel(), id);
+    		 qw.eq("orgtype", 2);
+    		 List<UserRelation> items = userLimitMapper.findUser(qw);
+    		 for(UserRelation temp : items) {
+    			 userLimitMapper.deleteById(temp.getUserno());
+    			 redisUtils.del(REDIS_KEY + id);
+    		 }
+    	 }
     	return flag;
     }
 }

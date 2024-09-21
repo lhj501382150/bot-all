@@ -7,15 +7,20 @@
           <el-form-item>
             <el-input v-model="filters.userno" placeholder="客户编号" maxlength="16"></el-input>
           </el-form-item>
+          <el-form-item>
+        <el-select v-model="filters.clevel" placeholder="级别" clearable>
+          <el-option v-for="(item,index) in clevels" :key="index" :label="item.val" :value="item.key"></el-option>
+        </el-select>
+        <el-select v-model="filters.orgtype" placeholder="类型" clearable>
+          <el-option v-for="(item,index) in orgtypes" :key="index" :label="item.val" :value="item.key"></el-option>
+        </el-select>
+			</el-form-item>
           
           <el-form-item>
             <kt-button icon="fa fa-search" :label="$t('action.search')" perms="sys:userLimit:view" type="primary" @click="findPage(null)"/>
           </el-form-item>
           <el-form-item>
             <kt-button icon="fa fa-plus" :label="$t('action.add')" perms="sys:userLimit:add" type="primary" @click="handleAdd" />
-          </el-form-item>
-          <el-form-item>
-            <kt-button icon="fa fa-plus" label="类似新增" perms="sys:userLimit:addLike" type="primary" @click="handleAddLike" />
           </el-form-item>
 
         </el-form>
@@ -41,7 +46,13 @@
 	<!--表格内容栏-->
 	<kt-table permsEdit="sys:userLimit:edit" permsDelete="sys:userLimit:del"
 		:data="pageResult" :columns="filterColumns" :buttons="buttons"
-		@findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete" @handleAudit="handleAudit">
+		@findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
+    <template #clevel="scope">
+        <el-tag type="danger" v-if="scope.row.orgtype==1">
+          {{ getClevel(scope.row.clevel) }}
+        </el-tag>
+        <el-tag v-if="scope.row.orgtype==2">普通会员</el-tag>
+    </template>
 	</kt-table>
 	<!--新增编辑界面-->
 	<el-dialog :title="operation?'新增':'编辑'" width="40%" :visible="true" v-if="dialogVisible" :close-on-click-modal="false" :show-close="false" :destroy-on-close="true"  v-dialogDrag>
@@ -97,7 +108,9 @@ export default {
 		return {
       size: 'small',
       filters: {
-        userno: ''
+        userno: '',
+        orgtype:'',
+        clevel:''
       },
       columns: [],
       buttons:[],
@@ -124,12 +137,23 @@ export default {
         maxNiuP: 0,
         minNiuB: 0,
         maxNiuB: 0,
-        
       },
-       
+      clevels:[
+        {key:1,val:'分公司'},
+        {key:2,val:'股东'},
+        {key:3,val:'总代理'},
+        {key:4,val:'代理'}
+      ],
+      orgtypes:[
+        {key:1,val:'非会员'},
+        {key:2,val:'普通会员'}
+      ],
     }
 	},
 	methods: {
+    getClevel(level){
+      return this.clevels.find(item=>item.key==level).val
+    },
 		// 获取分页数据
 		findPage: function (data) {
 			if(data !== null) {
@@ -137,9 +161,11 @@ export default {
 			}else{
         this.pageRequest = {pageNum: 1, pageSize: 50}
       }
-			this.pageRequest.params = {
-			  'userno':this.filters.userno
-			}
+      if(this.filters.clevel > 0){
+        this.filters.orgtype = 1
+      } 
+			this.pageRequest.params = Object.assign({},this.filters)
+      
 			this.$api.userlimit.findPage(this.pageRequest).then((res) => {
 				this.pageResult = res.data
 			}).then(data!=null?data.callback:'')
@@ -219,14 +245,13 @@ export default {
 			this.columns = [
         {prop:"userno", label:"用户编号", minWidth:120},
         // {prop:"username", label:"用户名称", minWidth:120},
+        {prop:"clevel", label:"类型", width:120},
         {prop:"minDou", label:"宝斗最小限额", minWidth:120},
         {prop:"maxDou", label:"宝斗最大限额", minWidth:120},
         {prop:"minNiuP", label:"牛牛平投最小限额", minWidth:120},
         {prop:"maxNiuP", label:"牛牛平投最大限额", minWidth:120},
         {prop:"minNiuB", label:"牛牛倍投最小限额", minWidth:120},
         {prop:"maxNiuB", label:"牛牛倍投最大限额", minWidth:120},
-        
-				
 			]
 			this.filterColumns = this.columns;
 	},
