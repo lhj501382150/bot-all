@@ -74,6 +74,9 @@ public class UserLimitServiceImpl extends ServiceImpl<UserLimitMapper, UserLimit
 		 
     	 if(user.getOrgtype() == 1) {
     		 UserRelation relation = userRelationMapper.selectById(entity.getUserno());
+    		 if(!checkMaxLimit(relation.getParentno(),entity)){
+    			 throw new RuntimeException("最大限额不能超过上级设置最大限额");
+    		 }
     		 QueryWrapper<UserLimit> qw = new QueryWrapper<UserLimit>();
     		 qw.eq("uno" + relation.getClevel(), entity.getUserno());
     		 qw.eq("orgtype", 2);
@@ -84,6 +87,8 @@ public class UserLimitServiceImpl extends ServiceImpl<UserLimitMapper, UserLimit
     			 super.save(entity);
     			 redisUtils.del(REDIS_KEY + entity.getUserno());
     		 }
+    	 }else {
+    		 redisUtils.del(REDIS_KEY + entity.getUserno());
     	 }
 //		 redisUtils.set(REDIS_KEY + entity.getUserno(),  JSONObject.toJSONString(entity));
 		 return flag;
@@ -96,6 +101,9 @@ public class UserLimitServiceImpl extends ServiceImpl<UserLimitMapper, UserLimit
 		 User user = userMapper.selectById(entity.getUserno());
 		 if(user.getOrgtype() == 1) {
     		 UserRelation relation = userRelationMapper.selectById(entity.getUserno());
+    		 if(!checkMaxLimit(relation.getParentno(),entity)){
+    			 throw new RuntimeException("最大限额不能超过上级设置最大限额");
+    		 }
     		 QueryWrapper<UserLimit> qw = new QueryWrapper<UserLimit>();
     		 qw.eq("uno" + relation.getClevel(), entity.getUserno());
     		 qw.eq("orgtype", 2);
@@ -106,6 +114,8 @@ public class UserLimitServiceImpl extends ServiceImpl<UserLimitMapper, UserLimit
     			 super.save(entity);
     			 redisUtils.del(REDIS_KEY + entity.getUserno());
     		 }
+    	 }else {
+    		 redisUtils.del(REDIS_KEY + entity.getUserno());
     	 }
 //		 redisUtils.set(REDIS_KEY + entity.getUserno(),  JSONObject.toJSONString(entity));
 		 return flag;
@@ -124,9 +134,28 @@ public class UserLimitServiceImpl extends ServiceImpl<UserLimitMapper, UserLimit
     		 List<UserRelation> items = userLimitMapper.findUser(qw);
     		 for(UserRelation temp : items) {
     			 userLimitMapper.deleteById(temp.getUserno());
-    			 redisUtils.del(REDIS_KEY + id);
+    			 redisUtils.del(REDIS_KEY + temp.getUserno());
     		 }
+    	 }else {
+    		 redisUtils.del(REDIS_KEY + id);
     	 }
+    	return flag;
+    }
+    
+    private boolean checkMaxLimit(String userno,UserLimit entity) {
+    	boolean flag = true;
+    	if(userno == null) return flag;
+    	UserLimit parent = userLimitMapper.selectById(userno);
+    	
+    	if(parent == null) return flag;
+    	
+    	if((parent.getMaxDou() != 0 && parent.getMaxDou() < entity.getMaxDou())
+    			|| (parent.getMaxNiuP() != 0 && parent.getMaxNiuP() < entity.getMaxNiuP())
+    			|| (parent.getMaxNiuB() != 0 && parent.getMaxNiuB() < entity.getMaxNiuB())) {
+    		flag = false;
+    		return flag;
+    	}
+    	 
     	return flag;
     }
 }
