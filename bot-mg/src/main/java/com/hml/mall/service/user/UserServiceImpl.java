@@ -23,10 +23,13 @@ import com.hml.core.page.PageResult;
 import com.hml.mall.entity.sys.Login;
 import com.hml.mall.entity.sys.UserRole;
 import com.hml.mall.entity.user.User;
+import com.hml.mall.entity.user.UserLimit;
 import com.hml.mall.entity.user.UserRelation;
+import com.hml.mall.iface.user.IUserLimitService;
 import com.hml.mall.iface.user.IUserService;
 import com.hml.mall.mapper.sys.LoginMapper;
 import com.hml.mall.mapper.sys.UserRoleMapper;
+import com.hml.mall.mapper.user.UserLimitMapper;
 import com.hml.mall.mapper.user.UserMapper;
 import com.hml.mall.mapper.user.UserRelationMapper;
 import com.hml.mall.security.LoginUser;
@@ -62,6 +65,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	
 	@Autowired
 	private UserRelationMapper userRelationMapper;
+	
+	@Autowired
+	private IUserLimitService userLimitService;
 	
 	@Autowired
 	private RedisUtils redisUtils;
@@ -264,8 +270,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     	entity.setPaypwd(pwd);
     	userMapper.insert(entity);
 //    	保存客户关系
-    	saveUserRelation(entity);
+    	UserRelation ur = saveUserRelation(entity);
     	
+    	//保存用户限额
+    	if(entity.getOrgtype() == 2) {
+    		saveUserLimit(entity,ur);
+    	}
 //    	保存角色
     	UserRole userRole = new UserRole();
 		userRole.setLoginno(entity.getUserno());
@@ -275,7 +285,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     		userRole.setRoleId(-2);
     	}
 		userRoleMapper.insert(userRole);
-    	syncUser(entity);
+    	
+		syncUser(entity);
     	redisUtils.hset(RedisKey.USER_INVITE_AUTH, entity.getUserno(), String.valueOf(entity.getUsertype()));
 		return true;
 	}
@@ -497,7 +508,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     
     
 //  根据推荐人获取 层级关系
-  private void saveUserRelation(User user)throws Exception{
+  private UserRelation saveUserRelation(User user)throws Exception{
   	UserRelation ur = new UserRelation();
   	
 //  	删除历史数据
@@ -525,6 +536,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	ur.setTjno(user.getOpenid());
 
   	userRelationMapper.insert(ur);
+  	
+  	return ur;
   }
 //  为曾级赋值
   private UserRelation setClevelVal(int level,String userno,UserRelation ur)throws Exception{
@@ -571,4 +584,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 			return new BigDecimal(1);
 		}
 	}
+  
+  private void saveUserLimit(User user,UserRelation ur)throws Exception{
+	  int clevel = ur.getClevel() - 1;
+	  if(clevel <= 0) return;
+	  List<String> usernos = new ArrayList<String>();
+	  if(!StringUtils.isBlank(ur.getUno5())) {
+		  usernos.add(ur.getUno5());
+	  }
+	  if(!StringUtils.isBlank(ur.getUno4())) {
+		  usernos.add(ur.getUno4());
+	  }
+	  if(!StringUtils.isBlank(ur.getUno3())) {
+		  usernos.add(ur.getUno3());
+	  }
+	  if(!StringUtils.isBlank(ur.getUno2())) {
+		  usernos.add(ur.getUno2());
+	  }
+	  if(!StringUtils.isBlank(ur.getUno1())) {
+		  usernos.add(ur.getUno1());
+	  }
+	  PageRequest request = new PageRequest();
+	  request.setPageNum(1);
+	  request.setPageSize(10);
+	  Map<String,Object> params = new HashMap<String, Object>();
+	  params.put("USERNO@IN", usernos);
+	  params.put("CLEVEL@DESC", "A");
+	  request.setParams(params);
+	  
+	  PageResult result = userLimitService.findPage(request);
+	  if(result.getContent() != null) {
+		  List<UserLimit> datas = (List<UserLimit>)result.getContent();
+		  if(datas != null && datas.size() > 0) {
+			  UserLimit limit = datas.get(0);
+			  limit.setUserno(user.getUserno());
+			  userLimitService.save(limit);
+		  }
+	  }
+  }
 }
